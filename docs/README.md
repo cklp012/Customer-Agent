@@ -63,6 +63,7 @@ python scripts/diagnose_runtime.py
 | **5.5** | [architecture_current.md](architecture_current.md) | 当前架构基线文档（非 `phase*_done` 命名） |
 | **5.6** | 本文档 | 文档入口索引 |
 | **6a** | [phase6a_plan.md](phase6a_plan.md) | 第二平台 Adapter 规划（DemoChannel 推荐、平台比较、6b 范围） |
+| **6b** | [phase6b_done.md](phase6b_done.md) | `DemoChannel` + `ChannelRegistry` 双平台单测（非生产） |
 
 ---
 
@@ -72,7 +73,7 @@ python scripts/diagnose_runtime.py
 |--------|------|
 | **默认开发 / 交付** | 不设置环境变量 → `legacy-default`（`PDDChannel` + `SendMessage`） |
 | **新架构联调** | `USE_PINDUODUO_CHANNEL_WRAPPER=true` 且 `USE_PINDUODUO_OUTBOUND=true` → `wrapper-and-outbound`；先用 `diagnose_runtime.py` 确认模式 |
-| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径，再读 [architecture_current.md §8](architecture_current.md#8-后续建议路线)（5b 可选、6a 规划文档、6b skeleton 等） |
+| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径；6b Demo 仅验证契约，下一步见 [architecture_current.md §8](architecture_current.md#8-后续建议路线) Phase 7 |
 | **明确不做（当前）** | Phase 5b 统一 bool 解析、接淘宝/抖店/京东运行时、Phase 4c consumer metadata 镜像 — 见 architecture §7 |
 
 ---

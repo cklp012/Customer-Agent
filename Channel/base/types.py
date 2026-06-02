@@ -17,6 +17,9 @@ class PlatformType(str, Enum):
     DOUYIN = "douyin"
     KUAISHOU = "kuaishou"
 
+    # Phase 6b：契约验证用假平台，非生产；未接入 bridge.ChannelType / Message 链路
+    DEMO = "demo"
+
     # 预留：后续 Adapter 接入时使用（当前运行时未使用）
     QIANNIU = "qianniu"
     DOUDIAN = "doudian"

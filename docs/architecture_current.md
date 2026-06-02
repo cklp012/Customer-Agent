@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 5.6 里程碑（文档索引） |
+| 文档版本 | Phase 6b 里程碑（DemoChannel skeleton） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -26,7 +26,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 
 ---
 
-## 2. 阶段完成情况（Phase 0 → 5a）
+## 2. 阶段完成情况（Phase 0 → 6b）
 
 | Phase | 范围 | 状态 | 要点 |
 |-------|------|------|------|
@@ -40,6 +40,9 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **4a** | resolver 增强 | ✅ | `metadata["outbound"]` + `AccountOutboundRegistry` + create fallback |
 | **4b** | registry 生命周期 | ✅ | `PinduoduoChannel` start 注册 / stop 注销 outbound |
 | **5a** | 运行模式文档 | ✅ | `docs/runtime_modes.md`、`scripts/diagnose_runtime.py` |
+| **5.5–5.6** | 架构基线 + 文档索引 | ✅ | `architecture_current.md`、`docs/README.md` |
+| **6a** | 第二平台规划 | ✅ | `docs/phase6a_plan.md` |
+| **6b** | `DemoChannel` skeleton | ✅ | `Channel/demo/*`、`PlatformType.DEMO`、Registry 双平台单测；**非生产** |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -148,6 +151,14 @@ flowchart TB
 |------|------|
 | **`Channel/base/`** | 跨平台契约：`PlatformType`、`ChannelStatus`、`BaseChannel`、`ChannelOutbound` Protocol、`Unified*` 模型、`ChannelRegistry` 工厂表（PDD 尚未在 app 启动时 register） |
 
+### Demo Channel（Phase 6b，非生产）
+
+| 路径 | 职责 |
+|------|------|
+| **`Channel/demo/demo_channel.py`** | 第二个 `BaseChannel`；内存状态机；不联网 |
+| **`Channel/demo/demo_outbound.py`** | 第二个 `ChannelOutbound`；`sent_log` + 固定 stub 数据 |
+| **`Channel/demo/demo_factory.py`** | `create_demo_channel` / `register_demo_channel`（**仅测试 bootstrap**） |
+
 ### 拼多多 Channel / 出站
 
 | 路径 | 职责 |
@@ -226,8 +237,8 @@ flowchart TB
 | **配置** | 运行模式 flag **未** UI 化、未写入 `config.json` |
 | **Phase 4c** | consumer `metadata["outbound"]` 镜像 — **暂缓** |
 | **真实店铺** | 文档级里程碑不假定全员有 PDD 测试店；黄金路径 #3–#8 需自备店铺复验 |
-| **DemoChannel（规划）** | Phase 6b 拟引入的 **非生产** 假平台：不连接淘宝/抖店/京东，不验证真实登录或消息收发；仅用于 Registry/契约单测（见 [phase6a_plan.md](phase6a_plan.md)） |
-| **第二平台运行时** | 淘宝/抖店/京东 Channel **未实现**；6a 仅完成选型与 6b 范围文档 |
+| **DemoChannel（已实现，非生产）** | Phase 6b：`PlatformType.DEMO` + `Channel/demo/*`；**不**连接真实平台，**不**验证真实登录/消息收发；**未**接入 app/UI/Message（见 [phase6b_done.md](phase6b_done.md)） |
+| **第二平台运行时** | 淘宝/抖店/京东 Channel **未实现**；6a 已完成选型文档 |
 
 ---
 
@@ -236,8 +247,8 @@ flowchart TB
 | 阶段 | 内容 | 类型 |
 |------|------|------|
 | **5b（可选）** | `runtime_env.py` 统一 bool 解析；`channel_flags` / `outbound_flags` 薄封装 | 小 refactor |
-| **6a** ✅ | 第二平台 Adapter **规划**：[phase6a_plan.md](phase6a_plan.md)（平台比较、合规边界、6b=DemoChannel 推荐） | 仅文档 |
-| **6b** | **`DemoChannel` / `MockCommerceChannel`**：`Channel/demo/*` + `PlatformType.DEMO` + 测试内 `ChannelRegistry` 注册；**不接 UI、不接真实平台**；不推荐 Taobao 空壳作为首选 | 小步代码 |
+| **6a** ✅ | 第二平台 Adapter **规划**：[phase6a_plan.md](phase6a_plan.md) | 仅文档 |
+| **6b** ✅ | **`DemoChannel`**：[phase6b_done.md](phase6b_done.md)；Registry 双平台单测；非生产 | 小步代码 |
 | **6c（可选）** | `diagnose_runtime` 只读列出 `ChannelRegistry.registered_platforms()` | 运维 |
 | **7** | `Context` / `PDDChatMessage` → `UnifiedMessage` mapper；handler 可选 `on_message`；泛化或分平台 outbound resolver | 架构 |
 | **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**），须商家授权 + 官方 API 文档 | 平台 |
@@ -301,6 +312,7 @@ D:\agent
 ├── config.json                     # LLM（非运行模式 flag）
 ├── Channel/
 │   ├── base/                       # 多平台抽象（Phase 1）
+│   ├── demo/                       # DemoChannel（Phase 6b，非生产）
 │   └── pinduoduo/
 │       ├── pdd_channel.py          # legacy PDDChannel
 │       ├── pinduoduo_channel.py    # BaseChannel 包装（Phase 3a/4b）
@@ -327,4 +339,4 @@ D:\agent
 
 ---
 
-*本文档描述截至 Phase 5.6 文档索引后的仓库状态；后续 Phase 变更请更新 §2 / §8 或本目录 [docs/README.md](README.md)。*
+*本文档描述截至 Phase 6b 后的仓库状态；后续 Phase 变更请更新 §2 / §8 或本目录 [docs/README.md](README.md)。*

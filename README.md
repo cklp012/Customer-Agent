@@ -2,6 +2,19 @@
 
 电商AI客服桌面应用程序，基于 PyQt6 构建，支持多平台渠道集成，集成 AI 大模型实现智能自动回复。
 
+正在改造为**多平台电商客服工作台**（Strangler Fig）；当前**运行时仅拼多多**，多平台抽象见 `Channel/base`。
+
+## 文档与改造状态
+
+| 主题 | 文档 |
+|------|------|
+| **文档目录（推荐起点）** | [docs/README.md](docs/README.md) |
+| 安装与启动 | [docs/runbook.md](docs/runbook.md) |
+| 当前架构基线 | [docs/architecture_current.md](docs/architecture_current.md) |
+| 运行模式（环境变量） | [docs/runtime_modes.md](docs/runtime_modes.md) |
+
+环境诊断（不启 GUI、不连 PDD）：`python scripts/diagnose_runtime.py` — 详见 [docs/runtime_modes.md](docs/runtime_modes.md)。
+
 ## 功能特性
 
 - **多渠道支持**：目前支持拼多多平台 WebSocket 实时消息接收
@@ -74,6 +87,8 @@ python scripts/build_win_exe.py --clean
 打包产物位于 `dist/AgentCustomer/` 目录。
 
 ## 项目结构
+
+模块职责与改造后链路见 [docs/architecture_current.md](docs/architecture_current.md)。
 
 ```
 text

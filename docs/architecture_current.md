@@ -1,8 +1,10 @@
 # Customer-Agent 当前架构基线（Architecture Current）
 
+**文档导航：** [docs 目录](README.md) · [运行手册](runbook.md) · [运行模式](runtime_modes.md)
+
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 5.5 里程碑 |
+| 文档版本 | Phase 5.6 里程碑（文档索引） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -276,10 +278,14 @@ git status
 
 | 文档 | 用途 |
 |------|------|
+| [README.md](./README.md) | 文档目录、Phase 全表、新开发者阅读顺序 |
 | [runbook.md](./runbook.md) | 安装、启动、账号 |
-| [runtime_modes.md](./runtime_modes.md) | Flag 与四模式 |
+| [runtime_modes.md](./runtime_modes.md) | Flag 与四模式（含 [§6 诊断脚本](runtime_modes.md#6-诊断脚本)） |
 | [phase0_audit.md](./phase0_audit.md) | 黄金路径清单 |
-| [phase1_done.md](./phase1_done.md) ~ [phase5a_done.md](./phase5a_done.md) | 各阶段交付记录 |
+
+**Phase 交付记录（逐文件）：** [phase1_done.md](./phase1_done.md) · [phase2a_done.md](./phase2a_done.md) · [phase2b_done.md](./phase2b_done.md) · [phase2c_done.md](./phase2c_done.md) · [phase3_done.md](./phase3_done.md) · [phase3b_done.md](./phase3b_done.md) · [phase4a_done.md](./phase4a_done.md) · [phase4b_done.md](./phase4b_done.md) · [phase5a_done.md](./phase5a_done.md)
+
+**环境诊断：** `python scripts/diagnose_runtime.py`（不启 GUI、不连 PDD）— 见 [runtime_modes.md §6](runtime_modes.md#6-诊断脚本) 与 [docs/README.md §运维与诊断](README.md#运维与诊断)。
 
 ---
 
@@ -310,10 +316,11 @@ D:\agent
 ├── Agent/CustomerAgent/
 ├── scripts/diagnose_runtime.py
 └── docs/
+    ├── README.md                   # 文档目录（Phase 5.6）
     ├── architecture_current.md     # 本文档
     └── runtime_modes.md
 ```
 
 ---
 
-*本文档描述截至 Phase 5a 合并后的仓库状态；后续 Phase 变更请更新本节或追加 `architecture_current_v2.md`。*
+*本文档描述截至 Phase 5.6 文档索引后的仓库状态；后续 Phase 变更请更新 §2 / §8 或本目录 [docs/README.md](README.md)。*

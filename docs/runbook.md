@@ -1,5 +1,7 @@
 # Agent-Customer 本地运行手册（Phase 0）
 
+**文档导航：** [docs 目录](README.md) · [当前架构](architecture_current.md) · [运行模式](runtime_modes.md) · [Phase 0 审计](phase0_audit.md)
+
 > **本机已验证**（2026-06-01，Windows，`D:\agent`）：`install_playwright.py` → `app.py` GUI → 自动回复 / 关键词 / 账号(0) / 知识库 各页可打开。PDD 登录与 WS 待添加测试店铺后补测。详见 [phase0_audit.md](./phase0_audit.md) §2.2。
 
 ## 环境要求

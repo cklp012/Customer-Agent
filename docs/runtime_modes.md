@@ -1,5 +1,7 @@
 # Customer-Agent 运行模式说明
 
+**文档导航：** [docs 目录](README.md) · [运行手册](runbook.md) · [当前架构](architecture_current.md)
+
 本文档说明拼多多相关**环境变量运行模式**。LLM、数据库路径等仍见 `config.json` 与 [runbook.md](./runbook.md)。
 
 ---
@@ -108,7 +110,9 @@ python scripts/diagnose_runtime.py
 
 | 文档 | 内容 |
 |------|------|
+| [README.md](./README.md) | 文档目录与 Phase 全表 |
 | [runbook.md](./runbook.md) | 安装、启动、PDD 登录 |
+| [architecture_current.md](./architecture_current.md) | 架构基线、模块职责、四模式对照 |
 | [phase2b_done.md](./phase2b_done.md) | handler outbound-first |
 | [phase3b_done.md](./phase3b_done.md) | AutoReply wrapper 切换 |
 | [phase4a_done.md](./phase4a_done.md) | resolver + registry |

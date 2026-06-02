@@ -119,13 +119,48 @@ class MessageHandlerMixin:
         }
         return context.type in queue_types
 
+    def _send_immediate_text_legacy(
+        self,
+        shop_id: str,
+        user_id: str,
+        recipient_uid: str,
+        text: str,
+    ) -> bool:
+        """Legacy：惰性构造 SendMessage 发送即时文本。"""
+        from Channel.pinduoduo.utils.API.send_message import SendMessage
+
+        send_message = SendMessage(shop_id, user_id)
+        result = send_message.send_text(recipient_uid, text)
+        if isinstance(result, dict) and result.get("success"):
+            return True
+        return False
+
+    async def _send_immediate_text(
+        self,
+        context: Context,
+        shop_id: str,
+        user_id: str,
+        recipient_uid: str,
+        text: str,
+    ) -> bool:
+        """即时文本发送：outbound-first，失败回退 legacy SendMessage。"""
+        from Message.handlers.outbound_resolver import resolve_pinduoduo_outbound
+
+        outbound = resolve_pinduoduo_outbound({}, context)
+        if outbound is not None:
+            if await outbound.send_text(recipient_uid, text):
+                return True
+            self.logger.warning(
+                "PinduoduoOutbound.send_text 失败，回退 legacy SendMessage"
+            )
+
+        return self._send_immediate_text_legacy(shop_id, user_id, recipient_uid, text)
+
     async def _handle_immediate_message(self, context: Context, shop_id: str, user_id: str):
         """立即处理消息"""
         username = context.kwargs.username
         recipient_uid = context.kwargs.from_uid
         try:
-            from Channel.pinduoduo.utils.API.send_message import SendMessage
-            send_message = SendMessage(shop_id, user_id)
             if context.type == ContextType.AUTH:
                 auth_info = context.content
                 if isinstance(auth_info, dict):
@@ -137,7 +172,7 @@ class MessageHandlerMixin:
 
             elif context.type == ContextType.WITHDRAW:
                 self.logger.info(f"收到撤回消息: {context.content}")
-                send_message.send_text(recipient_uid, "[玫瑰]")
+                await self._send_immediate_text(context, shop_id, user_id, recipient_uid, "[玫瑰]")
 
             elif context.type == ContextType.SYSTEM_STATUS:
                 self.logger.debug(f"系统状态消息: {context.content}")
@@ -156,7 +191,7 @@ class MessageHandlerMixin:
 
             elif context.type == ContextType.TRANSFER:
                 self.logger.info(f"转接消息: {context.content}")
-                send_message.send_text(recipient_uid, "[玫瑰]")
+                await self._send_immediate_text(context, shop_id, user_id, recipient_uid, "[玫瑰]")
 
         except Exception as e:
             self.logger.error(f"立即处理消息失败: {e}")

@@ -58,3 +58,4 @@ chroma_db/
 CLAUDE.md
 # CI/CD (not published to this mirror)
 .github/
+.browsers/

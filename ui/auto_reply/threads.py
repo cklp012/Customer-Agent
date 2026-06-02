@@ -63,16 +63,18 @@ class AutoReplyThread(QThread):
         self.logger = get_logger("AutoReplyThread")
 
     def run(self):
-        """启动后端 PDDChannel 引擎"""
-        from Channel.pinduoduo.pdd_channel import PDDChannel
+        """启动后端 Channel 引擎（legacy PDDChannel 或 PinduoduoChannel 包装层）。"""
+        from Channel.pinduoduo.channel_factory import (
+            create_auto_reply_runtime_channel,
+            start_auto_reply_account,
+        )
 
         try:
             # 为当前线程创建并设置新的事件循环
             self.loop = asyncio.new_event_loop()
             asyncio.set_event_loop(self.loop)
 
-            # 创建 PDDChannel 实例
-            self.channel = PDDChannel()
+            self.channel = create_auto_reply_runtime_channel()
 
             # 定义成功和失败的回调函数
             def on_success():
@@ -83,11 +85,12 @@ class AutoReplyThread(QThread):
 
             # 启动引擎，并传递回调
             task = self.loop.create_task(
-                self.channel.start_account(
-                    shop_id=self.account_data['shop_id'],
-                    user_id=self.account_data['user_id'],
-                    on_success=on_success,
-                    on_failure=on_failure
+                start_auto_reply_account(
+                    self.channel,
+                    self.account_data['shop_id'],
+                    self.account_data['user_id'],
+                    on_success,
+                    on_failure,
                 )
             )
 
@@ -121,7 +124,7 @@ class AutoReplyThread(QThread):
 
     def is_running(self) -> bool:
         """检查线程是否在运行"""
-        # 实际的运行状态由 PDDChannel 内部管理，这里仅表示线程是否已启动
+        # 实际的运行状态由 Channel（PDDChannel / PinduoduoChannel.legacy）内部管理
         return self.isRunning()
 
 

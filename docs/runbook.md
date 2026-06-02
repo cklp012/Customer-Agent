@@ -56,6 +56,26 @@ python app.py
 | 账号管理 | 可打开；新环境账号数为 0 |
 | 知识库 | 可打开；无店铺时提示先去账号管理添加 |
 
+## 运行模式（高级，可选）
+
+**默认无需设置任何环境变量**，即为 legacy 生产模式（`PDDChannel` + `SendMessage`）。
+
+测试新架构（需真实 PDD 测试店联调）：
+
+```powershell
+$env:USE_PINDUODUO_CHANNEL_WRAPPER = "true"
+$env:USE_PINDUODUO_OUTBOUND = "true"
+python app.py
+```
+
+启动前可检查当前模式（不启 GUI、不连 PDD）：
+
+```powershell
+python scripts/diagnose_runtime.py
+```
+
+完整说明见 [runtime_modes.md](./runtime_modes.md)。
+
 ## 最小配置
 
 1. 打开应用 → **设置**

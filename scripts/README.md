@@ -9,10 +9,22 @@ scripts/
 ├── __pycache__/          # Python 缓存目录
 ├── build_exe.py          # 完整打包脚本（功能丰富）
 ├── build_win_exe.py      # 简化打包脚本（快速构建）
+├── diagnose_runtime.py   # 运行模式诊断（Phase 5a，不启 GUI/PDD）
 ├── install_playwright.py # Playwright 浏览器安装脚本
 ├── version_info.txt      # Windows 可执行文件版本信息
 └── README.md             # 本使用说明文档
 ```
+
+### diagnose_runtime.py — 运行模式诊断（Phase 5a）
+
+打印 Python 环境、`USE_PINDUODUO_*` flag 解析结果、关键模块 import 与可选路径存在性。不启动 GUI、不连接拼多多。
+
+```powershell
+cd D:\agent
+python scripts/diagnose_runtime.py
+```
+
+详见 [docs/runtime_modes.md](../docs/runtime_modes.md)。
 
 ## 🛠️ 脚本详细说明
 

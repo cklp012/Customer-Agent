@@ -226,6 +226,8 @@ flowchart TB
 | **配置** | 运行模式 flag **未** UI 化、未写入 `config.json` |
 | **Phase 4c** | consumer `metadata["outbound"]` 镜像 — **暂缓** |
 | **真实店铺** | 文档级里程碑不假定全员有 PDD 测试店；黄金路径 #3–#8 需自备店铺复验 |
+| **DemoChannel（规划）** | Phase 6b 拟引入的 **非生产** 假平台：不连接淘宝/抖店/京东，不验证真实登录或消息收发；仅用于 Registry/契约单测（见 [phase6a_plan.md](phase6a_plan.md)） |
+| **第二平台运行时** | 淘宝/抖店/京东 Channel **未实现**；6a 仅完成选型与 6b 范围文档 |
 
 ---
 
@@ -234,10 +236,12 @@ flowchart TB
 | 阶段 | 内容 | 类型 |
 |------|------|------|
 | **5b（可选）** | `runtime_env.py` 统一 bool 解析；`channel_flags` / `outbound_flags` 薄封装 | 小 refactor |
-| **6a** | 第二平台 Adapter **规划文档**（淘宝 / 抖店 / JD 选型、API 差异） | 仅设计 |
-| **6b** | 选一平台做 **只读 skeleton**（`XxxOutbound` stub + `PlatformType` 注册，不接 UI） | 小步代码 |
-| **7** | `Context` / `PDDChatMessage` → `UnifiedMessage` mapper；handler 可选 `on_message` | 架构 |
-| **8** | 产品化：设置页开关、安装包默认 env、远程配置、运维监控 | 产品 |
+| **6a** ✅ | 第二平台 Adapter **规划**：[phase6a_plan.md](phase6a_plan.md)（平台比较、合规边界、6b=DemoChannel 推荐） | 仅文档 |
+| **6b** | **`DemoChannel` / `MockCommerceChannel`**：`Channel/demo/*` + `PlatformType.DEMO` + 测试内 `ChannelRegistry` 注册；**不接 UI、不接真实平台**；不推荐 Taobao 空壳作为首选 | 小步代码 |
+| **6c（可选）** | `diagnose_runtime` 只读列出 `ChannelRegistry.registered_platforms()` | 运维 |
+| **7** | `Context` / `PDDChatMessage` → `UnifiedMessage` mapper；handler 可选 `on_message`；泛化或分平台 outbound resolver | 架构 |
+| **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**），须商家授权 + 官方 API 文档 | 平台 |
+| **8** | 产品化：设置页开关、安装包默认 env、远程配置、运维监控、UI 平台维度 | 产品 |
 
 接第二平台前建议：**D 模式** + 真实 PDD 店跑通 `docs/phase0_audit.md` 黄金路径，再冻结本文件为 v1 基线。
 

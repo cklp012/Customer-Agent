@@ -62,6 +62,7 @@ python scripts/diagnose_runtime.py
 | **5a** | [phase5a_done.md](phase5a_done.md) | `runtime_modes.md` + `diagnose_runtime.py` + runbook |
 | **5.5** | [architecture_current.md](architecture_current.md) | 当前架构基线文档（非 `phase*_done` 命名） |
 | **5.6** | 本文档 | 文档入口索引 |
+| **6a** | [phase6a_plan.md](phase6a_plan.md) | 第二平台 Adapter 规划（DemoChannel 推荐、平台比较、6b 范围） |
 
 ---
 

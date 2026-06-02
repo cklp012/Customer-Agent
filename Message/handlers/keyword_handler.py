@@ -59,47 +59,63 @@ class KeywordDetectionHandler(BaseHandler):
 
         return False
 
+    def _transfer_to_human_legacy(
+        self,
+        shop_id: str,
+        user_id: str,
+        from_uid: str,
+    ) -> bool:
+        """Legacy：同步 SendMessage 转人工（含无客服离线提示）。"""
+        sender = SendMessage(shop_id, user_id)
+        cs_list = sender.getAssignCsList()
+        my_cs_uid = f"cs_{shop_id}_{user_id}"
+
+        if cs_list and isinstance(cs_list, dict):
+            available_cs_uids = [uid for uid in cs_list.keys() if uid != my_cs_uid]
+
+            if available_cs_uids:
+                cs_uid = available_cs_uids[0]
+                target_cs = cs_list[cs_uid]
+                cs_name = target_cs.get("username", "客服")
+
+                transfer_result = sender.move_conversation(from_uid, cs_uid)
+
+                if transfer_result and transfer_result.get("success"):
+                    self.logger.info(f"会话已成功转接给 {cs_name} ({cs_uid})")
+                    return True
+                self.logger.error("会话转接失败")
+            else:
+                self.logger.warning("没有其他可用的客服进行转接")
+                sender.send_text(
+                    from_uid,
+                    "抱歉，当前没有其他客服在线，请您稍后再试。",
+                )
+
+        return False
+
     async def handle(self, context: Context, metadata: Dict[str, Any]) -> bool:
-        """转接到人工客服"""
+        """转接到人工客服（outbound-first，失败回退 legacy）。"""
         try:
-            kwargs = context.kwargs
-            shop_id = getattr(kwargs, 'shop_id', None) or (kwargs.get('shop_id') if isinstance(kwargs, dict) else None)
-            user_id = getattr(kwargs, 'user_id', None) or (kwargs.get('user_id') if isinstance(kwargs, dict) else None)
-            from_uid = getattr(kwargs, 'from_uid', None) or (kwargs.get('from_uid') if isinstance(kwargs, dict) else None)
-            
+            from Message.handlers.outbound_resolver import (
+                extract_pdd_send_context,
+                resolve_pinduoduo_outbound,
+            )
+
+            shop_id, user_id, from_uid = extract_pdd_send_context(metadata, context)
+
             if not all([shop_id, user_id, from_uid]):
                 return False
-            
-            # 获取可用的客服列表
-            sender = SendMessage(shop_id, user_id)
-            cs_list = sender.getAssignCsList()
-            my_cs_uid = f"cs_{shop_id}_{user_id}"
-            
-            if cs_list and isinstance(cs_list, dict):
-                # 过滤掉自己，不转接给自己
-                available_cs_uids = [uid for uid in cs_list.keys() if uid != my_cs_uid]
 
-                if available_cs_uids:
-                    # 选择第一个可用的客服
-                    cs_uid = available_cs_uids[0]
-                    target_cs = cs_list[cs_uid]
-                    cs_name = target_cs.get('username', '客服')
-                    
-                    # 转移会话
-                    transfer_result = sender.move_conversation(from_uid, cs_uid)
-                    
-                    if transfer_result and transfer_result.get('success'):
+            outbound = resolve_pinduoduo_outbound(metadata, context)
+            if outbound is not None:
+                if await outbound.transfer_to_human(from_uid, reason="keyword"):
+                    return True
+                self.logger.warning(
+                    "PinduoduoOutbound.transfer_to_human 失败，回退 legacy 转人工"
+                )
 
-                        self.logger.info(f"会话已成功转接给 {cs_name} ({cs_uid})")
-                        return True
-                    else:
-                        self.logger.error("会话转接失败")
-                else:
-                    self.logger.warning("没有其他可用的客服进行转接")
-                    sender.send_text(from_uid, "抱歉，当前没有其他客服在线，请您稍后再试。")
-            
-            return False
-            
+            return self._transfer_to_human_legacy(shop_id, user_id, from_uid)
+
         except Exception as e:
             self.logger.error(f"客服转接处理失败: {e}")
             return False

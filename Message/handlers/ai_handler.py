@@ -88,25 +88,47 @@ class AIReplyHandler(BaseHandler):
             self.logger.error(f"AI Bot调用失败: {e}")
             return None
 
+    def _send_text_legacy(
+        self,
+        shop_id: str,
+        user_id: str,
+        from_uid: str,
+        reply: str,
+    ) -> bool:
+        """Legacy：同步 SendMessage.send_text。"""
+        from Channel.pinduoduo.utils.API.send_message import SendMessage
+
+        sender = SendMessage(shop_id, user_id)
+        result = sender.send_text(from_uid, reply)
+        if isinstance(result, dict) and result.get("success"):
+            return True
+        return False
+
     async def _send_reply(self, context: Context, reply: str, metadata: Dict[str, Any]) -> bool:
-        """发送回复"""
+        """发送回复（outbound-first，失败回退 legacy SendMessage）。"""
         try:
-            # 从metadata中提取必要信息
-            shop_id = metadata.get('shop_id')
-            user_id = metadata.get('user_id')
-            from_uid = metadata.get('from_uid')
+            from Message.handlers.outbound_resolver import (
+                extract_pdd_send_context,
+                resolve_pinduoduo_outbound,
+            )
+
+            shop_id, user_id, from_uid = extract_pdd_send_context(metadata, context)
 
             if not all([shop_id, user_id, from_uid]):
-                self.logger.warning(f"缺少发送信息: shop_id={shop_id}, user_id={user_id}, from_uid={from_uid}")
+                self.logger.warning(
+                    f"缺少发送信息: shop_id={shop_id}, user_id={user_id}, from_uid={from_uid}"
+                )
                 return False
 
-            # 尝试发送消息
-            from Channel.pinduoduo.utils.API.send_message import SendMessage
-            sender = SendMessage(shop_id, user_id)
-            result = sender.send_text(from_uid, reply)
-            if isinstance(result, dict) and result.get("success"):
-                return True
-            return False
+            outbound = resolve_pinduoduo_outbound(metadata, context)
+            if outbound is not None:
+                if await outbound.send_text(from_uid, reply):
+                    return True
+                self.logger.warning(
+                    "PinduoduoOutbound.send_text 失败，回退 legacy SendMessage"
+                )
+
+            return self._send_text_legacy(shop_id, user_id, from_uid, reply)
 
         except Exception as e:
             self.logger.error(f"发送回复失败: {e}")

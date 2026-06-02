@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 6b 里程碑（DemoChannel skeleton） |
+| 文档版本 | Phase 7b 里程碑（pdd_to_unified mapper） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -43,7 +43,8 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **5.5–5.6** | 架构基线 + 文档索引 | ✅ | `architecture_current.md`、`docs/README.md` |
 | **6a** | 第二平台规划 | ✅ | `docs/phase6a_plan.md` |
 | **6b** | `DemoChannel` skeleton | ✅ | `Channel/demo/*`、`PlatformType.DEMO`、Registry 双平台单测；**非生产** |
-| **7a** | UnifiedMessage mapper 规划 | ✅ | `docs/phase7a_plan.md`；**Unified 未入运行时** |
+| **7a** | UnifiedMessage mapper 规划 | ✅ | `docs/phase7a_plan.md` |
+| **7b** | `pdd_to_unified` mapper | ✅ | `Channel/pinduoduo/mappers/*` + fixtures；**未接运行时** |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -160,6 +161,12 @@ flowchart TB
 | **`Channel/demo/demo_outbound.py`** | 第二个 `ChannelOutbound`；`sent_log` + 固定 stub 数据 |
 | **`Channel/demo/demo_factory.py`** | `create_demo_channel` / `register_demo_channel`（**仅测试 bootstrap**） |
 
+### 拼多多 Unified 映射（Phase 7b，未接运行时）
+
+| 路径 | 职责 |
+|------|------|
+| **`Channel/pinduoduo/mappers/pdd_to_unified.py`** | `PDDChatMessage` → `UnifiedMessage`；`compute_pdd_routing`；**未**在 WS / Consumer 中调用 |
+
 ### 拼多多 Channel / 出站
 
 | 路径 | 职责 |
@@ -252,7 +259,7 @@ flowchart TB
 | **6b** ✅ | **`DemoChannel`**：[phase6b_done.md](phase6b_done.md)；Registry 双平台单测；非生产 | 小步代码 |
 | **6c（可选）** | `diagnose_runtime` 只读列出 `ChannelRegistry.registered_platforms()` | 运维 |
 | **7a** ✅ | UnifiedMessage **mapper 规划**：[phase7a_plan.md](phase7a_plan.md)（PDD 链路、映射、routing） | 仅文档 |
-| **7b** | `Channel/pinduoduo/mappers/pdd_to_unified` + fixtures + 单测；**不接** WS / Consumer / handlers | 小步代码 |
+| **7b** ✅ | `pdd_to_unified` + fixtures + 单测：[phase7b_done.md](phase7b_done.md)；运行时仍 **Context** | 小步代码 |
 | **7c** | mapper **shadow** / log 对比；主路径仍 `put_message(Context)` | 可观测 |
 | **7d** | `MessageWrapper` / handler **双轨**；可选 `on_message(UnifiedMessage)`；分平台或统一 outbound resolver | 架构 |
 | **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
@@ -318,6 +325,7 @@ D:\agent
 │   ├── base/                       # 多平台抽象（Phase 1）
 │   ├── demo/                       # DemoChannel（Phase 6b，非生产）
 │   └── pinduoduo/
+│       ├── mappers/                # pdd_to_unified（Phase 7b，未接 WS）
 │       ├── pdd_channel.py          # legacy PDDChannel
 │       ├── pinduoduo_channel.py    # BaseChannel 包装（Phase 3a/4b）
 │       ├── pinduoduo_outbound.py   # 出站适配器（Phase 2a）
@@ -343,4 +351,4 @@ D:\agent
 
 ---
 
-*本文档描述截至 Phase 6b 后的仓库状态；后续 Phase 变更请更新 §2 / §8 或本目录 [docs/README.md](README.md)。*
+*本文档描述截至 Phase 7b 后的仓库状态；UnifiedMessage mapper 已存在但未入队，Message 运行时仍为 legacy Context。*

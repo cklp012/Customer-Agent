@@ -1,0 +1,19 @@
+{
+  "response": "push",
+  "message": {
+    "msg_id": "demo-msg-mall-cs-001",
+    "nickname": "demo_cs_display",
+    "type": 0,
+    "sub_type": 2,
+    "content": "您好，我是店铺客服",
+    "time": 1717200003,
+    "from": {
+      "role": "mall_cs",
+      "uid": "demo_cs_uid_001"
+    },
+    "to": {
+      "role": "user",
+      "uid": "demo_buyer_uid_004"
+    }
+  }
+}

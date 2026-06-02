@@ -1,0 +1,25 @@
+{
+  "response": "push",
+  "message": {
+    "msg_id": "demo-msg-goods-001",
+    "nickname": "demo_buyer",
+    "type": 0,
+    "sub_type": 0,
+    "time": 1717200001,
+    "from": {
+      "role": "user",
+      "uid": "demo_buyer_uid_002"
+    },
+    "to": {
+      "role": "mall_cs",
+      "uid": "demo_cs_uid_001"
+    },
+    "info": {
+      "goodsID": 10001,
+      "goodsName": "Demo Product",
+      "goodsPrice": "990",
+      "goodsThumbUrl": "https://example.invalid/thumb.png",
+      "linkUrl": "https://example.invalid/goods/10001"
+    }
+  }
+}

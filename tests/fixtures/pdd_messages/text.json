@@ -1,0 +1,19 @@
+{
+  "response": "push",
+  "message": {
+    "msg_id": "demo-msg-text-001",
+    "nickname": "demo_buyer",
+    "type": 0,
+    "sub_type": 2,
+    "content": "你好，请问有货吗？",
+    "time": 1717200000,
+    "from": {
+      "role": "user",
+      "uid": "demo_buyer_uid_001"
+    },
+    "to": {
+      "role": "mall_cs",
+      "uid": "demo_cs_uid_001"
+    }
+  }
+}

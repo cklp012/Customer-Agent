@@ -1,0 +1,20 @@
+{
+  "response": "push",
+  "message": {
+    "msg_id": "demo-msg-withdraw-001",
+    "nickname": "demo_buyer",
+    "type": 1002,
+    "time": 1717200002,
+    "from": {
+      "role": "user",
+      "uid": "demo_buyer_uid_003"
+    },
+    "to": {
+      "role": "mall_cs",
+      "uid": "demo_cs_uid_001"
+    },
+    "info": {
+      "withdraw_hint": "对方撤回了一条消息"
+    }
+  }
+}

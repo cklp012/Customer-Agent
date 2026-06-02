@@ -65,6 +65,7 @@ python scripts/diagnose_runtime.py
 | **6a** | [phase6a_plan.md](phase6a_plan.md) | 第二平台 Adapter 规划（DemoChannel 推荐、平台比较、6b 范围） |
 | **6b** | [phase6b_done.md](phase6b_done.md) | `DemoChannel` + `ChannelRegistry` 双平台单测（非生产） |
 | **7a** | [phase7a_plan.md](phase7a_plan.md) | UnifiedMessage mapper 规划（PDD 链路、映射表、7b–8 分期） |
+| **7b** | [phase7b_done.md](phase7b_done.md) | `pdd_to_unified` mapper + fixtures + 单测（未接运行时） |
 
 ---
 
@@ -74,7 +75,7 @@ python scripts/diagnose_runtime.py
 |--------|------|
 | **默认开发 / 交付** | 不设置环境变量 → `legacy-default`（`PDDChannel` + `SendMessage`） |
 | **新架构联调** | `USE_PINDUODUO_CHANNEL_WRAPPER=true` 且 `USE_PINDUODUO_OUTBOUND=true` → `wrapper-and-outbound`；先用 `diagnose_runtime.py` 确认模式 |
-| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径；6b Demo 仅验证契约；7a 已规划 mapper，**7b** 实现 `pdd_to_unified`（仍不接运行时） |
+| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径；7b mapper 已存在但未入队，下一步 **7c** shadow 或 **7d** handler 双轨 |
 | **明确不做（当前）** | Phase 5b 统一 bool 解析、接淘宝/抖店/京东运行时、Phase 4c consumer metadata 镜像 — 见 architecture §7 |
 
 ---

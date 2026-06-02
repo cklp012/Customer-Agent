@@ -18,6 +18,8 @@ from Channel.base.types import ChannelStatus, PlatformType
 from Channel.pinduoduo.outbound_factory import create_pinduoduo_outbound
 from Channel.pinduoduo.pdd_channel import PDDChannel
 from Channel.pinduoduo.pinduoduo_outbound import PinduoduoOutbound
+from Message.handlers.account_outbound_registry import register as register_outbound
+from Message.handlers.account_outbound_registry import unregister as unregister_outbound
 from core.connection_status import ConnectionState
 from utils.logger_loguru import get_logger
 
@@ -63,7 +65,7 @@ class PinduoduoChannel(BaseChannel):
         return self._outbound
 
     def request_stop(self) -> None:
-        """请求停止 WebSocket（透传 legacy）。"""
+        """请求停止 WebSocket（透传 legacy；不注销 registry，见 stop_account）。"""
         self._legacy.request_stop()
 
     async def login(
@@ -128,10 +130,12 @@ class PinduoduoChannel(BaseChannel):
             on_success,
             on_failure,
         )
+        register_outbound(self._shop_id, self._account_id, self.outbound)
 
     async def stop_account(self, shop_id: str, account_id: str) -> None:
-        """停止账号（委托 legacy）。"""
+        """停止账号（委托 legacy，并注销 registry 出站缓存）。"""
         await self._legacy.stop_account(shop_id, account_id)
+        unregister_outbound(shop_id, account_id)
         if str(shop_id) == self._shop_id and str(account_id) == self._account_id:
             self._outbound = None
 

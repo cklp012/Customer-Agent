@@ -43,6 +43,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **5.5–5.6** | 架构基线 + 文档索引 | ✅ | `architecture_current.md`、`docs/README.md` |
 | **6a** | 第二平台规划 | ✅ | `docs/phase6a_plan.md` |
 | **6b** | `DemoChannel` skeleton | ✅ | `Channel/demo/*`、`PlatformType.DEMO`、Registry 双平台单测；**非生产** |
+| **7a** | UnifiedMessage mapper 规划 | ✅ | `docs/phase7a_plan.md`；**Unified 未入运行时** |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -231,7 +232,7 @@ flowchart TB
 |------|------|
 | **其它平台** | 未接淘宝、抖店、京东运行时 Channel |
 | **PDD 内核** | 未重写 WebSocket 连接、消息循环、`PDDChatMessage` 解析、`pdd_login` |
-| **消息系统** | 未重写 `MessageConsumer` / 队列模型 |
+| **消息系统** | 未重写 `MessageConsumer` / 队列模型；**运行时仍为 legacy `Context`**（`put_message` / `MessageWrapper` / handlers），`UnifiedMessage` **未入队**（见 [phase7a_plan.md](phase7a_plan.md)） |
 | **兼容策略** | **未移除** handler / 即时消息上的 legacy `SendMessage` fallback |
 | **产品化** | 无 SaaS 后端、无多租户部署、无商家云端控制台 |
 | **配置** | 运行模式 flag **未** UI 化、未写入 `config.json` |
@@ -250,9 +251,12 @@ flowchart TB
 | **6a** ✅ | 第二平台 Adapter **规划**：[phase6a_plan.md](phase6a_plan.md) | 仅文档 |
 | **6b** ✅ | **`DemoChannel`**：[phase6b_done.md](phase6b_done.md)；Registry 双平台单测；非生产 | 小步代码 |
 | **6c（可选）** | `diagnose_runtime` 只读列出 `ChannelRegistry.registered_platforms()` | 运维 |
-| **7** | `Context` / `PDDChatMessage` → `UnifiedMessage` mapper；handler 可选 `on_message`；泛化或分平台 outbound resolver | 架构 |
-| **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**），须商家授权 + 官方 API 文档 | 平台 |
-| **8** | 产品化：设置页开关、安装包默认 env、远程配置、运维监控、UI 平台维度 | 产品 |
+| **7a** ✅ | UnifiedMessage **mapper 规划**：[phase7a_plan.md](phase7a_plan.md)（PDD 链路、映射、routing） | 仅文档 |
+| **7b** | `Channel/pinduoduo/mappers/pdd_to_unified` + fixtures + 单测；**不接** WS / Consumer / handlers | 小步代码 |
+| **7c** | mapper **shadow** / log 对比；主路径仍 `put_message(Context)` | 可观测 |
+| **7d** | `MessageWrapper` / handler **双轨**；可选 `on_message(UnifiedMessage)`；分平台或统一 outbound resolver | 架构 |
+| **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
+| **8** | 产品化：UI 平台维度、`app.py` Registry、`unified_outbound_resolver`、设置页与监控 | 产品 |
 
 接第二平台前建议：**D 模式** + 真实 PDD 店跑通 `docs/phase0_audit.md` 黄金路径，再冻结本文件为 v1 基线。
 

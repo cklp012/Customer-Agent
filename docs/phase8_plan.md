@@ -2,7 +2,7 @@
 
 | 项 | 值 |
 |---|---|
-| 状态 | 8a ✅ 已交付；8b+ 待做 |
+| 状态 | 8a ✅、8b ✅ 已交付；8c+ 待做 |
 | 相关 | [phase8a_done.md](phase8a_done.md)、[architecture_current.md](architecture_current.md) |
 
 ---
@@ -12,7 +12,7 @@
 | 路线 | 内容 | 风险 | Phase 8 |
 |------|------|------|---------|
 | **A** | Demo runtime spike（测试级 E2E） | 低 | ✅ **8a** |
-| **B** | unified outbound resolver | 中 | **8b** |
+| **B** | unified outbound resolver | 中 | ✅ **8b** |
 | **C** | handler 按 routing/content_type 改行为 | 高 | 9+ |
 | **D** | 真实淘宝/抖店/京东 | 最高 | 独立 spike |
 
@@ -46,8 +46,8 @@
 | 阶段 | 内容 |
 |------|------|
 | **8a** ✅ | Demo mapper + inbound_enqueue + runtime 测试 |
-| **8b** | `resolve_outbound(platform)` + `ChannelOutbound` registry |
-| **8c** | `app.py` Registry bootstrap；diagnose 列 platforms |
+| **8b** ✅ | `resolve_outbound` + `channel_outbound_registry`（Route A，handler 未接） |
+| **8c** | handler 接入 `resolve_outbound`；`app.py` Registry bootstrap |
 | **9+** | routing 行为 / 真实平台 spike |
 | **10** | UI 多平台、产品化 |
 

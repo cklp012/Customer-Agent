@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 8a 里程碑（Demo runtime test path） |
+| 文档版本 | Phase 8b 里程碑（unified outbound resolver） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -54,6 +54,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **7i** | INFO 敏感日志清理 | ✅ | `log_sanitizer`；无 content/reply 全文/完整 buyer UID |
 | **7j** | UID warning/debug 清理 | ✅ | account/buyer/cs UID 脱敏；`shop_id` 明文；发送/resolver **未改** |
 | **8a** | Demo runtime spike | ✅ | Demo 入站 → 双轨入队 → Consumer → handler(Context)；**仅测试** |
+| **8b** | unified outbound resolver | ✅ | `resolve_outbound` + `channel_outbound_registry`；**handler 未接** |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -110,6 +111,18 @@ DemoChannel(inject_runtime_flow=True) 或 enqueue_demo_message
 ```
 
 与 PDD 生产路径 **隔离**（独立 queue、不改 `pdd_message_handler` / app / UI）。
+
+### Unified outbound 解析（Phase 8b，测试 / 未来 8c）
+
+```text
+resolve_outbound(metadata, context)   ← handler 生产仍用 resolve_pinduoduo_outbound
+  1. metadata["outbound"]（PDD 平台用旧 _is_usable_pinduoduo_outbound）
+  2. channel_outbound_registry.get(platform, shop_id, account_id)
+  3. platform == pinduoduo → resolve_pinduoduo_outbound（旧 registry + factory + flag）
+  4. 其它平台 → None（Demo 不自动 create）
+```
+
+**AccountOutboundRegistry** 与 **channel_outbound_registry** 并行；8b 不迁移 PDD 注册。
 
 ---
 
@@ -213,8 +226,10 @@ flowchart TB
 | **`Message/metadata_adapter.py`** | Phase 7e：统一读取 metadata/context；7f：`get_send_context_for_extract`（legacy extract 等价） |
 | **`Message/log_sanitizer.py`** | Phase 7i–7j：日志脱敏（content/reply/UID refs、`format_send_context_log`） |
 | **`Message/metadata_observability.py`** | Phase 7g–7h：`build_handler_observation` + `log_handler_observation`（`logger.debug`，默认 INFO 无输出） |
-| **`Message/handlers/outbound_resolver.py`** | `extract_pdd_send_context`（委托 adapter）；`resolve_pinduoduo_outbound`（metadata → registry → create） |
-| **`Message/handlers/account_outbound_registry.py`** | 按 `shop_id:user_id` 线程安全缓存 `PinduoduoOutbound` |
+| **`Message/handlers/outbound_resolver.py`** | **生产**：`resolve_pinduoduo_outbound`（metadata → AccountOutboundRegistry → create） |
+| **`Message/handlers/unified_outbound_resolver.py`** | Phase 8b：`resolve_outbound`；PDD 委托旧 resolver |
+| **`Message/handlers/channel_outbound_registry.py`** | Phase 8b：`platform:shop_id:account_id` → `ChannelOutbound` |
+| **`Message/handlers/account_outbound_registry.py`** | PDD 专用：`shop_id:user_id`（8b 未改） |
 | **`Message/handlers/ai_handler.py`** | AI 回复；`handle()` safe debug；`_send_reply` outbound-first |
 | **`Message/handlers/keyword_handler.py`** | 关键词转人工；`handle()` safe debug；outbound-first |
 | **`Channel/pinduoduo/core/pdd_message_handler.py`** | WS 消息路由；即时消息「[玫瑰]」outbound-first（**未改 WS 本身**） |
@@ -300,8 +315,8 @@ flowchart TB
 | **7i** ✅ | INFO 敏感日志清理：[phase7i_done.md](phase7i_done.md) | 可观测 |
 | **7j** ✅ | UID warning/debug 清理：[phase7j_done.md](phase7j_done.md) | 可观测 |
 | **8a** ✅ | Demo runtime spike：[phase8a_done.md](phase8a_done.md) | 架构验证 |
-| **8b** | unified outbound resolver / `ChannelOutbound` registry 泛化 | 架构 |
-| **8c** | `app.py` Registry bootstrap、diagnose platforms | 产品/运维 |
+| **8b** ✅ | unified outbound resolver：[phase8b_done.md](phase8b_done.md)；handler **未接** | 架构 |
+| **8c** | handler 接入 `resolve_outbound`；`app.py` Registry bootstrap | 产品/运维 |
 | **7+ spike** | 真实第二平台（**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
 | **10** | UI 多平台、SaaS 化 | 产品 |
 

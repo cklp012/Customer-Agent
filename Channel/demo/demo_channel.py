@@ -30,8 +30,16 @@ class DemoChannel(BaseChannel):
 
     platform = PlatformType.DEMO
 
-    def __init__(self, *, inject_synthetic_message_on_start: bool = False) -> None:
+    def __init__(
+        self,
+        *,
+        inject_synthetic_message_on_start: bool = False,
+        inject_runtime_flow: bool = False,
+        runtime_queue_name: Optional[str] = None,
+    ) -> None:
         self._inject_synthetic_message_on_start = inject_synthetic_message_on_start
+        self._inject_runtime_flow = inject_runtime_flow
+        self._runtime_queue_name = runtime_queue_name
         self._shop_id: Optional[str] = None
         self._account_id: Optional[str] = None
         self._status: ChannelStatus = ChannelStatus.DISCONNECTED
@@ -93,7 +101,20 @@ class DemoChannel(BaseChannel):
 
         on_success()
 
-        if self._inject_synthetic_message_on_start and self._on_message is not None:
+        if self._inject_runtime_flow:
+            if not self._runtime_queue_name:
+                raise RuntimeError(
+                    "inject_runtime_flow=True 需要 runtime_queue_name（仅测试用）"
+                )
+            from Channel.demo.demo_inbound import enqueue_demo_message
+
+            await enqueue_demo_message(
+                _SYNTHETIC_INBOUND,
+                self._shop_id,
+                self._account_id,
+                self._runtime_queue_name,
+            )
+        elif self._inject_synthetic_message_on_start and self._on_message is not None:
             self._on_message(_SYNTHETIC_INBOUND)
 
     async def stop_account(self, shop_id: str, account_id: str) -> None:

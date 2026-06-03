@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 7j 里程碑（UID warning/debug log cleanup） |
+| 文档版本 | Phase 8a 里程碑（Demo runtime test path） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -53,6 +53,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **7h** | handler debug 接线 | ✅ | `handle()` 入口 `log_handler_observation`；发送路径 **未改** |
 | **7i** | INFO 敏感日志清理 | ✅ | `log_sanitizer`；无 content/reply 全文/完整 buyer UID |
 | **7j** | UID warning/debug 清理 | ✅ | account/buyer/cs UID 脱敏；`shop_id` 明文；发送/resolver **未改** |
+| **8a** | Demo runtime spike | ✅ | Demo 入站 → 双轨入队 → Consumer → handler(Context)；**仅测试** |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -97,6 +98,18 @@ flowchart TB
     SM[SendMessage legacy]
     UI --> PDD --> WS --> HC --> SM
 ```
+
+### Demo runtime 测试路径（Phase 8a，非生产）
+
+```text
+DemoChannel(inject_runtime_flow=True) 或 enqueue_demo_message
+  → demo_raw_to_context + demo_raw_to_unified
+  → enqueue_inbound_message（USE_UNIFIED_MESSAGE_DUAL_TRACK 可选）
+  → queue demo_{shop_id}
+  → MessageConsumer → handler(Context, metadata)
+```
+
+与 PDD 生产路径 **隔离**（独立 queue、不改 `pdd_message_handler` / app / UI）。
 
 ---
 
@@ -165,9 +178,12 @@ flowchart TB
 
 | 路径 | 职责 |
 |------|------|
-| **`Channel/demo/demo_channel.py`** | 第二个 `BaseChannel`；内存状态机；不联网 |
+| **`Channel/demo/demo_channel.py`** | 第二个 `BaseChannel`；8a：`inject_runtime_flow` 测试入队 |
+| **`Channel/demo/demo_inbound.py`** | Phase 8a：Demo 入站 → `enqueue_inbound_message` |
+| **`Channel/demo/mappers/*`** | Phase 8a：`demo_raw_to_context` / `demo_raw_to_unified` |
 | **`Channel/demo/demo_outbound.py`** | 第二个 `ChannelOutbound`；`sent_log` + 固定 stub 数据 |
 | **`Channel/demo/demo_factory.py`** | `create_demo_channel` / `register_demo_channel`（**仅测试 bootstrap**） |
+| **`Message/inbound_enqueue.py`** | Phase 8a：统一入队 helper（读 `USE_UNIFIED_MESSAGE_DUAL_TRACK`） |
 
 ### 拼多多 Unified 映射（Phase 7b，未接运行时）
 
@@ -260,7 +276,7 @@ flowchart TB
 | **配置** | 运行模式 flag **未** UI 化、未写入 `config.json` |
 | **Phase 4c** | consumer `metadata["outbound"]` 镜像 — **暂缓** |
 | **真实店铺** | 文档级里程碑不假定全员有 PDD 测试店；黄金路径 #3–#8 需自备店铺复验 |
-| **DemoChannel（已实现，非生产）** | Phase 6b：`PlatformType.DEMO` + `Channel/demo/*`；**不**连接真实平台，**不**验证真实登录/消息收发；**未**接入 app/UI/Message（见 [phase6b_done.md](phase6b_done.md)） |
+| **DemoChannel（已实现，非生产）** | 6b 契约 + **8a** 测试级 runtime 入队（见 [phase8a_done.md](phase8a_done.md)）；**未**接入 app/UI 生产 |
 | **第二平台运行时** | 淘宝/抖店/京东 Channel **未实现**；6a 已完成选型文档 |
 
 ---
@@ -283,8 +299,11 @@ flowchart TB
 | **7h** ✅ | handler debug 接线：[phase7h_done.md](phase7h_done.md)；默认 INFO 无新增日志 | 可观测 |
 | **7i** ✅ | INFO 敏感日志清理：[phase7i_done.md](phase7i_done.md) | 可观测 |
 | **7j** ✅ | UID warning/debug 清理：[phase7j_done.md](phase7j_done.md) | 可观测 |
-| **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
-| **8** | 产品化：UI 平台维度、`app.py` Registry、`unified_outbound_resolver`、第二平台 | 产品 |
+| **8a** ✅ | Demo runtime spike：[phase8a_done.md](phase8a_done.md) | 架构验证 |
+| **8b** | unified outbound resolver / `ChannelOutbound` registry 泛化 | 架构 |
+| **8c** | `app.py` Registry bootstrap、diagnose platforms | 产品/运维 |
+| **7+ spike** | 真实第二平台（**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
+| **10** | UI 多平台、SaaS 化 | 产品 |
 
 接第二平台前建议：**D 模式** + 真实 PDD 店跑通 `docs/phase0_audit.md` 黄金路径，再冻结本文件为 v1 基线。
 

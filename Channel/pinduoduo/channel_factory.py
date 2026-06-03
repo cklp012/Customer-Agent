@@ -1,4 +1,4 @@
-"""PinduoduoChannel 工厂与 AutoReply 运行时切换（Phase 3a/3b，9a Registry 门控）。"""
+"""PinduoduoChannel 工厂与 AutoReply 运行时切换（Phase 3a/3b，9a/9b Registry）。"""
 
 from __future__ import annotations
 
@@ -20,7 +20,7 @@ def _noop_on_message(*_args: Any, **_kwargs: Any) -> None:
 
 
 def create_pinduoduo_channel(**kwargs: Any) -> PinduoduoChannel:
-    """创建 PinduoduoChannel 实例。"""
+    """创建 PinduoduoChannel 实例（wrapper-only，不经 wrapper flag）。"""
     return PinduoduoChannel(**kwargs)
 
 
@@ -29,6 +29,16 @@ def _create_auto_reply_legacy(**kwargs: Any) -> AutoReplyRuntimeChannel:
     if use_pinduoduo_channel_wrapper():
         return create_pinduoduo_channel(**kwargs)
     return PDDChannel(**kwargs)
+
+
+def create_pinduoduo_registry_channel(**kwargs: Any) -> AutoReplyRuntimeChannel:
+    """
+    ChannelRegistry 注册工厂（Phase 9b parity）。
+
+    只调用 _create_auto_reply_legacy；禁止再入 create_auto_reply_runtime_channel
+    或 ChannelRegistry.create。
+    """
+    return _create_auto_reply_legacy(**kwargs)
 
 
 def _warn_registry_fallback(reason: str, *, exc: BaseException | None = None) -> None:
@@ -49,32 +59,27 @@ def create_auto_reply_runtime_channel(**kwargs: Any) -> AutoReplyRuntimeChannel:
     """
     创建 AutoReply 运行时 Channel。
 
-    USE_CHANNEL_REGISTRY_FOR_AUTOREPLY 默认 false；为 true 且 wrapper 为 true 且
-    PINDUODUO 已注册时尝试 ChannelRegistry.create，失败则 fallback 旧 wrapper 路径。
+    USE_CHANNEL_REGISTRY_FOR_AUTOREPLY 默认 false；为 true 且 PINDUODUO 已注册时
+    尝试 ChannelRegistry.create，失败则 fallback _create_auto_reply_legacy。
     """
     from Message.autoreply_registry_flags import use_channel_registry_for_autoreply
 
     if not use_channel_registry_for_autoreply():
         return _create_auto_reply_legacy(**kwargs)
 
-    if not use_pinduoduo_channel_wrapper():
-        return PDDChannel(**kwargs)
-
     if not ChannelRegistry.is_registered(PlatformType.PINDUODUO):
         _warn_registry_fallback("PlatformType.PINDUODUO not registered")
-        return create_pinduoduo_channel(**kwargs)
+        return _create_auto_reply_legacy(**kwargs)
 
     try:
         channel = ChannelRegistry.create(PlatformType.PINDUODUO, **kwargs)
     except Exception as exc:
         _warn_registry_fallback("ChannelRegistry.create raised", exc=exc)
-        return create_pinduoduo_channel(**kwargs)
+        return _create_auto_reply_legacy(**kwargs)
 
-    if not isinstance(channel, PinduoduoChannel):
-        _warn_registry_fallback(
-            f"unexpected channel type {type(channel)!r}, expected PinduoduoChannel"
-        )
-        return create_pinduoduo_channel(**kwargs)
+    if channel is None:
+        _warn_registry_fallback("ChannelRegistry.create returned None")
+        return _create_auto_reply_legacy(**kwargs)
 
     return channel
 
@@ -100,5 +105,5 @@ async def start_auto_reply_account(
 
 
 def register_pinduoduo_channel() -> None:
-    """向 ChannelRegistry 注册拼多多工厂（由测试或显式 bootstrap 调用）。"""
-    ChannelRegistry.register(PlatformType.PINDUODUO, create_pinduoduo_channel)
+    """向 ChannelRegistry 注册拼多多 parity 工厂（Phase 9b）。"""
+    ChannelRegistry.register(PlatformType.PINDUODUO, create_pinduoduo_registry_channel)

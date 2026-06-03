@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+import os
 import unittest
 from unittest.mock import AsyncMock, MagicMock, patch
 
@@ -159,14 +160,36 @@ class TestPinduoduoChannel(unittest.TestCase):
 
 
 class TestChannelFactory(unittest.TestCase):
+    def setUp(self) -> None:
+        self._wrapper_backup = os.environ.get("USE_PINDUODUO_CHANNEL_WRAPPER")
+
     def tearDown(self) -> None:
         ChannelRegistry.unregister(PlatformType.PINDUODUO)
+        if self._wrapper_backup is None:
+            os.environ.pop("USE_PINDUODUO_CHANNEL_WRAPPER", None)
+        else:
+            os.environ["USE_PINDUODUO_CHANNEL_WRAPPER"] = self._wrapper_backup
 
-    def test_register_and_create(self) -> None:
+    @patch("Channel.pinduoduo.channel_factory.create_pinduoduo_channel")
+    def test_register_and_create_wrapper_on(self, create_mock: MagicMock) -> None:
+        os.environ["USE_PINDUODUO_CHANNEL_WRAPPER"] = "true"
         register_pinduoduo_channel()
         self.assertTrue(ChannelRegistry.is_registered(PlatformType.PINDUODUO))
+        wrapper = MagicMock(spec=PinduoduoChannel)
+        create_mock.return_value = wrapper
         channel = ChannelRegistry.create(PlatformType.PINDUODUO, legacy=MagicMock())
-        self.assertIsInstance(channel, PinduoduoChannel)
+        self.assertIs(channel, wrapper)
+        create_mock.assert_called_once()
+
+    @patch("Channel.pinduoduo.channel_factory.PDDChannel")
+    def test_register_and_create_wrapper_off(self, pdd_cls: MagicMock) -> None:
+        os.environ.pop("USE_PINDUODUO_CHANNEL_WRAPPER", None)
+        register_pinduoduo_channel()
+        legacy = MagicMock()
+        pdd_cls.return_value = legacy
+        channel = ChannelRegistry.create(PlatformType.PINDUODUO)
+        self.assertIs(channel, legacy)
+        pdd_cls.assert_called_once()
 
     def test_create_factory_function(self) -> None:
         legacy = MagicMock()

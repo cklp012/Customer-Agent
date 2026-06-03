@@ -50,6 +50,25 @@ class TestReadAllRuntimeFlags(unittest.TestCase):
             "legacy_factory",
         )
 
+    def test_infer_autoreply_source_registry_on_registered(self) -> None:
+        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "true"
+        flags = read_all_runtime_flags()
+        self.assertEqual(
+            infer_autoreply_channel_source(
+                flags=flags,
+                registry_platforms=["pinduoduo"],
+            ),
+            "registry",
+        )
+
+    def test_infer_autoreply_source_registry_on_missing(self) -> None:
+        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "true"
+        flags = read_all_runtime_flags()
+        self.assertEqual(
+            infer_autoreply_channel_source(flags=flags, registry_platforms=[]),
+            "registry_fallback",
+        )
+
     def test_unified_outbound_flag(self) -> None:
         os.environ["USE_UNIFIED_OUTBOUND_RESOLVER"] = "true"
         flags = read_all_runtime_flags()

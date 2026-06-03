@@ -2,7 +2,7 @@
 
 | 项 | 值 |
 |---|---|
-| 状态 | **9a** 实现中 / 交付见 [phase9_done.md](phase9_done.md) |
+| 状态 | **9a** ✅ / **9b** ✅ 见 [phase9_done.md](phase9_done.md)、[phase9b_done.md](phase9b_done.md) |
 | 路线 | **B**：`USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 默认 false |
 
 ---
@@ -18,9 +18,9 @@
 | `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` | `USE_PINDUODUO_CHANNEL_WRAPPER` | PINDUODUO 已注册 | 创建路径 |
 |--------------------------------------|---------------------------------|------------------|----------|
 | false | * | * | `legacy_factory`（3b 原逻辑） |
-| true | false | * | `PDDChannel()`（不调用 Registry） |
-| true | true | yes | `ChannelRegistry.create` |
-| true | true | no / 异常 | `create_pinduoduo_channel` fallback |
+| true | false | yes | `ChannelRegistry.create` → `PDDChannel`（9b parity factory） |
+| true | true | yes | `ChannelRegistry.create` → `PinduoduoChannel` |
+| true | * | no / 异常 | `_create_auto_reply_legacy` fallback |
 
 ---
 
@@ -29,7 +29,7 @@
 | 阶段 | 内容 |
 |------|------|
 | **9a** ✅ | flag + `channel_factory` 扩展 + capabilities/diagnose + 测试 |
-| **9b** | Registry 工厂与 wrapper-off 等价化（改 `register_pinduoduo_channel` 语义，单独立项） |
+| **9b** ✅ | `create_pinduoduo_registry_channel` + register parity |
 | **10+** | UI 多平台、routing、真实第二平台 |
 
 ---

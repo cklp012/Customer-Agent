@@ -204,9 +204,6 @@ def infer_autoreply_channel_source(
     if not flags.get("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", False):
         return "legacy_factory"
 
-    if not flags["USE_PINDUODUO_CHANNEL_WRAPPER"]:
-        return "legacy_factory_registry_disabled_by_wrapper"
-
     from Channel.base.types import PlatformType
 
     if PlatformType.PINDUODUO.value in registry_platforms:

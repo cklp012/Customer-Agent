@@ -128,6 +128,38 @@ def get_routing(metadata: Dict[str, Any], context: Context) -> str:
     return "drop"
 
 
+def get_send_context_for_extract(
+    metadata: Dict[str, Any],
+    context: Optional[Context] = None,
+) -> Tuple[Optional[str], Optional[str], Optional[str]]:
+    """
+    发送上下文三元组 (shop_id, user_id, from_uid)，与 legacy extract_pdd_send_context 等价。
+
+    仅读 metadata legacy 键与 context.kwargs；不 strip、不读 account_id/buyer_uid、无 unified fallback。
+    """
+    shop_id = metadata.get("shop_id")
+    user_id = metadata.get("user_id")
+    from_uid = metadata.get("from_uid")
+
+    if context is not None:
+        kwargs = getattr(context, "kwargs", None)
+        if shop_id is None:
+            shop_id = _read_kwarg(kwargs, "shop_id")
+        if user_id is None:
+            user_id = _read_kwarg(kwargs, "user_id")
+        if from_uid is None:
+            from_uid = _read_kwarg(kwargs, "from_uid")
+
+    if shop_id is not None:
+        shop_id = str(shop_id)
+    if user_id is not None:
+        user_id = str(user_id)
+    if from_uid is not None:
+        from_uid = str(from_uid)
+
+    return shop_id, user_id, from_uid
+
+
 def get_send_context(
     metadata: Dict[str, Any],
     context: Context,
@@ -135,8 +167,8 @@ def get_send_context(
     """
     发送上下文三元组 (shop_id, user_id, from_uid)。
 
-    语义与 Message.handlers.outbound_resolver.extract_pdd_send_context 对齐：
-    legacy metadata / kwargs 优先；仅缺失时 fallback unified 键。
+    legacy metadata / kwargs 优先；仅缺失时 fallback unified 键（account_id / buyer_uid）。
+    发送路径 extract 请用 get_send_context_for_extract，避免 unified-only 行为差异。
     """
     shop_id = get_shop_id(metadata, context)
     user_id = get_account_id(metadata, context)

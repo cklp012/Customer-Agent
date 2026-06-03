@@ -13,6 +13,7 @@ from Message.metadata_adapter import (
     get_platform,
     get_routing,
     get_send_context,
+    get_send_context_for_extract,
     get_shop_id,
     has_unified_metadata,
 )
@@ -136,18 +137,20 @@ class TestUnifiedOnlyFallback(unittest.TestCase):
 
 
 class TestEquivalenceWithExtractPdd(unittest.TestCase):
-    def test_matches_extract_pdd_send_context_legacy(self) -> None:
+    def test_extract_delegates_to_get_send_context_for_extract_legacy(self) -> None:
         meta = _legacy_metadata()
         ctx = _legacy_context()
+        self.assertEqual(get_send_context_for_extract(meta, ctx), extract_pdd_send_context(meta, ctx))
         self.assertEqual(get_send_context(meta, ctx), extract_pdd_send_context(meta, ctx))
 
-    def test_matches_extract_pdd_send_context_unified_enrich(self) -> None:
+    def test_extract_delegates_to_get_send_context_for_extract_unified_enrich(self) -> None:
         meta = _unified_enrich_metadata()
         ctx = _legacy_context()
+        self.assertEqual(get_send_context_for_extract(meta, ctx), extract_pdd_send_context(meta, ctx))
         self.assertEqual(get_send_context(meta, ctx), extract_pdd_send_context(meta, ctx))
 
     def test_unified_only_fallback_beyond_extract_pdd(self) -> None:
-        """adapter 在 legacy 键缺失时可读 account_id/buyer_uid；extract_pdd 尚不支持（7f）。"""
+        """get_send_context 在 legacy 键缺失时可读 account_id/buyer_uid；extract 路径仍不支持。"""
         meta = {
             "has_unified": True,
             "shop_id": "s1",
@@ -160,6 +163,7 @@ class TestEquivalenceWithExtractPdd(unittest.TestCase):
             channel_type=ChannelType.PINDUODUO,
         )
         self.assertEqual(get_send_context(meta, ctx), ("s1", "u1", "b1"))
+        self.assertEqual(get_send_context_for_extract(meta, ctx), ("s1", None, None))
         self.assertEqual(extract_pdd_send_context(meta, ctx), ("s1", None, None))
 
 

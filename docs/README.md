@@ -69,6 +69,7 @@ python scripts/diagnose_runtime.py
 | **7c** | [phase7c_done.md](phase7c_done.md) | `USE_UNIFIED_MESSAGE_SHADOW` 旁路 log（默认 off） |
 | **7d** | [phase7d_done.md](phase7d_done.md) | 双轨入队 `MessageWrapper.unified_message`（默认 off，handler 仍 Context） |
 | **7e** | [phase7e_done.md](phase7e_done.md) | `metadata_adapter` 统一读取（handler 未改） |
+| **7f** | [phase7f_done.md](phase7f_done.md) | `extract_pdd_send_context` 委托 `get_send_context_for_extract`（handler 未改） |
 
 ---
 
@@ -78,7 +79,7 @@ python scripts/diagnose_runtime.py
 |--------|------|
 | **默认开发 / 交付** | 不设置环境变量 → `legacy-default`（`PDDChannel` + `SendMessage`） |
 | **新架构联调** | `USE_PINDUODUO_CHANNEL_WRAPPER=true` 且 `USE_PINDUODUO_OUTBOUND=true` → `wrapper-and-outbound`；先用 `diagnose_runtime.py` 确认模式 |
-| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径；7e adapter 已就绪，下一步 **7f** 接入 handler/extract |
+| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径；7f extract 已委托 adapter，下一步 **7g** handler 观测字段 |
 | **明确不做（当前）** | Phase 5b 统一 bool 解析、接淘宝/抖店/京东运行时、Phase 4c consumer metadata 镜像 — 见 architecture §7 |
 
 ---

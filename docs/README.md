@@ -72,6 +72,7 @@ python scripts/diagnose_runtime.py
 | **7f** | [phase7f_done.md](phase7f_done.md) | `extract_pdd_send_context` 委托 `get_send_context_for_extract`（handler 未改） |
 | **7g** | [phase7g_done.md](phase7g_done.md) | `metadata_observability` 安全观测 helper（handler 未改） |
 | **7h** | [phase7h_done.md](phase7h_done.md) | handler `handle()` 入口 safe debug；keyword content debug 清理 |
+| **7i** | [phase7i_done.md](phase7i_done.md) | INFO 敏感日志清理（BaseHandler / ai reply / CatchAllHandler） |
 
 ---
 
@@ -81,7 +82,7 @@ python scripts/diagnose_runtime.py
 |--------|------|
 | **默认开发 / 交付** | 不设置环境变量 → `legacy-default`（`PDDChannel` + `SendMessage`） |
 | **新架构联调** | `USE_PINDUODUO_CHANNEL_WRAPPER=true` 且 `USE_PINDUODUO_OUTBOUND=true` → `wrapper-and-outbound`；先用 `diagnose_runtime.py` 确认模式 |
-| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径；7h handler debug 已接线，下一步 **7i** INFO 级敏感日志清理 |
+| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径；7i INFO 敏感日志已清理，下一步 **7j** remaining UID warning |
 | **明确不做（当前）** | Phase 5b 统一 bool 解析、接淘宝/抖店/京东运行时、Phase 4c consumer metadata 镜像 — 见 architecture §7 |
 
 ---

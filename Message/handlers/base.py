@@ -1,10 +1,9 @@
 """
 处理器基类和通用工具
 """
-import json
-from typing import Dict, Any, Optional
-from utils.logger_loguru import get_logger
+from typing import Optional
 from bridge.context import Context
+from Message.log_sanitizer import content_length, format_message_type, format_user_ref
 from ..core.handlers import MessageHandler
 
 
@@ -18,20 +17,14 @@ class BaseHandler(MessageHandler):
 
     async def log_message(self, context: Context, action: str, extra_info: str = ""):
         """统一的日志记录（不记录完整内容以保护隐私）"""
-        user_info = self._get_user_info(context)
-        content_preview = str(context.content)[:50] + "..." if context.content else ""
-        self.logger.info(f"{self.name} {action} - {user_info} - {content_preview} {extra_info}")
+        user_ref = self._get_user_info(context)
+        msg_type = format_message_type(context)
+        length = content_length(context.content)
+        suffix = f" {extra_info}" if extra_info else ""
+        self.logger.info(
+            f"{self.name} {action} - {user_ref} - type={msg_type} content_len={length}{suffix}"
+        )
 
     def _get_user_info(self, context: Context) -> str:
-        """提取用户信息"""
-        try:
-            if hasattr(context, 'kwargs') and context.kwargs:
-                from_uid = getattr(context.kwargs, 'from_uid', None)
-                username = getattr(context.kwargs, 'username', None)
-                if username:
-                    return f"用户:{username}({from_uid})"
-                elif from_uid:
-                    return f"用户:{from_uid}"
-            return "用户:unknown"
-        except Exception:
-            return "用户:unknown"
+        """提取脱敏用户引用。"""
+        return format_user_ref(context)

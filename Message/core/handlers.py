@@ -100,17 +100,26 @@ class CatchAllHandler(MessageHandler):
 
     async def handle(self, context: Context, metadata: Dict[str, Any]) -> bool:
         """记录所有消息，用于调试和统计（不记录完整内容以保护隐私）"""
-        user_id = metadata.get('user_id', 'unknown')
-        message_id = metadata.get('message_id', 'unknown')
-        content_preview = str(context.content)[:50] + "..." if context.content else ""
+        from Message.log_sanitizer import (
+            content_length,
+            format_message_type,
+            format_user_ref,
+            redact_uid,
+        )
 
-        self.logger.info(f"=== 消息处理记录 ===")
-        self.logger.info(f"用户ID: {user_id}")
+        account_ref = redact_uid(metadata.get("user_id")) or "unknown"
+        buyer_ref = format_user_ref(context)
+        message_id = metadata.get("message_id", "unknown")
+        msg_len = content_length(context.content)
+
+        self.logger.info("=== 消息处理记录 ===")
+        self.logger.info(f"账号: {account_ref}")
+        self.logger.info(f"买家: {buyer_ref}")
         self.logger.info(f"消息ID: {message_id}")
-        self.logger.info(f"消息类型: {context.type}")
+        self.logger.info(f"消息类型: {format_message_type(context)}")
         self.logger.info(f"渠道类型: {context.channel_type}")
-        self.logger.info(f"消息内容预览: {content_preview}")
-        self.logger.info(f"消息已被CatchAllHandler处理")
-        self.logger.info(f"===================")
+        self.logger.info(f"content_len: {msg_len}")
+        self.logger.info("消息已被CatchAllHandler处理")
+        self.logger.info("===================")
 
         return True  # 总是返回True，避免"没有合适的处理器"警告

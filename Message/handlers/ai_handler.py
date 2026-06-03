@@ -59,7 +59,7 @@ class AIReplyHandler(BaseHandler):
             # 3. 发送回复
             success = await self._send_reply(context, reply, metadata)
             if success:
-                await self.log_message(context, "AI回复发送成功", f"回复: {reply}...")
+                await self.log_message(context, "AI回复发送成功", f"reply_len={len(reply)}")
             else:
                 self.logger.warning("AI回复发送失败")
                 return await self._handle_fallback(context, metadata)
@@ -150,10 +150,10 @@ class AIReplyHandler(BaseHandler):
             success = await self._send_reply(context, reply_text, metadata)
             if not success:
                 # 如果发送失败，记录日志并返回False让下游有机会处理
-                await self.log_message(context, "备用回复发送失败", f"内容: {reply_text}")
+                await self.log_message(context, "备用回复发送失败", f"reply_len={len(reply_text)}")
                 return False
 
-            await self.log_message(context, "备用回复发送成功", f"内容: {reply_text}")
+            await self.log_message(context, "备用回复发送成功", f"reply_len={len(reply_text)}")
             return True
 
         except Exception as e:

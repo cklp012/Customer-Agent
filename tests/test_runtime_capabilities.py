@@ -9,6 +9,7 @@ from Message.runtime_capabilities import (
     build_runtime_capability_report,
     format_capability_report_for_console,
     get_channel_registry_status,
+    infer_autoreply_channel_source,
     read_all_runtime_flags,
 )
 
@@ -21,6 +22,7 @@ class TestReadAllRuntimeFlags(unittest.TestCase):
             "USE_UNIFIED_MESSAGE_SHADOW",
             "USE_UNIFIED_MESSAGE_DUAL_TRACK",
             "USE_UNIFIED_OUTBOUND_RESOLVER",
+            "USE_CHANNEL_REGISTRY_FOR_AUTOREPLY",
         ):
             os.environ.pop(key, None)
 
@@ -31,6 +33,7 @@ class TestReadAllRuntimeFlags(unittest.TestCase):
             "USE_UNIFIED_MESSAGE_SHADOW",
             "USE_UNIFIED_MESSAGE_DUAL_TRACK",
             "USE_UNIFIED_OUTBOUND_RESOLVER",
+            "USE_CHANNEL_REGISTRY_FOR_AUTOREPLY",
         ):
             os.environ.pop(key, None)
         flags = read_all_runtime_flags()
@@ -38,6 +41,14 @@ class TestReadAllRuntimeFlags(unittest.TestCase):
         self.assertFalse(flags["USE_PINDUODUO_OUTBOUND"])
         self.assertFalse(flags["USE_UNIFIED_OUTBOUND_RESOLVER"])
         self.assertFalse(flags["USE_UNIFIED_MESSAGE_DUAL_TRACK"])
+        self.assertFalse(flags["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"])
+
+    def test_infer_autoreply_source_defaults(self) -> None:
+        flags = read_all_runtime_flags()
+        self.assertEqual(
+            infer_autoreply_channel_source(flags=flags, registry_platforms=[]),
+            "legacy_factory",
+        )
 
     def test_unified_outbound_flag(self) -> None:
         os.environ["USE_UNIFIED_OUTBOUND_RESOLVER"] = "true"
@@ -78,6 +89,7 @@ class TestRuntimeCapabilityReport(unittest.TestCase):
             "ChannelRegistry platforms",
             "Bootstrap status",
             "Default registration plan",
+            "AutoReply channel source",
         ):
             self.assertIn(token, text, msg=f"missing {token}")
 

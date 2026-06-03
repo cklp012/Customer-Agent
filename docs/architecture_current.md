@@ -59,6 +59,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **8d** | runtime diagnostics | ✅ | `runtime_capabilities` + `diagnose_runtime` capability report |
 | **8e** | runtime bootstrap | ✅ | `runtime_bootstrap`；只 register |
 | **8f** | app startup bootstrap | ✅ | `apply_app_startup_bootstrap()` in `app.py` `main()` |
+| **9a** | AutoReply registry gated create | ✅ | `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 默认 off |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -79,8 +80,8 @@ USE_PINDUODUO_OUTBOUND=false          # 或未设置
 用户 GUI（自动回复页）
   → ui/auto_reply/manager.py
   → ui/auto_reply/threads.py :: AutoReplyThread
-       → create_auto_reply_runtime_channel()  # 不经 ChannelRegistry（8e）
-       → PDDChannel() 或 PinduoduoChannel（wrapper flag）
+       → create_auto_reply_runtime_channel()  # 9a 可选 Registry（默认仍 legacy）
+       → PDDChannel() 或 PinduoduoChannel（wrapper flag；见下决策树）
        → LifecycleMixin.start_account
             → init → WebSocket 连接
             → _setup_message_consumer → handler_chain
@@ -149,11 +150,21 @@ apply_app_startup_bootstrap()  → register_default_platforms()（Phase 8f，app
                                → 可选 DEMO（USE_DEMO_CHANNEL_REGISTRATION=true）
                                → 失败不阻断 GUI；不 start_account
 
-AutoReplyThread（生产）        → create_auto_reply_runtime_channel()  # 仍绕过 Registry
+AutoReplyThread（生产）        → create_auto_reply_runtime_channel()
 diagnose_runtime               → 独立子进程，只读 status，默认不 register
 ```
 
-Registry 注册 **不等于** GUI 已切换到 `ChannelRegistry.create()`（**9+** 可选改 AutoReply）。
+### AutoReply 创建决策树（Phase 9a）
+
+```text
+create_auto_reply_runtime_channel()
+  USE_CHANNEL_REGISTRY_FOR_AUTOREPLY=false → legacy_factory（3b）
+  registry=true, wrapper=false             → PDDChannel()（不 Registry.create）
+  registry=true, wrapper=true, 已注册      → ChannelRegistry.create(PINDUODUO)
+  registry=true, wrapper=true, 未注册/失败 → fallback create_pinduoduo_channel()
+```
+
+**9b（未做）**：wrapper off 时 Registry 工厂等价化。
 
 ---
 

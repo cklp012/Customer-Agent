@@ -2,7 +2,7 @@
 
 | 项 | 值 |
 |---|---|
-| 状态 | 8a ✅–8f ✅ 已交付；9+ 待做 |
+| 状态 | 8a ✅–8f ✅；9a ✅ AutoReply registry gated create；9b+ 待做 |
 | 相关 | [phase8a_done.md](phase8a_done.md)、[architecture_current.md](architecture_current.md) |
 
 ---
@@ -51,7 +51,9 @@
 | **8d** ✅ | `runtime_capabilities` + `diagnose_runtime` capability report |
 | **8e** ✅ | `runtime_bootstrap` + diagnose Platform bootstrap（不接 app） |
 | **8f** ✅ | `app.py` → `apply_app_startup_bootstrap()` |
-| **9+** | routing 行为 / 真实平台 spike |
+| **9a** ✅ | `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` + `create_auto_reply_runtime_channel` 门控 |
+| **9b** | Registry 工厂统一 / wrapper-off 等价化 |
+| **9c+** | routing 行为 / 真实平台 spike |
 | **10** | UI 多平台、产品化 |
 
 ---

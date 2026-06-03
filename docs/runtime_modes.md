@@ -6,14 +6,27 @@
 
 ---
 
-## 1. 两个 flag 的分工
+## 1. PDD Channel / AutoReply flag 分工
 
 | 环境变量 | 作用 | 读取位置 |
 |----------|------|----------|
-| `USE_PINDUODUO_CHANNEL_WRAPPER` | `AutoReplyThread` 是否创建 `PinduoduoChannel`（包装 legacy `PDDChannel`） | `Channel/pinduoduo/channel_flags.py` |
+| `USE_PINDUODUO_CHANNEL_WRAPPER` | `create_auto_reply_runtime_channel` 是否创建 `PinduoduoChannel`（包装 legacy `PDDChannel`） | `Channel/pinduoduo/channel_flags.py` |
+| `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` | wrapper **为 true** 时是否尝试 `ChannelRegistry.create(PINDUODUO)` | `Message/autoreply_registry_flags.py` |
 | `USE_PINDUODUO_OUTBOUND` | handler / 即时消息是否优先走 `PinduoduoOutbound` | `Channel/pinduoduo/outbound_flags.py` → `outbound_resolver` |
 
-二者**独立**：可只开其一，也可同时开启。
+`USE_PINDUODUO_CHANNEL_WRAPPER` 与 `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` **独立**；registry flag **不替代** wrapper flag。
+
+### AutoReply 创建矩阵（Phase 9a）
+
+| Registry flag | Wrapper flag | PINDUODUO 已注册（本进程） | 实际创建 |
+|---------------|--------------|---------------------------|----------|
+| false | false | * | `PDDChannel()`（生产默认） |
+| false | true | * | `create_pinduoduo_channel()` |
+| true | false | * | `PDDChannel()`（**不**调用 Registry） |
+| true | true | yes | `ChannelRegistry.create(PINDUODUO)` |
+| true | true | no / 失败 | fallback `create_pinduoduo_channel()` + warning |
+
+`AutoReplyThread` 仍只调用 `create_auto_reply_runtime_channel()`；未改 `threads.py`。
 
 ### ChannelRegistry bootstrap（Phase 8e，独立）
 
@@ -23,9 +36,9 @@
 
 - **默认 false**：默认计划只注册 `pinduoduo`；**不**启动 Demo runtime、**不** `start_account`。
 - Demo 为 **test-only** 平台，不应作为生产默认启动项。
-- `register_default_platforms()` **不** 替代 `create_auto_reply_runtime_channel()`；`AutoReplyThread` 仍不经 `ChannelRegistry.create()`（见 diagnose **Platform bootstrap** 段）。
-- **Phase 8f**：`python app.py` 在 `main()` 内调用 `apply_app_startup_bootstrap()`（仅 register，失败不阻断 GUI）。
-- Registry 已注册 **不等于** GUI 已改用 `ChannelRegistry.create()`；`AutoReplyThread` 仍走 `create_auto_reply_runtime_channel()`。
+- `register_default_platforms()` 只 register，不 start；**Phase 8f** `app.py` 启动时 `apply_app_startup_bootstrap()`。
+- **Phase 9a**：仅当 `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY=true` **且** `USE_PINDUODUO_CHANNEL_WRAPPER=true` **且** 本进程已注册 PINDUODUO 时，`create_auto_reply_runtime_channel` 才调用 `ChannelRegistry.create`；否则与 3b 相同。
+- diagnose 独立子进程：空 Registry 时推断为 `registry_fallback`，不代表运行中的 `app.py` 未 bootstrap。
 
 ```powershell
 # 手动 bootstrap（与 app 内调用等价，独立进程）

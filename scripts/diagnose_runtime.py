@@ -81,22 +81,41 @@ def main() -> int:
     print(f"  Description: {report.pdd_mode_description}")
     print()
     print("  ### Unified / multi-platform")
+    from Message.autoreply_registry_flags import use_channel_registry_for_autoreply
     from Message.bootstrap_flags import use_demo_channel_registration
+    from Message.runtime_capabilities import infer_autoreply_channel_source
 
     for env_name in (
         "USE_UNIFIED_MESSAGE_SHADOW",
         "USE_UNIFIED_MESSAGE_DUAL_TRACK",
         "USE_UNIFIED_OUTBOUND_RESOLVER",
         "USE_DEMO_CHANNEL_REGISTRATION",
+        "USE_CHANNEL_REGISTRY_FOR_AUTOREPLY",
     ):
         if env_name == "USE_DEMO_CHANNEL_REGISTRATION":
             resolved = use_demo_channel_registration()
+        elif env_name == "USE_CHANNEL_REGISTRY_FOR_AUTOREPLY":
+            resolved = use_channel_registry_for_autoreply()
         else:
             resolved = flags[env_name]
         print(f"  {env_name}: {_env_display(env_name)} -> {resolved}")
     print()
+    print("  USE_CHANNEL_REGISTRY_FOR_AUTOREPLY does not replace USE_PINDUODUO_CHANNEL_WRAPPER.")
+    print("  AutoReply uses ChannelRegistry.create only when BOTH are true and PINDUODUO")
+    print("  is registered in this process; otherwise create_auto_reply_runtime_channel")
+    print("  falls back to legacy PDDChannel / create_pinduoduo_channel.")
+    print()
     print("  True values (case-insensitive): 1, true, yes, on")
     print("  Default when unset: false")
+    print()
+
+    autoreply_source = infer_autoreply_channel_source(
+        flags=flags,
+        registry_platforms=registry_platforms,
+    )
+    print("## AutoReply channel source (inferred, this process)")
+    print(f"  autoreply_channel_source: {autoreply_source}")
+    print("  (diagnose does not call ChannelRegistry.create or start app/GUI/PDD)")
     print()
 
     print("## Runtime capability report")

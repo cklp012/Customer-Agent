@@ -17,12 +17,18 @@ from Channel.pinduoduo.pinduoduo_channel import PinduoduoChannel
 class TestAutoReplyChannelSwitch(unittest.TestCase):
     def setUp(self) -> None:
         self._env_backup = os.environ.get("USE_PINDUODUO_CHANNEL_WRAPPER")
+        self._registry_backup = os.environ.get("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY")
+        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
 
     def tearDown(self) -> None:
         if self._env_backup is None:
             os.environ.pop("USE_PINDUODUO_CHANNEL_WRAPPER", None)
         else:
             os.environ["USE_PINDUODUO_CHANNEL_WRAPPER"] = self._env_backup
+        if self._registry_backup is None:
+            os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
+        else:
+            os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = self._registry_backup
 
     @patch("Channel.pinduoduo.channel_factory.PDDChannel")
     def test_flag_off_creates_legacy(self, pdd_cls: MagicMock) -> None:
@@ -36,6 +42,30 @@ class TestAutoReplyChannelSwitch(unittest.TestCase):
     @patch("Channel.pinduoduo.channel_factory.create_pinduoduo_channel")
     def test_flag_on_creates_wrapper(self, create_mock: MagicMock) -> None:
         os.environ["USE_PINDUODUO_CHANNEL_WRAPPER"] = "true"
+        wrapper = MagicMock(spec=PinduoduoChannel)
+        create_mock.return_value = wrapper
+        channel = create_auto_reply_runtime_channel()
+        self.assertIs(channel, wrapper)
+        create_mock.assert_called_once()
+
+    @patch("Channel.pinduoduo.channel_factory.PDDChannel")
+    def test_registry_flag_off_wrapper_off_legacy_path(
+        self, pdd_cls: MagicMock
+    ) -> None:
+        os.environ.pop("USE_PINDUODUO_CHANNEL_WRAPPER", None)
+        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
+        legacy = MagicMock()
+        pdd_cls.return_value = legacy
+        channel = create_auto_reply_runtime_channel()
+        self.assertIs(channel, legacy)
+        pdd_cls.assert_called_once()
+
+    @patch("Channel.pinduoduo.channel_factory.create_pinduoduo_channel")
+    def test_registry_flag_off_wrapper_on_legacy_factory(
+        self, create_mock: MagicMock
+    ) -> None:
+        os.environ["USE_PINDUODUO_CHANNEL_WRAPPER"] = "true"
+        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
         wrapper = MagicMock(spec=PinduoduoChannel)
         create_mock.return_value = wrapper
         channel = create_auto_reply_runtime_channel()

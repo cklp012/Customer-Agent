@@ -20,6 +20,7 @@ def _ensure_flag_readers() -> Dict[str, Callable[[], bool]]:
     from Channel.pinduoduo.mappers.dual_track_flags import use_unified_message_dual_track
     from Channel.pinduoduo.mappers.shadow_flags import use_unified_message_shadow
     from Channel.pinduoduo.outbound_flags import use_pinduoduo_outbound
+    from Message.autoreply_registry_flags import use_channel_registry_for_autoreply
     from Message.handlers.unified_outbound_flags import use_unified_outbound_resolver
 
     _FLAG_READERS.update(
@@ -29,6 +30,7 @@ def _ensure_flag_readers() -> Dict[str, Callable[[], bool]]:
             "USE_UNIFIED_MESSAGE_SHADOW": use_unified_message_shadow,
             "USE_UNIFIED_MESSAGE_DUAL_TRACK": use_unified_message_dual_track,
             "USE_UNIFIED_OUTBOUND_RESOLVER": use_unified_outbound_resolver,
+            "USE_CHANNEL_REGISTRY_FOR_AUTOREPLY": use_channel_registry_for_autoreply,
         }
     )
     return _FLAG_READERS
@@ -184,6 +186,35 @@ def _active_pdd_send_path(flags: Dict[str, bool]) -> str:
     return "legacy SendMessage (USE_PINDUODUO_OUTBOUND=false, production default)"
 
 
+def infer_autoreply_channel_source(
+    *,
+    flags: Dict[str, bool] | None = None,
+    registry_platforms: List[str] | None = None,
+) -> str:
+    """
+    推断 AutoReply create_auto_reply_runtime_channel 将使用的创建路径（只读，不创建实例）。
+    """
+    flags = flags if flags is not None else read_all_runtime_flags()
+    registry_platforms = (
+        registry_platforms
+        if registry_platforms is not None
+        else get_channel_registry_status()
+    )
+
+    if not flags.get("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", False):
+        return "legacy_factory"
+
+    if not flags["USE_PINDUODUO_CHANNEL_WRAPPER"]:
+        return "legacy_factory_registry_disabled_by_wrapper"
+
+    from Channel.base.types import PlatformType
+
+    if PlatformType.PINDUODUO.value in registry_platforms:
+        return "registry"
+
+    return "registry_fallback"
+
+
 @dataclass(frozen=True)
 class RuntimeCapabilityReport:
     """Runtime capability 报告（Phase 8d）。"""
@@ -203,6 +234,7 @@ class RuntimeCapabilityReport:
     bootstrap_status: str
     default_registration_plan: List[str]
     available_platforms: List[str]
+    autoreply_channel_source: str
 
 
 def build_runtime_capability_report(
@@ -249,6 +281,10 @@ def build_runtime_capability_report(
     from Message.runtime_bootstrap import get_bootstrap_status
 
     bootstrap = get_bootstrap_status()
+    autoreply_source = infer_autoreply_channel_source(
+        flags=flags,
+        registry_platforms=registry_platforms,
+    )
 
     return RuntimeCapabilityReport(
         active_pdd_send_path=_active_pdd_send_path(flags),
@@ -266,6 +302,7 @@ def build_runtime_capability_report(
         bootstrap_status=bootstrap.status,
         default_registration_plan=list(bootstrap.planned),
         available_platforms=list(bootstrap.available),
+        autoreply_channel_source=autoreply_source,
     )
 
 
@@ -309,6 +346,7 @@ def format_capability_report_for_console(report: RuntimeCapabilityReport) -> str
         + ", ".join(report.default_registration_plan),
         "  Available platforms (bootstrap):   "
         + ", ".join(report.available_platforms),
+        "  AutoReply channel source:          " + report.autoreply_channel_source,
         "",
         "  Notes:",
         "    - pdd_message_handler still uses resolve_pinduoduo_outbound only.",

@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 8e 里程碑（runtime bootstrap visibility） |
+| 文档版本 | Phase 8f 里程碑（app startup bootstrap） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -57,7 +57,8 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **8b** | unified outbound resolver | ✅ | `resolve_outbound` + `channel_outbound_registry` |
 | **8c** | handler 接入 unified resolver | ✅ | `USE_UNIFIED_OUTBOUND_RESOLVER` 默认 off |
 | **8d** | runtime diagnostics | ✅ | `runtime_capabilities` + `diagnose_runtime` capability report |
-| **8e** | runtime bootstrap | ✅ | `runtime_bootstrap`；只 register，不接 app |
+| **8e** | runtime bootstrap | ✅ | `runtime_bootstrap`；只 register |
+| **8f** | app startup bootstrap | ✅ | `apply_app_startup_bootstrap()` in `app.py` `main()` |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -144,15 +145,15 @@ pdd_message_handler 即时消息：仍 resolve_pinduoduo_outbound（未接 8c）
 ### ChannelRegistry bootstrap（Phase 8e，与 GUI 双路径）
 
 ```text
-register_default_platforms()  → ChannelRegistry.register(PINDUODUO factory)
+apply_app_startup_bootstrap()  → register_default_platforms()（Phase 8f，app main()）
                                → 可选 DEMO（USE_DEMO_CHANNEL_REGISTRATION=true）
-                               → 不 start_account
+                               → 失败不阻断 GUI；不 start_account
 
 AutoReplyThread（生产）        → create_auto_reply_runtime_channel()  # 仍绕过 Registry
-diagnose_runtime               → 只读 status，默认不 register
+diagnose_runtime               → 独立子进程，只读 status，默认不 register
 ```
 
-Registry 注册 **不等于** GUI 已切换到 `ChannelRegistry.create()`（**8f** 可选 app 一行 register，**9+** 可选改 AutoReply）。
+Registry 注册 **不等于** GUI 已切换到 `ChannelRegistry.create()`（**9+** 可选改 AutoReply）。
 
 ---
 
@@ -356,7 +357,8 @@ flowchart TB
 | **8c** ✅ | handler 接入 unified resolver：[phase8c_done.md](phase8c_done.md) | 架构 |
 | **8d** ✅ | runtime diagnostics：[phase8d_done.md](phase8d_done.md) | 运维 |
 | **8e** ✅ | runtime bootstrap：[phase8e_done.md](phase8e_done.md) | 运维 |
-| **8f** | `app.py` 可选 `register_default_platforms()` | 产品/运维 |
+| **8f** ✅ | app startup bootstrap：[phase8f_done.md](phase8f_done.md) | 产品/运维 |
+| **9+** | AutoReply → `ChannelRegistry.create()` | 架构 |
 | **7+ spike** | 真实第二平台（**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
 | **10** | UI 多平台、SaaS 化 | 产品 |
 

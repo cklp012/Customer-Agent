@@ -24,11 +24,12 @@
 - **默认 false**：默认计划只注册 `pinduoduo`；**不**启动 Demo runtime、**不** `start_account`。
 - Demo 为 **test-only** 平台，不应作为生产默认启动项。
 - `register_default_platforms()` **不** 替代 `create_auto_reply_runtime_channel()`；`AutoReplyThread` 仍不经 `ChannelRegistry.create()`（见 diagnose **Platform bootstrap** 段）。
-- **8e 不接 app.py**；`app.py` 显式 bootstrap 规划为 **Phase 8f**。
+- **Phase 8f**：`python app.py` 在 `main()` 内调用 `apply_app_startup_bootstrap()`（仅 register，失败不阻断 GUI）。
+- Registry 已注册 **不等于** GUI 已改用 `ChannelRegistry.create()`；`AutoReplyThread` 仍走 `create_auto_reply_runtime_channel()`。
 
 ```powershell
-# 仅测试 / 脚本显式 bootstrap（生产 app 可不调用）
-python -c "from Message.runtime_bootstrap import register_default_platforms; register_default_platforms()"
+# 手动 bootstrap（与 app 内调用等价，独立进程）
+python -c "from Message.runtime_bootstrap import register_default_platforms; print(register_default_platforms())"
 ```
 
 ### Handler unified outbound（Phase 8c，独立）
@@ -171,7 +172,8 @@ python scripts/diagnose_runtime.py
 - PDD 四模式 ID + 描述
 - **Runtime capability report**（见 [phase8d_done.md](./phase8d_done.md)）
 - **Platform bootstrap**：Available platforms、Default registration plan、Registered in this process、Bootstrap status
-- `ChannelRegistry` 列表（**空列表属正常**，未 bootstrap 时）
+- `ChannelRegistry` 列表（**diagnose 子进程**常为 empty；**app.py 进程**内 bootstrap 成功后为 `pinduoduo`）
+- 说明：diagnose 未 apply bootstrap **不代表** 正在运行的 app 未注册
 - 分组 import 检查
 - 提示：`AutoReplyThread` 未用 Registry；Registry 注册 ≠ GUI 切换；Demo test-only
 

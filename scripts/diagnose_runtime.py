@@ -106,6 +106,9 @@ def main() -> int:
     bootstrap_status = get_bootstrap_status()
     print("## Platform bootstrap")
     print(format_bootstrap_for_console(bootstrap_status))
+    print("  Context: this diagnose script runs in its own process; it does not")
+    print("  call register_default_platforms(). A running python app.py process")
+    print("  applies apply_app_startup_bootstrap() — empty registry here is normal.")
     print()
 
     print("## ChannelRegistry")

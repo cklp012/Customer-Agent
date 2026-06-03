@@ -78,7 +78,8 @@ python scripts/diagnose_runtime.py
 | **8b** | [phase8b_done.md](phase8b_done.md) | unified outbound resolver + channel registry |
 | **8c** | [phase8c_done.md](phase8c_done.md) | handler 接入 `resolve_outbound`（UNIFIED flag 默认 off） |
 | **8d** | [phase8d_done.md](phase8d_done.md) | runtime diagnostics / capability report |
-| **8e** | [phase8e_done.md](phase8e_done.md) | ChannelRegistry bootstrap（不接 app） |
+| **8e** | [phase8e_done.md](phase8e_done.md) | ChannelRegistry bootstrap API |
+| **8f** | [phase8f_done.md](phase8f_done.md) | app.py 启动一行 registry bootstrap |
 | **8** | [phase8_plan.md](phase8_plan.md) / [phase8b_plan.md](phase8b_plan.md) | 多平台 runtime / outbound 规划 |
 
 ---
@@ -89,7 +90,7 @@ python scripts/diagnose_runtime.py
 |--------|------|
 | **默认开发 / 交付** | 不设置环境变量 → `legacy-default`（`PDDChannel` + `SendMessage`） |
 | **新架构联调** | `USE_PINDUODUO_CHANNEL_WRAPPER=true` 且 `USE_PINDUODUO_OUTBOUND=true` → `wrapper-and-outbound`；先用 `diagnose_runtime.py` 确认模式 |
-| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径；`python scripts/diagnose_runtime.py` 查看 capability + Platform bootstrap；下一步 **8f** app 接线或真实平台 spike |
+| **接第二平台前** | 在真实 PDD 测试店跑通 [phase0_audit.md](phase0_audit.md) 黄金路径；`python app.py` 进程内 Registry 已 bootstrap；下一步 **9+** AutoReply 接 Registry 或真实平台 spike |
 | **明确不做（当前）** | Phase 5b 统一 bool 解析、接淘宝/抖店/京东运行时、Phase 4c consumer metadata 镜像 — 见 architecture §7 |
 
 ---

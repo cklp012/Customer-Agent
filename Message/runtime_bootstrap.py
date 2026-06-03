@@ -117,6 +117,25 @@ def clear_channel_registry_for_tests() -> None:
     ChannelRegistry.clear()
 
 
+def apply_app_startup_bootstrap() -> None:
+    """
+    app.py 启动时注册 ChannelRegistry 工厂（Phase 8f）。
+
+    仅 register，不 start_account；失败记日志且不抛出，不阻断 GUI。
+    """
+    from utils.logger_loguru import get_logger
+
+    logger = get_logger("ChannelBootstrap")
+    try:
+        registered = register_default_platforms()
+        logger.info("ChannelRegistry bootstrap ok: %s", registered)
+    except Exception:
+        logger.warning(
+            "ChannelRegistry bootstrap failed; GUI continues with legacy channel path",
+            exc_info=True,
+        )
+
+
 def format_bootstrap_for_console(status: BootstrapStatus) -> str:
     """人类可读 Platform bootstrap 报告。"""
     avail_lines = []
@@ -149,8 +168,8 @@ def format_bootstrap_for_console(status: BootstrapStatus) -> str:
         [
             "",
             "  Notes:",
-            "    - Empty ChannelRegistry is normal until register_default_platforms() "
-            "or app bootstrap (Phase 8f).",
+            "    - diagnose_runtime runs in a separate process (often not_applied here).",
+            "    - python app.py calls apply_app_startup_bootstrap in the app process.",
             "    - AutoReplyThread still uses create_auto_reply_runtime_channel(), "
             "not ChannelRegistry.create().",
             "    - Registry registration does not mean GUI switched to Registry.",

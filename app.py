@@ -71,10 +71,14 @@ def main():
     app = QApplication(sys.argv)
     app.setApplicationName("Agent-Customer")
 
-    # 创建主窗口
     logger = _get_logger("App")
     logger.info("应用程序启动...")
 
+    from Message.runtime_bootstrap import apply_app_startup_bootstrap
+
+    apply_app_startup_bootstrap()
+
+    # 创建主窗口
     t0 = time.perf_counter()
     t_import = time.perf_counter()
     from ui.main_ui import MainWindow  # noqa: F401

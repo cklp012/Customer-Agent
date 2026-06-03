@@ -15,6 +15,23 @@
 
 二者**独立**：可只开其一，也可同时开启。
 
+### UnifiedMessage shadow（Phase 7c，独立）
+
+| 环境变量 | 作用 | 读取位置 |
+|----------|------|----------|
+| `USE_UNIFIED_MESSAGE_SHADOW` | WS 收消息后旁路调用 `pdd_to_unified` 并打摘要日志 | `Channel/pinduoduo/mappers/shadow_flags.py` |
+
+- **默认 false**（未设置或空字符串）。
+- 真值：`1`、`true`、`yes`、`on`（大小写不敏感）。
+- **仅**用于开发/联调观测 mapper；**不**改变 `Context` 主路径、**不**影响 PDD 发送/接收入队、**不**让 `UnifiedMessage` 进入 `MessageConsumer`。
+- 与 `USE_PINDUODUO_CHANNEL_WRAPPER` / `USE_PINDUODUO_OUTBOUND` **无依赖**，可任意组合。
+
+```powershell
+# 仅开启 shadow（生产默认可不设）
+$env:USE_UNIFIED_MESSAGE_SHADOW = "true"
+python app.py
+```
+
 ### 默认值
 
 - 未设置或空字符串 → **false**（与 Phase 0–3 行为一致）
@@ -126,5 +143,6 @@ python scripts/diagnose_runtime.py
 |------|------|
 | `PLAYWRIGHT_BROWSERS_PATH` | Playwright 浏览器目录（见 `app.py`、登录） |
 | `LOG_LEVEL` | 日志级别（见 `utils/logger_loguru.py`） |
+| `USE_UNIFIED_MESSAGE_SHADOW` | UnifiedMessage mapper 旁路日志（见上文 §1） |
 
-与拼多多运行模式 flag 无直接关系。
+与拼多多 Channel/Outbound 运行模式 flag 无强制组合关系。

@@ -77,6 +77,15 @@ class MessageHandlerMixin:
                 return
 
             if context:
+                from Channel.pinduoduo.mappers.shadow import maybe_shadow_unified_message
+
+                maybe_shadow_unified_message(
+                    pdd_message,
+                    context,
+                    shop_id=shop_id,
+                    user_id=user_id,
+                    username=username,
+                )
                 if self._should_process_immediately(context):
                     await self._handle_immediate_message(context, shop_id, user_id)
                     self.logger.debug(f"立即处理消息: {context.type}, ID: {pdd_message.msg_id}")

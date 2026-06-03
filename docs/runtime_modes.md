@@ -15,6 +15,24 @@
 
 二者**独立**：可只开其一，也可同时开启。
 
+### Handler unified outbound（Phase 8c，独立）
+
+| 环境变量 | 作用 | 读取位置 |
+|----------|------|----------|
+| `USE_UNIFIED_OUTBOUND_RESOLVER` | `ai_handler` / `keyword_handler` 使用 `resolve_outbound` 而非 `resolve_pinduoduo_outbound` | `Message/handlers/unified_outbound_flags.py` |
+
+- **默认 false**（未设置 → 与 8c 前生产行为一致）。
+- 真值：`1`、`true`、`yes`、`on`（大小写不敏感）。
+- 与上文 **PDD 四模式正交**：不改变 `legacy-default` / `wrapper-and-outbound` 等模式 ID；仅切换 handler 出站**解析函数**。
+- `pdd_message_handler` 即时消息路径**仍**只走 `resolve_pinduoduo_outbound`（未接 8c）。
+- PDD 分支在 `resolve_outbound` 内**委托**旧 resolver，`USE_PINDUODUO_OUTBOUND` 语义不变。
+
+```powershell
+# 仅测试 Demo handler 出站（生产可不设）
+$env:USE_UNIFIED_OUTBOUND_RESOLVER = "true"
+python -m unittest tests.test_handler_unified_outbound -v
+```
+
 ### UnifiedMessage shadow（Phase 7c，独立）
 
 | 环境变量 | 作用 | 读取位置 |
@@ -121,16 +139,26 @@ python app.py
 
 ---
 
-## 6. 诊断脚本
+## 6. 诊断脚本（Phase 5a + 8d）
 
-不启动 GUI、不连 PDD：
+不启动 GUI、不连 PDD、不修改环境变量：
 
 ```powershell
 cd D:\agent
 python scripts/diagnose_runtime.py
 ```
 
-输出：Python 环境、两 flag 解析、当前模式名称、关键模块 import、可选路径存在性。
+输出包括：
+
+- Python 环境与项目根
+- **全部 5 个 flag** 的 raw → resolved
+- PDD 四模式 ID + 描述
+- **Runtime capability report**（见 [phase8d_done.md](./phase8d_done.md)）
+- `ChannelRegistry` 已注册平台（**空列表属正常**，app 未 bootstrap 时）
+- 分组 import 检查（PDD / Demo 8a / inbound / unified outbound / registry）
+- 提示：`pdd_message_handler` 仍用旧 resolver；Demo 仅测试 runtime
+
+Capability 字段摘要：`active_pdd_send_path`、`handler_outbound_resolver`、`immediate_message_resolver`、`demo_inbound_pipeline`、`demo_test_runtime`、`unified_outbound_available`、`handler_unified_outbound_enabled`、`unified_inbound_dual_track_enabled`、`unified_shadow_mapper_enabled`、`channel_registry_platforms`。
 
 ---
 
@@ -162,5 +190,6 @@ python scripts/diagnose_runtime.py
 | `LOG_LEVEL` | 日志级别（见 `utils/logger_loguru.py`） |
 | `USE_UNIFIED_MESSAGE_SHADOW` | UnifiedMessage mapper 旁路日志（见上文 §1） |
 | `USE_UNIFIED_MESSAGE_DUAL_TRACK` | UnifiedMessage 双轨入队（见上文 §1） |
+| `USE_UNIFIED_OUTBOUND_RESOLVER` | handler 统一出站解析（见上文 §1） |
 
 与拼多多 Channel/Outbound 运行模式 flag 无强制组合关系。

@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 8c 里程碑（handler unified outbound 接入） |
+| 文档版本 | Phase 8d 里程碑（runtime diagnostics） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -56,6 +56,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **8a** | Demo runtime spike | ✅ | Demo 入站 → 双轨入队 → Consumer → handler(Context)；**仅测试** |
 | **8b** | unified outbound resolver | ✅ | `resolve_outbound` + `channel_outbound_registry` |
 | **8c** | handler 接入 unified resolver | ✅ | `USE_UNIFIED_OUTBOUND_RESOLVER` 默认 off |
+| **8d** | runtime diagnostics | ✅ | `runtime_capabilities` + `diagnose_runtime` capability report |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -255,7 +256,8 @@ flowchart TB
 | 路径 | 职责 |
 |------|------|
 | **`ui/auto_reply/threads.py`** | 每账号一线程一 event loop；`create_auto_reply_runtime_channel` + `start_auto_reply_account`；`request_stop` |
-| **`scripts/diagnose_runtime.py`** | 无 GUI/PDD 诊断：flag、模式名、import、路径存在性 |
+| **`Message/runtime_capabilities.py`** | Phase 8d：flag / import / capability report |
+| **`scripts/diagnose_runtime.py`** | 无 GUI/PDD 诊断：5 flag、capability report、ChannelRegistry、分组 import |
 | **`docs/runtime_modes.md`** | 运行模式 SSOT、四组合矩阵、回退说明 |
 
 ### 其它（未重构，仍为核心）
@@ -320,7 +322,7 @@ flowchart TB
 | **5b（可选）** | `runtime_env.py` 统一 bool 解析；`channel_flags` / `outbound_flags` 薄封装 | 小 refactor |
 | **6a** ✅ | 第二平台 Adapter **规划**：[phase6a_plan.md](phase6a_plan.md) | 仅文档 |
 | **6b** ✅ | **`DemoChannel`**：[phase6b_done.md](phase6b_done.md)；Registry 双平台单测；非生产 | 小步代码 |
-| **6c（可选）** | `diagnose_runtime` 只读列出 `ChannelRegistry.registered_platforms()` | 运维 |
+| **6c** ✅ | 并入 **8d**：`diagnose_runtime` 列出 `ChannelRegistry` | 运维 |
 | **7a** ✅ | UnifiedMessage **mapper 规划**：[phase7a_plan.md](phase7a_plan.md)（PDD 链路、映射、routing） | 仅文档 |
 | **7b** ✅ | `pdd_to_unified` + fixtures：[phase7b_done.md](phase7b_done.md) | 小步代码 |
 | **7c** ✅ | shadow 旁路 log：[phase7c_done.md](phase7c_done.md) | 可观测 |
@@ -334,7 +336,8 @@ flowchart TB
 | **8a** ✅ | Demo runtime spike：[phase8a_done.md](phase8a_done.md) | 架构验证 |
 | **8b** ✅ | unified outbound resolver：[phase8b_done.md](phase8b_done.md) | 架构 |
 | **8c** ✅ | handler 接入 unified resolver：[phase8c_done.md](phase8c_done.md) | 架构 |
-| **8d** | `app.py` Registry bootstrap、diagnose platforms | 产品/运维 |
+| **8d** ✅ | runtime diagnostics：[phase8d_done.md](phase8d_done.md) | 运维 |
+| **8e** | `app.py` Registry bootstrap；GUI platform visibility | 产品/运维 |
 | **7+ spike** | 真实第二平台（**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
 | **10** | UI 多平台、SaaS 化 | 产品 |
 

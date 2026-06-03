@@ -15,9 +15,9 @@ scripts/
 └── README.md             # 本使用说明文档
 ```
 
-### diagnose_runtime.py — 运行模式诊断（Phase 5a）
+### diagnose_runtime.py — 运行模式诊断（Phase 5a + 8d）
 
-打印 Python 环境、`USE_PINDUODUO_*` flag 解析结果、关键模块 import 与可选路径存在性。不启动 GUI、不连接拼多多。
+打印 Python 环境、**5 个 runtime flag**、PDD 四模式、**Runtime capability report**、`ChannelRegistry` 状态、分组模块 import 与可选路径存在性。不启动 GUI、不连接拼多多。
 
 ```powershell
 cd D:\agent

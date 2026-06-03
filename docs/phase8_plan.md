@@ -2,7 +2,7 @@
 
 | 项 | 值 |
 |---|---|
-| 状态 | 8a ✅、8b ✅、8c ✅ 已交付；8d+ 待做 |
+| 状态 | 8a ✅–8d ✅ 已交付；8e+ 待做 |
 | 相关 | [phase8a_done.md](phase8a_done.md)、[architecture_current.md](architecture_current.md) |
 
 ---
@@ -48,7 +48,8 @@
 | **8a** ✅ | Demo mapper + inbound_enqueue + runtime 测试 |
 | **8b** ✅ | `resolve_outbound` + `channel_outbound_registry`（Route A，handler 未接） |
 | **8c** ✅ | handler 接入 `resolve_outbound`（`USE_UNIFIED_OUTBOUND_RESOLVER` 默认 off） |
-| **8d** | `app.py` Registry bootstrap；diagnose platforms |
+| **8d** ✅ | `runtime_capabilities` + `diagnose_runtime` capability report |
+| **8e** | `app.py` Registry bootstrap；GUI platform visibility |
 | **9+** | routing 行为 / 真实平台 spike |
 | **10** | UI 多平台、产品化 |
 

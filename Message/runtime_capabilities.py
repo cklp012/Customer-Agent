@@ -200,6 +200,9 @@ class RuntimeCapabilityReport:
     channel_registry_platforms: List[str]
     pdd_mode_id: str
     pdd_mode_description: str
+    bootstrap_status: str
+    default_registration_plan: List[str]
+    available_platforms: List[str]
 
 
 def build_runtime_capability_report(
@@ -243,6 +246,10 @@ def build_runtime_capability_report(
 
     mode_id, mode_desc = _resolve_pdd_mode(flags)
 
+    from Message.runtime_bootstrap import get_bootstrap_status
+
+    bootstrap = get_bootstrap_status()
+
     return RuntimeCapabilityReport(
         active_pdd_send_path=_active_pdd_send_path(flags),
         handler_outbound_resolver=handler_resolver,
@@ -256,6 +263,9 @@ def build_runtime_capability_report(
         channel_registry_platforms=list(registry_platforms),
         pdd_mode_id=mode_id,
         pdd_mode_description=mode_desc,
+        bootstrap_status=bootstrap.status,
+        default_registration_plan=list(bootstrap.planned),
+        available_platforms=list(bootstrap.available),
     )
 
 
@@ -294,11 +304,16 @@ def format_capability_report_for_console(report: RuntimeCapabilityReport) -> str
         "  Unified shadow mapper:             "
         + str(report.unified_shadow_mapper_enabled),
         "  ChannelRegistry platforms:         " + reg,
+        "  Bootstrap status:                  " + report.bootstrap_status,
+        "  Default registration plan:         "
+        + ", ".join(report.default_registration_plan),
+        "  Available platforms (bootstrap):   "
+        + ", ".join(report.available_platforms),
         "",
         "  Notes:",
         "    - pdd_message_handler still uses resolve_pinduoduo_outbound only.",
         "    - Demo runtime is for unittest/integration tests, not production.",
-        "    - Empty ChannelRegistry is normal until app bootstrap (Phase 8e).",
+        "    - See diagnose ## Platform bootstrap for Registry vs AutoReplyThread.",
     ]
     return "\n".join(lines)
 

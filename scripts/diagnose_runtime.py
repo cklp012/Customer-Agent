@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-运行模式诊断（Phase 5a + 8d）。
+运行模式诊断（Phase 5a + 8d + 8e）。
 
 不启动 GUI、不连接 PDD、不读取账号密码、不修改环境变量。
 """
@@ -34,6 +34,7 @@ def main() -> int:
     if str(project_root) not in sys.path:
         sys.path.insert(0, str(project_root))
 
+    from Message.runtime_bootstrap import format_bootstrap_for_console, get_bootstrap_status
     from Message.runtime_capabilities import (
         build_runtime_capability_report,
         check_module_imports,
@@ -44,7 +45,7 @@ def main() -> int:
     )
 
     print("=" * 60)
-    print("Customer-Agent Runtime Diagnostics (Phase 5a + 8d)")
+    print("Customer-Agent Runtime Diagnostics (Phase 5a + 8d + 8e)")
     print("=" * 60)
     print()
 
@@ -80,12 +81,19 @@ def main() -> int:
     print(f"  Description: {report.pdd_mode_description}")
     print()
     print("  ### Unified / multi-platform")
+    from Message.bootstrap_flags import use_demo_channel_registration
+
     for env_name in (
         "USE_UNIFIED_MESSAGE_SHADOW",
         "USE_UNIFIED_MESSAGE_DUAL_TRACK",
         "USE_UNIFIED_OUTBOUND_RESOLVER",
+        "USE_DEMO_CHANNEL_REGISTRATION",
     ):
-        print(f"  {env_name}: {_env_display(env_name)} -> {flags[env_name]}")
+        if env_name == "USE_DEMO_CHANNEL_REGISTRATION":
+            resolved = use_demo_channel_registration()
+        else:
+            resolved = flags[env_name]
+        print(f"  {env_name}: {_env_display(env_name)} -> {resolved}")
     print()
     print("  True values (case-insensitive): 1, true, yes, on")
     print("  Default when unset: false")
@@ -93,6 +101,11 @@ def main() -> int:
 
     print("## Runtime capability report")
     print(format_capability_report_for_console(report))
+    print()
+
+    bootstrap_status = get_bootstrap_status()
+    print("## Platform bootstrap")
+    print(format_bootstrap_for_console(bootstrap_status))
     print()
 
     print("## ChannelRegistry")
@@ -117,6 +130,7 @@ def main() -> int:
     print("## Docs")
     print(f"  Runtime modes: {project_root / 'docs' / 'runtime_modes.md'}")
     print(f"  Phase 8d:      {project_root / 'docs' / 'phase8d_done.md'}")
+    print(f"  Phase 8e:      {project_root / 'docs' / 'phase8e_done.md'}")
     print()
 
     pdd_core = imports.get("pdd_core", {})

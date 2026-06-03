@@ -32,6 +32,9 @@ class TestDiagnoseRuntimeScript(unittest.TestCase):
         for token in (
             "USE_UNIFIED_OUTBOUND_RESOLVER",
             "Runtime capability report",
+            "Platform bootstrap",
+            "Available platforms",
+            "AutoReplyThread",
             "ChannelRegistry",
             "pdd_message_handler",
             "Demo test runtime",

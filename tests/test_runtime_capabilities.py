@@ -76,6 +76,8 @@ class TestRuntimeCapabilityReport(unittest.TestCase):
             "pdd_message_handler",
             "Demo test runtime",
             "ChannelRegistry platforms",
+            "Bootstrap status",
+            "Default registration plan",
         ):
             self.assertIn(token, text, msg=f"missing {token}")
 

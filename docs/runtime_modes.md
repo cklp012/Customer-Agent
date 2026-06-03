@@ -15,6 +15,22 @@
 
 二者**独立**：可只开其一，也可同时开启。
 
+### ChannelRegistry bootstrap（Phase 8e，独立）
+
+| 环境变量 | 作用 | 读取位置 |
+|----------|------|----------|
+| `USE_DEMO_CHANNEL_REGISTRATION` | `register_default_platforms()` 是否注册 Demo 工厂 | `Message/bootstrap_flags.py` |
+
+- **默认 false**：默认计划只注册 `pinduoduo`；**不**启动 Demo runtime、**不** `start_account`。
+- Demo 为 **test-only** 平台，不应作为生产默认启动项。
+- `register_default_platforms()` **不** 替代 `create_auto_reply_runtime_channel()`；`AutoReplyThread` 仍不经 `ChannelRegistry.create()`（见 diagnose **Platform bootstrap** 段）。
+- **8e 不接 app.py**；`app.py` 显式 bootstrap 规划为 **Phase 8f**。
+
+```powershell
+# 仅测试 / 脚本显式 bootstrap（生产 app 可不调用）
+python -c "from Message.runtime_bootstrap import register_default_platforms; register_default_platforms()"
+```
+
 ### Handler unified outbound（Phase 8c，独立）
 
 | 环境变量 | 作用 | 读取位置 |
@@ -139,9 +155,9 @@ python app.py
 
 ---
 
-## 6. 诊断脚本（Phase 5a + 8d）
+## 6. 诊断脚本（Phase 5a + 8d + 8e）
 
-不启动 GUI、不连 PDD、不修改环境变量：
+不启动 GUI、不连 PDD、不修改环境变量、**默认不**调用 `register_default_platforms()`：
 
 ```powershell
 cd D:\agent
@@ -151,14 +167,15 @@ python scripts/diagnose_runtime.py
 输出包括：
 
 - Python 环境与项目根
-- **全部 5 个 flag** 的 raw → resolved
+- **全部 6 个 runtime flag**（含 `USE_DEMO_CHANNEL_REGISTRATION`）的 raw → resolved
 - PDD 四模式 ID + 描述
 - **Runtime capability report**（见 [phase8d_done.md](./phase8d_done.md)）
-- `ChannelRegistry` 已注册平台（**空列表属正常**，app 未 bootstrap 时）
-- 分组 import 检查（PDD / Demo 8a / inbound / unified outbound / registry）
-- 提示：`pdd_message_handler` 仍用旧 resolver；Demo 仅测试 runtime
+- **Platform bootstrap**：Available platforms、Default registration plan、Registered in this process、Bootstrap status
+- `ChannelRegistry` 列表（**空列表属正常**，未 bootstrap 时）
+- 分组 import 检查
+- 提示：`AutoReplyThread` 未用 Registry；Registry 注册 ≠ GUI 切换；Demo test-only
 
-Capability 字段摘要：`active_pdd_send_path`、`handler_outbound_resolver`、`immediate_message_resolver`、`demo_inbound_pipeline`、`demo_test_runtime`、`unified_outbound_available`、`handler_unified_outbound_enabled`、`unified_inbound_dual_track_enabled`、`unified_shadow_mapper_enabled`、`channel_registry_platforms`。
+Capability 字段另含：`bootstrap_status`、`default_registration_plan`、`available_platforms`（见 [phase8e_done.md](./phase8e_done.md)）。
 
 ---
 
@@ -191,5 +208,6 @@ Capability 字段摘要：`active_pdd_send_path`、`handler_outbound_resolver`�
 | `USE_UNIFIED_MESSAGE_SHADOW` | UnifiedMessage mapper 旁路日志（见上文 §1） |
 | `USE_UNIFIED_MESSAGE_DUAL_TRACK` | UnifiedMessage 双轨入队（见上文 §1） |
 | `USE_UNIFIED_OUTBOUND_RESOLVER` | handler 统一出站解析（见上文 §1） |
+| `USE_DEMO_CHANNEL_REGISTRATION` | ChannelRegistry 注册 Demo 工厂（见上文 §1） |
 
 与拼多多 Channel/Outbound 运行模式 flag 无强制组合关系。

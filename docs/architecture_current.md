@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 8d 里程碑（runtime diagnostics） |
+| 文档版本 | Phase 8e 里程碑（runtime bootstrap visibility） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -57,6 +57,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **8b** | unified outbound resolver | ✅ | `resolve_outbound` + `channel_outbound_registry` |
 | **8c** | handler 接入 unified resolver | ✅ | `USE_UNIFIED_OUTBOUND_RESOLVER` 默认 off |
 | **8d** | runtime diagnostics | ✅ | `runtime_capabilities` + `diagnose_runtime` capability report |
+| **8e** | runtime bootstrap | ✅ | `runtime_bootstrap`；只 register，不接 app |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -77,7 +78,8 @@ USE_PINDUODUO_OUTBOUND=false          # 或未设置
 用户 GUI（自动回复页）
   → ui/auto_reply/manager.py
   → ui/auto_reply/threads.py :: AutoReplyThread
-       → PDDChannel()                    # legacy，非 PinduoduoChannel
+       → create_auto_reply_runtime_channel()  # 不经 ChannelRegistry（8e）
+       → PDDChannel() 或 PinduoduoChannel（wrapper flag）
        → LifecycleMixin.start_account
             → init → WebSocket 连接
             → _setup_message_consumer → handler_chain
@@ -138,6 +140,19 @@ pdd_message_handler 即时消息：仍 resolve_pinduoduo_outbound（未接 8c）
 | on | on | unified → 委托 → outbound / legacy |
 
 **AccountOutboundRegistry** 与 **channel_outbound_registry** 并行；未迁移 PDD 注册。
+
+### ChannelRegistry bootstrap（Phase 8e，与 GUI 双路径）
+
+```text
+register_default_platforms()  → ChannelRegistry.register(PINDUODUO factory)
+                               → 可选 DEMO（USE_DEMO_CHANNEL_REGISTRATION=true）
+                               → 不 start_account
+
+AutoReplyThread（生产）        → create_auto_reply_runtime_channel()  # 仍绕过 Registry
+diagnose_runtime               → 只读 status，默认不 register
+```
+
+Registry 注册 **不等于** GUI 已切换到 `ChannelRegistry.create()`（**8f** 可选 app 一行 register，**9+** 可选改 AutoReply）。
 
 ---
 
@@ -256,8 +271,10 @@ flowchart TB
 | 路径 | 职责 |
 |------|------|
 | **`ui/auto_reply/threads.py`** | 每账号一线程一 event loop；`create_auto_reply_runtime_channel` + `start_auto_reply_account`；`request_stop` |
-| **`Message/runtime_capabilities.py`** | Phase 8d：flag / import / capability report |
-| **`scripts/diagnose_runtime.py`** | 无 GUI/PDD 诊断：5 flag、capability report、ChannelRegistry、分组 import |
+| **`Message/runtime_capabilities.py`** | Phase 8d–8e：flag / import / capability + bootstrap 字段 |
+| **`Message/runtime_bootstrap.py`** | Phase 8e：`register_default_platforms`、bootstrap status |
+| **`Message/bootstrap_flags.py`** | Phase 8e：`USE_DEMO_CHANNEL_REGISTRATION` |
+| **`scripts/diagnose_runtime.py`** | 无 GUI/PDD 诊断：flags、capability、Platform bootstrap |
 | **`docs/runtime_modes.md`** | 运行模式 SSOT、四组合矩阵、回退说明 |
 
 ### 其它（未重构，仍为核心）
@@ -280,6 +297,7 @@ flowchart TB
 | `USE_PINDUODUO_CHANNEL_WRAPPER` | `channel_flags.py` → `channel_factory.create_auto_reply_runtime_channel` | **false** |
 | `USE_PINDUODUO_OUTBOUND` | `outbound_flags.py` → `outbound_resolver.resolve_*` | **false** |
 | `USE_UNIFIED_OUTBOUND_RESOLVER` | `unified_outbound_flags.py` → handler 选 `resolve_outbound` | **false** |
+| `USE_DEMO_CHANNEL_REGISTRATION` | `bootstrap_flags.py` → `register_default_platforms` 含 Demo | **false** |
 
 真值：`1` / `true` / `yes` / `on`（大小写不敏感）。
 
@@ -337,7 +355,8 @@ flowchart TB
 | **8b** ✅ | unified outbound resolver：[phase8b_done.md](phase8b_done.md) | 架构 |
 | **8c** ✅ | handler 接入 unified resolver：[phase8c_done.md](phase8c_done.md) | 架构 |
 | **8d** ✅ | runtime diagnostics：[phase8d_done.md](phase8d_done.md) | 运维 |
-| **8e** | `app.py` Registry bootstrap；GUI platform visibility | 产品/运维 |
+| **8e** ✅ | runtime bootstrap：[phase8e_done.md](phase8e_done.md) | 运维 |
+| **8f** | `app.py` 可选 `register_default_platforms()` | 产品/运维 |
 | **7+ spike** | 真实第二平台（**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
 | **10** | UI 多平台、SaaS 化 | 产品 |
 

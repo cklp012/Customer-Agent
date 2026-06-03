@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 7d 里程碑（UnifiedMessage 双轨入队） |
+| 文档版本 | Phase 7e 里程碑（metadata adapter） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -47,6 +47,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **7b** | `pdd_to_unified` mapper | ✅ | `Channel/pinduoduo/mappers/*` + fixtures |
 | **7c** | UnifiedMessage shadow | ✅ | `USE_UNIFIED_MESSAGE_SHADOW`（默认 off）；旁路 log |
 | **7d** | 双轨入队 | ✅ | `USE_UNIFIED_MESSAGE_DUAL_TRACK`（默认 off）；`MessageWrapper.unified_message` |
+| **7e** | metadata adapter | ✅ | `Message/metadata_adapter.py`；handler **未改** |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -188,6 +189,7 @@ flowchart TB
 |------|------|
 | **`Message/models/queue_models.py`** | `MessageWrapper`：`context`（必填）+ `unified_message`（可选，Phase 7d） |
 | **`Message/core/consumer.py`** | `enrich_metadata_from_unified`；handler 仍 `handle(context, metadata)` |
+| **`Message/metadata_adapter.py`** | Phase 7e：统一读取 metadata/context；7f 供 handler/extract 使用 |
 | **`Message/handlers/outbound_resolver.py`** | `extract_pdd_send_context`；`resolve_pinduoduo_outbound`（metadata → registry → create） |
 | **`Message/handlers/account_outbound_registry.py`** | 按 `shop_id:user_id` 线程安全缓存 `PinduoduoOutbound` |
 | **`Message/handlers/ai_handler.py`** | AI 回复；`_send_reply` outbound-first |
@@ -268,7 +270,8 @@ flowchart TB
 | **7b** ✅ | `pdd_to_unified` + fixtures：[phase7b_done.md](phase7b_done.md) | 小步代码 |
 | **7c** ✅ | shadow 旁路 log：[phase7c_done.md](phase7c_done.md) | 可观测 |
 | **7d** ✅ | 双轨入队：[phase7d_done.md](phase7d_done.md)；`USE_UNIFIED_MESSAGE_DUAL_TRACK` 默认 off | 架构 |
-| **7e** | handler adapter；可选读 Unified / metadata；**不**移除 Context | 架构 |
+| **7e** ✅ | metadata adapter：[phase7e_done.md](phase7e_done.md) | 小步代码 |
+| **7f** | handler / `extract_pdd_send_context` 逐步使用 adapter | 架构 |
 | **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
 | **8** | 产品化：UI 平台维度、`app.py` Registry、`unified_outbound_resolver`、设置页与监控 | 产品 |
 
@@ -358,4 +361,4 @@ D:\agent
 
 ---
 
-*本文档描述截至 Phase 7d 后的仓库状态；双轨与 shadow 均默认关闭；handler 仍仅处理 legacy Context，UnifiedMessage 未替代 Context。*
+*本文档描述截至 Phase 7e 后的仓库状态；adapter 已存在但 handler 未接入；双轨与 shadow 默认关闭；UnifiedMessage 未替代 Context。*

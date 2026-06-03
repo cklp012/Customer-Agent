@@ -6,7 +6,10 @@
 import asyncio
 import hashlib
 import time
-from typing import Optional, Dict, Set
+from typing import TYPE_CHECKING, Dict, Optional, Set
+
+if TYPE_CHECKING:
+    from Channel.base.models import UnifiedMessage
 from utils.logger_loguru import get_logger
 
 from ..models.queue_models import MessageWrapper, QueueStats, QueueConfig
@@ -33,7 +36,11 @@ class SimpleMessageQueue:
         self._deduplication_cache: Set[str] = set() if config.enable_deduplication else None
         self._last_cleanup_time = time.time()
 
-    async def put(self, context: Context) -> str:
+    async def put(
+        self,
+        context: Context,
+        unified_message: Optional["UnifiedMessage"] = None,
+    ) -> str:
         """放入消息"""
         if self._closed:
             raise RuntimeError("Queue is closed")
@@ -45,7 +52,8 @@ class SimpleMessageQueue:
         message_wrapper = MessageWrapper(
             message_id="",  # 将在__post_init__中生成
             context=context,
-            timestamp=time.time()
+            timestamp=time.time(),
+            unified_message=unified_message,
         )
 
         # 检查去重

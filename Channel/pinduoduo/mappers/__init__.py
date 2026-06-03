@@ -5,11 +5,13 @@ from Channel.pinduoduo.mappers.pdd_to_unified import (
     pdd_message_to_unified,
 )
 from Channel.pinduoduo.mappers.shadow import maybe_shadow_unified_message
+from Channel.pinduoduo.mappers.dual_track_flags import use_unified_message_dual_track
 from Channel.pinduoduo.mappers.shadow_flags import use_unified_message_shadow
 
 __all__ = [
     "compute_pdd_routing",
     "maybe_shadow_unified_message",
     "pdd_message_to_unified",
+    "use_unified_message_dual_track",
     "use_unified_message_shadow",
 ]

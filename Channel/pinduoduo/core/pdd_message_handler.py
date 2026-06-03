@@ -90,7 +90,38 @@ class MessageHandlerMixin:
                     await self._handle_immediate_message(context, shop_id, user_id)
                     self.logger.debug(f"立即处理消息: {context.type}, ID: {pdd_message.msg_id}")
                 elif self._should_queue_message(context):
-                    msg_id = await put_message(queue_name, context)
+                    unified_message = None
+                    from Channel.pinduoduo.mappers.dual_track_flags import (
+                        use_unified_message_dual_track,
+                    )
+
+                    if use_unified_message_dual_track():
+                        try:
+                            from Channel.pinduoduo.mappers.pdd_to_unified import (
+                                pdd_message_to_unified,
+                            )
+
+                            shop_name = ""
+                            kwargs = getattr(context, "kwargs", None)
+                            if kwargs is not None:
+                                shop_name = str(getattr(kwargs, "shop_name", None) or "")
+                            unified_message = pdd_message_to_unified(
+                                pdd_message,
+                                shop_id=shop_id,
+                                user_id=user_id,
+                                username=username,
+                                shop_name=shop_name,
+                            )
+                        except Exception as map_err:
+                            self.logger.warning(
+                                "unified_dual_track mapper failed shop_id={} msg_id={} error={}",
+                                shop_id,
+                                pdd_message.msg_id,
+                                map_err,
+                            )
+                    msg_id = await put_message(
+                        queue_name, context, unified_message=unified_message
+                    )
                     self.logger.debug(f"消息已入队: {queue_name}, ID: {msg_id}, 类型: {context.type}")
                 else:
                     self.logger.debug(f"忽略消息: {context.type}, ID: {pdd_message.msg_id}")

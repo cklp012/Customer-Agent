@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 7c 里程碑（UnifiedMessage shadow） |
+| 文档版本 | Phase 7d 里程碑（UnifiedMessage 双轨入队） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -45,7 +45,8 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **6b** | `DemoChannel` skeleton | ✅ | `Channel/demo/*`、`PlatformType.DEMO`、Registry 双平台单测；**非生产** |
 | **7a** | UnifiedMessage mapper 规划 | ✅ | `docs/phase7a_plan.md` |
 | **7b** | `pdd_to_unified` mapper | ✅ | `Channel/pinduoduo/mappers/*` + fixtures |
-| **7c** | UnifiedMessage shadow | ✅ | `USE_UNIFIED_MESSAGE_SHADOW`（默认 off）；旁路 log；**未入队** |
+| **7c** | UnifiedMessage shadow | ✅ | `USE_UNIFIED_MESSAGE_SHADOW`（默认 off）；旁路 log |
+| **7d** | 双轨入队 | ✅ | `USE_UNIFIED_MESSAGE_DUAL_TRACK`（默认 off）；`MessageWrapper.unified_message` |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -167,7 +168,8 @@ flowchart TB
 | 路径 | 职责 |
 |------|------|
 | **`Channel/pinduoduo/mappers/pdd_to_unified.py`** | `PDDChatMessage` → `UnifiedMessage`；`compute_pdd_routing` |
-| **`Channel/pinduoduo/mappers/shadow.py`** | Phase 7c：`maybe_shadow_unified_message`；flag on 时 WS 旁路 log；**不改变** Context 主路径 |
+| **`Channel/pinduoduo/mappers/shadow.py`** | Phase 7c：shadow log；双轨 on 时跳过重复 mapper |
+| **`Channel/pinduoduo/mappers/dual_track_flags.py`** | Phase 7d：`USE_UNIFIED_MESSAGE_DUAL_TRACK` |
 
 ### 拼多多 Channel / 出站
 
@@ -184,6 +186,8 @@ flowchart TB
 
 | 路径 | 职责 |
 |------|------|
+| **`Message/models/queue_models.py`** | `MessageWrapper`：`context`（必填）+ `unified_message`（可选，Phase 7d） |
+| **`Message/core/consumer.py`** | `enrich_metadata_from_unified`；handler 仍 `handle(context, metadata)` |
 | **`Message/handlers/outbound_resolver.py`** | `extract_pdd_send_context`；`resolve_pinduoduo_outbound`（metadata → registry → create） |
 | **`Message/handlers/account_outbound_registry.py`** | 按 `shop_id:user_id` 线程安全缓存 `PinduoduoOutbound` |
 | **`Message/handlers/ai_handler.py`** | AI 回复；`_send_reply` outbound-first |
@@ -241,7 +245,7 @@ flowchart TB
 |------|------|
 | **其它平台** | 未接淘宝、抖店、京东运行时 Channel |
 | **PDD 内核** | 未重写 WebSocket 连接、消息循环、`PDDChatMessage` 解析、`pdd_login` |
-| **消息系统** | 未重写 `MessageConsumer` / 队列模型；**运行时仍为 legacy `Context`**；`UnifiedMessage` **未入队**；7c shadow 默认 **关闭**（见 [phase7c_done.md](phase7c_done.md)） |
+| **消息系统** | **handler 仍只处理 legacy `Context`**；7d 双轨默认 off 时与 Phase 0 一致；flag on 时队列可携 `unified_message` 副本供 metadata，**不替代** Context（见 [phase7d_done.md](phase7d_done.md)） |
 | **兼容策略** | **未移除** handler / 即时消息上的 legacy `SendMessage` fallback |
 | **产品化** | 无 SaaS 后端、无多租户部署、无商家云端控制台 |
 | **配置** | 运行模式 flag **未** UI 化、未写入 `config.json` |
@@ -262,8 +266,9 @@ flowchart TB
 | **6c（可选）** | `diagnose_runtime` 只读列出 `ChannelRegistry.registered_platforms()` | 运维 |
 | **7a** ✅ | UnifiedMessage **mapper 规划**：[phase7a_plan.md](phase7a_plan.md)（PDD 链路、映射、routing） | 仅文档 |
 | **7b** ✅ | `pdd_to_unified` + fixtures：[phase7b_done.md](phase7b_done.md) | 小步代码 |
-| **7c** ✅ | shadow 旁路 log：[phase7c_done.md](phase7c_done.md)；`USE_UNIFIED_MESSAGE_SHADOW` 默认 off | 可观测 |
-| **7d** | `MessageWrapper` / handler **双轨**；可选 `on_message(UnifiedMessage)`；分平台或统一 outbound resolver | 架构 |
+| **7c** ✅ | shadow 旁路 log：[phase7c_done.md](phase7c_done.md) | 可观测 |
+| **7d** ✅ | 双轨入队：[phase7d_done.md](phase7d_done.md)；`USE_UNIFIED_MESSAGE_DUAL_TRACK` 默认 off | 架构 |
+| **7e** | handler adapter；可选读 Unified / metadata；**不**移除 Context | 架构 |
 | **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
 | **8** | 产品化：UI 平台维度、`app.py` Registry、`unified_outbound_resolver`、设置页与监控 | 产品 |
 
@@ -353,4 +358,4 @@ D:\agent
 
 ---
 
-*本文档描述截至 Phase 7c 后的仓库状态；shadow 已接线但默认关闭，UnifiedMessage 未入队，Message 运行时仍为 legacy Context。*
+*本文档描述截至 Phase 7d 后的仓库状态；双轨与 shadow 均默认关闭；handler 仍仅处理 legacy Context，UnifiedMessage 未替代 Context。*

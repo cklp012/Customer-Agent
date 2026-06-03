@@ -15,6 +15,49 @@ from ..models.queue_models import MessageWrapper
 logger = get_logger(__name__)
 
 
+def enrich_metadata_from_unified(wrapper: MessageWrapper) -> Dict[str, Any]:
+    """
+    从 optional UnifiedMessage 提取观测用 metadata（Phase 7d）。
+
+    不改变 handler 入参；发送路径仍以 legacy Context.kwargs 为准。
+    """
+    unified = wrapper.unified_message
+    if unified is None:
+        return {}
+
+    conv = unified.conversation
+    extra: Dict[str, Any] = {
+        "has_unified": True,
+        "platform": unified.platform.value,
+        "shop_id": conv.shop_id,
+        "account_id": conv.account_id,
+        "buyer_uid": conv.buyer_uid,
+        "conversation_id": conv.conversation_id,
+        "content_type": unified.content_type,
+        "routing": conv.extra.get("routing", ""),
+        "unified_message_id": unified.message_id,
+    }
+
+    kwargs = getattr(wrapper.context, "kwargs", None)
+    if kwargs:
+        for key in ("shop_id", "user_id", "from_uid"):
+            legacy_val = getattr(kwargs, key, None)
+            unified_key = "account_id" if key == "user_id" else key
+            if key == "from_uid":
+                unified_key = "buyer_uid"
+            unified_val = extra.get(unified_key)
+            if legacy_val is not None and unified_val and str(legacy_val) != str(unified_val):
+                logger.warning(
+                    "unified_dual_track metadata mismatch field={} legacy={} unified={} "
+                    "message_id={}",
+                    key,
+                    legacy_val,
+                    unified_val,
+                    wrapper.message_id,
+                )
+    return extra
+
+
 class MessageConsumer:
     """消息消费者 - 简化版"""
 
@@ -91,7 +134,7 @@ class MessageConsumer:
             try:
                 processed = False
                 metadata = wrapper.to_metadata()
-                # 追加渠道上下文到metadata，供发送使用
+                # 追加渠道上下文到metadata，供发送使用（legacy PDD kwargs，发送仍以之为准）
                 try:
                     kwargs = getattr(wrapper.context, 'kwargs', None)
                     if kwargs:
@@ -100,6 +143,7 @@ class MessageConsumer:
                         metadata['from_uid'] = getattr(kwargs, 'from_uid', None)
                 except Exception:
                     pass
+                metadata.update(enrich_metadata_from_unified(wrapper))
                 # 保留用于日志的用户键
                 metadata['user_key'] = self._extract_user_id(wrapper.context)
 

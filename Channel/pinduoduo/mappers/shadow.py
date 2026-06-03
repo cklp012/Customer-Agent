@@ -10,6 +10,7 @@ from typing import Any
 
 from bridge.context import Context
 from Channel.pinduoduo.mappers.pdd_to_unified import compute_pdd_routing, pdd_message_to_unified
+from Channel.pinduoduo.mappers.dual_track_flags import use_unified_message_dual_track
 from Channel.pinduoduo.mappers.shadow_flags import use_unified_message_shadow
 from Channel.pinduoduo.pdd_message import PDDChatMessage
 from utils.logger_loguru import get_logger
@@ -76,6 +77,10 @@ def maybe_shadow_unified_message(
     flag off 时为 no-op。任何异常在此函数内捕获，不向调用方抛出。
     """
     if not use_unified_message_shadow():
+        return
+
+    # 双轨入队已构建 UnifiedMessage，避免重复 mapper
+    if use_unified_message_dual_track():
         return
 
     try:

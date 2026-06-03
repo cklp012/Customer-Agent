@@ -32,6 +32,23 @@ $env:USE_UNIFIED_MESSAGE_SHADOW = "true"
 python app.py
 ```
 
+### UnifiedMessage 双轨入队（Phase 7d，独立）
+
+| 环境变量 | 作用 | 读取位置 |
+|----------|------|----------|
+| `USE_UNIFIED_MESSAGE_DUAL_TRACK` | 入队时 `MessageWrapper` 附带 `UnifiedMessage` 副本；Consumer metadata 增加观测字段 | `Channel/pinduoduo/mappers/dual_track_flags.py` |
+
+- **默认 false**。
+- 真值：`1`、`true`、`yes`、`on`（大小写不敏感）。
+- **handler 仍只处理 legacy `Context`**；**不**替代 Context、**不**改变 `outbound_resolver` 与发送路径。
+- 仅 **queue** 入队路径；immediate 消息不附带 unified。
+- 与 `USE_UNIFIED_MESSAGE_SHADOW` **独立**；双轨 on 时 shadow **不再重复**调用 mapper。
+
+```powershell
+$env:USE_UNIFIED_MESSAGE_DUAL_TRACK = "true"
+python app.py
+```
+
 ### 默认值
 
 - 未设置或空字符串 → **false**（与 Phase 0–3 行为一致）
@@ -144,5 +161,6 @@ python scripts/diagnose_runtime.py
 | `PLAYWRIGHT_BROWSERS_PATH` | Playwright 浏览器目录（见 `app.py`、登录） |
 | `LOG_LEVEL` | 日志级别（见 `utils/logger_loguru.py`） |
 | `USE_UNIFIED_MESSAGE_SHADOW` | UnifiedMessage mapper 旁路日志（见上文 §1） |
+| `USE_UNIFIED_MESSAGE_DUAL_TRACK` | UnifiedMessage 双轨入队（见上文 §1） |
 
 与拼多多 Channel/Outbound 运行模式 flag 无强制组合关系。

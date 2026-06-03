@@ -65,10 +65,14 @@ async def stop_consumer(queue_name: str):
     await message_consumer_manager.stop_consumer(queue_name)
 
 
-async def put_message(queue_name: str, context: Context) -> str:
-    """向队列放入消息（兼容原API）"""
+async def put_message(
+    queue_name: str,
+    context: Context,
+    unified_message=None,
+) -> str:
+    """向队列放入消息（兼容原API）；可选附带 UnifiedMessage 双轨副本（Phase 7d）。"""
     queue = queue_manager.get_or_create_queue(queue_name)
-    return await queue.put(context)
+    return await queue.put(context, unified_message=unified_message)
 
 
 async def get_message(queue_name: str, timeout: float = None):

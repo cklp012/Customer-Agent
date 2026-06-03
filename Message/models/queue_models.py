@@ -6,17 +6,23 @@
 import time
 import uuid
 from dataclasses import dataclass, field
-from typing import Optional, Dict, Any
+from typing import TYPE_CHECKING, Any, Dict, Optional
+
 from bridge.context import Context
+
+if TYPE_CHECKING:
+    from Channel.base.models import UnifiedMessage
 
 
 @dataclass
 class MessageWrapper:
     """消息包装器 - 简化版"""
+
     message_id: str
     context: Context
     timestamp: float
     retry_count: int = 0
+    unified_message: Optional["UnifiedMessage"] = None
 
     def __post_init__(self):
         if not self.message_id:

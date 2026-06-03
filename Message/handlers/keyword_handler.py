@@ -107,13 +107,19 @@ class KeywordDetectionHandler(BaseHandler):
                 extract_pdd_send_context,
                 resolve_pinduoduo_outbound,
             )
+            from Message.handlers.unified_outbound_flags import use_unified_outbound_resolver
 
             shop_id, user_id, from_uid = extract_pdd_send_context(metadata, context)
 
             if not all([shop_id, user_id, from_uid]):
                 return False
 
-            outbound = resolve_pinduoduo_outbound(metadata, context)
+            if use_unified_outbound_resolver():
+                from Message.handlers.unified_outbound_resolver import resolve_outbound
+
+                outbound = resolve_outbound(metadata, context)
+            else:
+                outbound = resolve_pinduoduo_outbound(metadata, context)
             if outbound is not None:
                 if await outbound.transfer_to_human(from_uid, reason="keyword"):
                     return True

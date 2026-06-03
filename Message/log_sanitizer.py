@@ -1,5 +1,5 @@
 """
-INFO 级日志脱敏 helper（Phase 7i）。
+INFO / WARNING / DEBUG 日志脱敏 helper（Phase 7i–7j）。
 
 复用 metadata_observability.redact_uid；不输出用户正文或完整 UID。
 """
@@ -17,7 +17,45 @@ __all__ = [
     "reply_length",
     "format_user_ref",
     "format_message_type",
+    "format_account_ref",
+    "format_buyer_ref",
+    "format_cs_ref",
+    "format_send_context_log",
 ]
+
+
+def _ref_label(prefix: str, uid: Optional[str]) -> str:
+    if uid is None:
+        return f"{prefix}=missing"
+    redacted = redact_uid(str(uid))
+    if redacted is None:
+        return f"{prefix}=missing"
+    return f"{prefix}={redacted}"
+
+
+def format_account_ref(user_id: Optional[str]) -> str:
+    """account=***suffix 或 account=missing。"""
+    return _ref_label("account", user_id)
+
+
+def format_buyer_ref(from_uid: Optional[str]) -> str:
+    """buyer=***suffix 或 buyer=missing。"""
+    return _ref_label("buyer", from_uid)
+
+
+def format_cs_ref(cs_uid: Optional[str]) -> str:
+    """cs=***suffix 或 cs=missing。"""
+    return _ref_label("cs", cs_uid)
+
+
+def format_send_context_log(
+    shop_id: Optional[str],
+    user_id: Optional[str],
+    from_uid: Optional[str],
+) -> str:
+    """shop_id 明文；account/buyer 脱敏。"""
+    shop_part = f"shop_id={shop_id}" if shop_id is not None else "shop_id=missing"
+    return f"{shop_part} {format_account_ref(user_id)} {format_buyer_ref(from_uid)}"
 
 
 def content_length(value: Any) -> int:

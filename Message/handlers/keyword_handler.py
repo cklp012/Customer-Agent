@@ -81,7 +81,11 @@ class KeywordDetectionHandler(BaseHandler):
                 transfer_result = sender.move_conversation(from_uid, cs_uid)
 
                 if transfer_result and transfer_result.get("success"):
-                    self.logger.info(f"会话已成功转接给 {cs_name} ({cs_uid})")
+                    from Message.log_sanitizer import format_cs_ref
+
+                    self.logger.info(
+                        f"会话已成功转接给 {cs_name} ({format_cs_ref(cs_uid)})"
+                    )
                     return True
                 self.logger.error("会话转接失败")
             else:

@@ -13,6 +13,7 @@ from Channel.pinduoduo.outbound_factory import create_pinduoduo_outbound
 from Channel.pinduoduo.outbound_flags import use_pinduoduo_outbound
 from Channel.pinduoduo.pinduoduo_outbound import PinduoduoOutbound
 from Message.handlers.account_outbound_registry import get as get_registered_outbound
+from Message.log_sanitizer import format_account_ref, format_send_context_log
 from Message.metadata_adapter import get_send_context_for_extract
 from utils.logger_loguru import get_logger
 
@@ -48,8 +49,11 @@ def _is_usable_pinduoduo_outbound(
         return False
     if str(ob_shop) != str(shop_id) or str(ob_user) != str(user_id):
         logger.debug(
-            f"outbound 账号不匹配: outbound=({ob_shop},{ob_user}) "
-            f"expected=({shop_id},{user_id})"
+            "outbound 账号不匹配: outbound=(shop_id=%s,%s) expected=(shop_id=%s,%s)",
+            ob_shop,
+            format_account_ref(str(ob_user) if ob_user is not None else None),
+            shop_id,
+            format_account_ref(user_id),
         )
         return False
     return True
@@ -71,7 +75,8 @@ def resolve_pinduoduo_outbound(
     shop_id, user_id, from_uid = extract_pdd_send_context(metadata, context)
     if not all([shop_id, user_id, from_uid]):
         logger.debug(
-            f"无法解析 outbound，缺少字段: shop_id={shop_id}, user_id={user_id}, from_uid={from_uid}"
+            "无法解析 outbound，缺少字段: %s",
+            format_send_context_log(shop_id, user_id, from_uid),
         )
         return None
 

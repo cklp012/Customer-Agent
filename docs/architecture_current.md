@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 7i 里程碑（sensitive INFO log cleanup） |
+| 文档版本 | Phase 7j 里程碑（UID warning/debug log cleanup） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -52,6 +52,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **7g** | metadata observability | ✅ | `Message/metadata_observability.py`；安全观测 helper |
 | **7h** | handler debug 接线 | ✅ | `handle()` 入口 `log_handler_observation`；发送路径 **未改** |
 | **7i** | INFO 敏感日志清理 | ✅ | `log_sanitizer`；无 content/reply 全文/完整 buyer UID |
+| **7j** | UID warning/debug 清理 | ✅ | account/buyer/cs UID 脱敏；`shop_id` 明文；发送/resolver **未改** |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -194,7 +195,7 @@ flowchart TB
 | **`Message/models/queue_models.py`** | `MessageWrapper`：`context`（必填）+ `unified_message`（可选，Phase 7d） |
 | **`Message/core/consumer.py`** | `enrich_metadata_from_unified`；handler 仍 `handle(context, metadata)` |
 | **`Message/metadata_adapter.py`** | Phase 7e：统一读取 metadata/context；7f：`get_send_context_for_extract`（legacy extract 等价） |
-| **`Message/log_sanitizer.py`** | Phase 7i：INFO 日志脱敏（`format_user_ref`、`content_length`） |
+| **`Message/log_sanitizer.py`** | Phase 7i–7j：日志脱敏（content/reply/UID refs、`format_send_context_log`） |
 | **`Message/metadata_observability.py`** | Phase 7g–7h：`build_handler_observation` + `log_handler_observation`（`logger.debug`，默认 INFO 无输出） |
 | **`Message/handlers/outbound_resolver.py`** | `extract_pdd_send_context`（委托 adapter）；`resolve_pinduoduo_outbound`（metadata → registry → create） |
 | **`Message/handlers/account_outbound_registry.py`** | 按 `shop_id:user_id` 线程安全缓存 `PinduoduoOutbound` |
@@ -281,9 +282,9 @@ flowchart TB
 | **7g** ✅ | metadata observability helper：[phase7g_done.md](phase7g_done.md)；handler **未改** | 小步代码 |
 | **7h** ✅ | handler debug 接线：[phase7h_done.md](phase7h_done.md)；默认 INFO 无新增日志 | 可观测 |
 | **7i** ✅ | INFO 敏感日志清理：[phase7i_done.md](phase7i_done.md) | 可观测 |
-| **7j** | remaining UID warning（`_send_reply`、keyword `cs_uid`、outbound_resolver） | 可观测 |
+| **7j** ✅ | UID warning/debug 清理：[phase7j_done.md](phase7j_done.md) | 可观测 |
 | **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
-| **8** | 产品化：UI 平台维度、`app.py` Registry、`unified_outbound_resolver`、设置页与监控 | 产品 |
+| **8** | 产品化：UI 平台维度、`app.py` Registry、`unified_outbound_resolver`、第二平台 | 产品 |
 
 接第二平台前建议：**D 模式** + 真实 PDD 店跑通 `docs/phase0_audit.md` 黄金路径，再冻结本文件为 v1 基线。
 

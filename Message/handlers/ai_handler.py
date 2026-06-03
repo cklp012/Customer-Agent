@@ -118,8 +118,11 @@ class AIReplyHandler(BaseHandler):
             shop_id, user_id, from_uid = extract_pdd_send_context(metadata, context)
 
             if not all([shop_id, user_id, from_uid]):
+                from Message.log_sanitizer import format_send_context_log
+
                 self.logger.warning(
-                    f"缺少发送信息: shop_id={shop_id}, user_id={user_id}, from_uid={from_uid}"
+                    "缺少发送信息: %s",
+                    format_send_context_log(shop_id, user_id, from_uid),
                 )
                 return False
 

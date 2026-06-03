@@ -43,6 +43,9 @@ class AIReplyHandler(BaseHandler):
 
     async def handle(self, context: Context, metadata: Dict[str, Any]) -> bool:
         """处理AI回复"""
+        from Message.metadata_observability import log_handler_observation
+
+        log_handler_observation(self.logger, metadata, context, self.name)
         try:
             # 1. 预处理消息
             processed_content = self.preprocessor.process(context.content, context.type)

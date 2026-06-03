@@ -54,7 +54,7 @@ class KeywordDetectionHandler(BaseHandler):
         # 检查是否包含任何关键词
         for keyword in self.keywords:
             if keyword in content_lower:
-                self.logger.debug(f"检测到关键词: '{keyword}' 在消息: '{context.content}'")
+                self.logger.debug(f"检测到关键词: '{keyword}'")
                 return True
 
         return False
@@ -95,6 +95,9 @@ class KeywordDetectionHandler(BaseHandler):
 
     async def handle(self, context: Context, metadata: Dict[str, Any]) -> bool:
         """转接到人工客服（outbound-first，失败回退 legacy）。"""
+        from Message.metadata_observability import log_handler_observation
+
+        log_handler_observation(self.logger, metadata, context, self.name)
         try:
             from Message.handlers.outbound_resolver import (
                 extract_pdd_send_context,

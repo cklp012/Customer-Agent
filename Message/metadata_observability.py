@@ -2,11 +2,12 @@
 Handler 用 metadata 安全观测摘要（Phase 7g）。
 
 只读 metadata_adapter 与 metadata 队列字段；不读 context.content，不输出完整 UID 或敏感正文。
-本模块不接入 handler 运行时；Phase 7h 再用于 logger.debug。
+Phase 7h：`log_handler_observation` 供 handler `logger.debug` 使用。
 """
 
 from __future__ import annotations
 
+import logging
 from typing import Any, Dict, Optional, Union
 
 from bridge.context import Context
@@ -137,3 +138,20 @@ def format_observation_for_log(obs: Dict[str, ObservationValue]) -> str:
             continue
         parts.append(f"{key}={text}")
     return " ".join(parts)
+
+
+def log_handler_observation(
+    logger: logging.Logger,
+    metadata: Dict[str, Any],
+    context: Context,
+    handler_name: str,
+) -> None:
+    """输出 safe handler observation debug 行；异常不影响 handler 主流程。"""
+    try:
+        obs = build_handler_observation(metadata, context, handler_name=handler_name)
+        line = format_observation_for_log(obs)
+        if not line:
+            return
+        logger.debug("handler_observation %s", line)
+    except Exception:
+        return

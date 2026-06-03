@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 7g 里程碑（metadata observability helper） |
+| 文档版本 | Phase 7h 里程碑（handler debug observability） |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -49,7 +49,8 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **7d** | 双轨入队 | ✅ | `USE_UNIFIED_MESSAGE_DUAL_TRACK`（默认 off）；`MessageWrapper.unified_message` |
 | **7e** | metadata adapter | ✅ | `Message/metadata_adapter.py`；handler **未改** |
 | **7f** | extract 委托 adapter | ✅ | `get_send_context_for_extract`；`extract_pdd_send_context` 薄委托；handler **未改** |
-| **7g** | metadata observability | ✅ | `Message/metadata_observability.py`；安全观测 helper；handler **未改** |
+| **7g** | metadata observability | ✅ | `Message/metadata_observability.py`；安全观测 helper |
+| **7h** | handler debug 接线 | ✅ | `handle()` 入口 `log_handler_observation`；发送路径 **未改** |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -192,11 +193,11 @@ flowchart TB
 | **`Message/models/queue_models.py`** | `MessageWrapper`：`context`（必填）+ `unified_message`（可选，Phase 7d） |
 | **`Message/core/consumer.py`** | `enrich_metadata_from_unified`；handler 仍 `handle(context, metadata)` |
 | **`Message/metadata_adapter.py`** | Phase 7e：统一读取 metadata/context；7f：`get_send_context_for_extract`（legacy extract 等价） |
-| **`Message/metadata_observability.py`** | Phase 7g：安全观测摘要（`build_handler_observation`）；**未接入 handler 运行时** |
+| **`Message/metadata_observability.py`** | Phase 7g–7h：`build_handler_observation` + `log_handler_observation`（`logger.debug`，默认 INFO 无输出） |
 | **`Message/handlers/outbound_resolver.py`** | `extract_pdd_send_context`（委托 adapter）；`resolve_pinduoduo_outbound`（metadata → registry → create） |
 | **`Message/handlers/account_outbound_registry.py`** | 按 `shop_id:user_id` 线程安全缓存 `PinduoduoOutbound` |
-| **`Message/handlers/ai_handler.py`** | AI 回复；`_send_reply` outbound-first |
-| **`Message/handlers/keyword_handler.py`** | 关键词转人工；`transfer_to_human` outbound-first |
+| **`Message/handlers/ai_handler.py`** | AI 回复；`handle()` safe debug；`_send_reply` outbound-first |
+| **`Message/handlers/keyword_handler.py`** | 关键词转人工；`handle()` safe debug；outbound-first |
 | **`Channel/pinduoduo/core/pdd_message_handler.py`** | WS 消息路由；即时消息「[玫瑰]」outbound-first（**未改 WS 本身**） |
 
 ### UI / 运维
@@ -276,7 +277,8 @@ flowchart TB
 | **7e** ✅ | metadata adapter：[phase7e_done.md](phase7e_done.md) | 小步代码 |
 | **7f** ✅ | extract 委托 adapter：[phase7f_done.md](phase7f_done.md)；发送路径 legacy 等价 | 小步代码 |
 | **7g** ✅ | metadata observability helper：[phase7g_done.md](phase7g_done.md)；handler **未改** | 小步代码 |
-| **7h** | handler `logger.debug` 接线 observability；清理 keyword content debug | 可观测 |
+| **7h** ✅ | handler debug 接线：[phase7h_done.md](phase7h_done.md)；默认 INFO 无新增日志 | 可观测 |
+| **7i** | INFO 级敏感日志清理（`BaseHandler.log_message`、ai reply 片段） | 可观测 |
 | **7+ spike** | 真实第二平台（调研优先级：**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
 | **8** | 产品化：UI 平台维度、`app.py` Registry、`unified_outbound_resolver`、设置页与监控 | 产品 |
 

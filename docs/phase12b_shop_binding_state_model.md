@@ -24,7 +24,9 @@
 | `connection_status` | enum | ✅ | 运行时健康 |
 | `inbound_status` | enum | ✅ | 收消息健康 |
 | `outbound_status` | enum | ✅ | 发消息健康 |
-| `reply_mode` | enum | ✅ | preview / assisted / auto |
+| `reply_mode` | enum | ✅ | preview / assisted / auto（**≠ 发送许可**，须 intent gate） |
+| `consultation_only` | bool | ✅ | 默认 **true**；售前咨询范围（12b.1） |
+| `default_reply_scope` | JSON | 可选 | allowlist intent 覆盖；与 `consultation_only` 二选一或并存 |
 | `shop_pause` | bool | ✅ | 单店暂停（与 workspace_pause 叠加） |
 | `waitlist` | bool | 可选 | 非 PDD MVP 平台 |
 | `last_heartbeat_at` | datetime | ✅ | 连接器心跳 |
@@ -92,13 +94,17 @@ else → healthy
 
 ---
 
-## 4. reply_mode（回复模式 · 与 binding 正交）
+## 4. reply_mode（回复模式 · 与 binding / intent 正交）
 
 | 值 | 含义 | 默认 |
 |----|------|------|
 | `preview` | 只生成建议，**不发送** | **✅ 新绑定** |
-| `assisted` | 商家确认后发送 | Growth |
-| `auto` | 规则内自动发送 | 须二次确认 |
+| `assisted` | 商家确认后发送（须过 send gate） | Growth |
+| `auto` | 仅 **allowed consultation intent + 高置信** 可自动发送 | 须二次确认 |
+
+**`reply_mode` 与 `intent gate` 分离：** `reply_mode` 决定「是否允许进入发送流程」；`intent` + `consultation_only` 决定「本条消息是否可 auto send」。详见 [phase12b1_intent_boundary.md](phase12b1_intent_boundary.md)。
+
+**`consultation_only`（12b.1）：** 新绑定默认 `true`。为 `false` 时仅 Growth/Pro 且须额外合规确认（非 MVP）。
 
 **`paused` 不是 reply_mode 枚举值**，而是控制标志（见 reply_mode doc）：
 
@@ -113,8 +119,9 @@ else → healthy
 | 1 | **`binding_status=connected` ≠ `reply_mode=auto`** |
 | 2 | 新绑定 **`reply_mode` 默认 `preview`** |
 | 3 | **`paused` 优先级最高** — 禁止 auto/assisted 发送 |
-| 4 | `waitlist` 平台 **不能** production `connected` |
-| 5 | 开启 `auto` 须写 `auto_enabled_at` + `AuditLog` |
+| 4 | `waitlist` 平台 **不能** production `connected`（不得标「已连接可收发」） |
+| 5 | 开启 `auto` 须写 `auto_enabled_at` + `AuditLog` + 确认售前咨询范围 |
+| 6 | 默认 `consultation_only=true`；**refund/complaint/after-sales** → human takeover by default（产品，12c 实现） |
 
 ```text
 商家可见「已连接」+ 「仅预览模式」  ← 正常且推荐初始状态

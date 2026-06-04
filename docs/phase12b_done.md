@@ -48,11 +48,12 @@
 
 ## 后续
 
-| Phase | 内容 |
-|-------|------|
-| **12c** | Reply preview / dry-run **技术设计**（gate send） |
-| **12d** | Connection status **Dashboard** 设计 |
-| **12e** | Merchant account **DB migration planning**（legacy → SaaS 表） |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **12b.1** | ✅ | Consultation-only 产品边界 — [phase12b1_done.md](phase12b1_done.md) |
+| **12c** | 待做 | **Intent gate +** reply preview / dry-run **send gate** 技术设计（须满足 [phase12b1_send_gate_requirements.md](phase12b1_send_gate_requirements.md)） |
+| **12d** | 待做 | Connection status **Dashboard** 设计 |
+| **12e** | 待做 | Merchant account **DB migration**（含 `intent`、`risk_level`、`blocked_reason`、`human_takeover_reason`、`allowed_to_send`） |
 
 ---
 

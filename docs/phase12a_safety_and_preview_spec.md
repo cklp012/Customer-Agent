@@ -17,11 +17,18 @@
 | **Auto** | `auto` | 通过规则引擎的消息 **自动发送** | 须二次确认开启 |
 
 ```text
-买家消息 → handler / AI → 生成 reply_text
-  preview:   记录 suggested_reply，status=preview_only，结束
-  assisted:  记录 suggested_reply，等待 merchant_approve → send
-  auto:      过 safety → send（失败记日志 + 可选 fallback 策略）
+买家消息
+  → intent classification
+  → consultation safety gate
+  → reply mode
+  → send decision
+
+  preview:   生成 suggested_reply；永不 send；status=preview_only
+  assisted:  生成 suggested_reply；merchant_approve → send（须过 gate）
+  auto:      仅 allowed intent + 高置信 + 低风险 → send；blocked → 转人工
 ```
+
+**Consultation safety gate（12b.1 SSOT）：** 见 [phase12b1_intent_boundary.md](phase12b1_intent_boundary.md) · [phase12b1_send_gate_requirements.md](phase12b1_send_gate_requirements.md)。
 
 **工程映射（未来，非当前默认）：**
 
@@ -35,9 +42,24 @@
 | 规则 | 值 |
 |------|-----|
 | 新绑定店铺 `reply_mode` | `preview` |
-| 开启 `auto` | 须二次确认 + 禁诺/转人工已配置 |
+| 新绑定 `consultation_only` | **true**（默认仅售前咨询范围，见 12b.1） |
+| 开启 `auto` | 须二次确认 + 禁诺/转人工已配置 + **确认只自动处理低风险咨询** |
 | 全局 `paused` | 默认 false；暂停后 **禁止** auto/assisted 发送 |
 | Preview 下暂停 | 可选：仍生成建议（便于观察）或一并停止生成 — **推荐仍生成** |
+
+### 2.1 Consultation safety gate 规则（12b.1）
+
+| 组合 | 行为 |
+|------|------|
+| **allowed intent** + `preview` | 生成建议；**不发** |
+| **allowed intent** + `assisted` | 生成建议；等商家确认后 send（过 gate） |
+| **allowed intent** + `auto` | **高置信 + 低风险** 可自动发；禁诺须通过 |
+| **blocked intent** + 任意 mode | **不自动发**；转人工（preview 可仅记「建议转人工」） |
+| **uncertain intent** | **不自动发**；preview 可建议；assisted 须确认；auto **禁止** |
+| **paused**（workspace/shop） | 停止 auto/assisted **发送**；Preview 建议生成可继续（推荐） |
+
+**优先级：** `paused` > `human_takeover` > `blocked_intent` > `uncertain_intent` > `reply_mode` > send。  
+**`reply_mode=auto` 不得覆盖 intent safety gate。**
 
 ---
 
@@ -99,8 +121,11 @@
 | `actual_reply` | 实际发送（若有） |
 | `reply_mode` | preview / assisted / auto |
 | `outcome` | preview_only / sent / blocked / transfer / failed |
-| `blocked_reason` | 禁诺 ID / low_confidence / … |
+| `intent` | 如 `product_question` / `refund_request`（12b.1） |
+| `intent_bucket` | allowed / blocked / uncertain |
+| `blocked_reason` | 禁诺 ID / intent_blocked / low_confidence / … |
 | `transfer_reason` | 场景说明 |
+| `allowed_to_send` | send gate 最终裁决 |
 
 ### 3.6 人工接管
 
@@ -136,7 +161,7 @@ AIReplyHandler._send_reply (conceptual):
 | Preview gate | ❌ 无 |
 | `USE_UNIFIED_OUTBOUND_RESOLVER` | 默认 off；仅 11g 测试 |
 
-→ **12c** reply preview / dry-run **技术设计**。
+→ **12c** intent gate + reply preview / dry-run **send gate 技术设计**（须满足 [phase12b1_send_gate_requirements.md](phase12b1_send_gate_requirements.md)）。
 
 ---
 

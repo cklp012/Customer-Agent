@@ -3,14 +3,14 @@
 | 项 | 值 |
 |----|-----|
 | 类型 | **产品化研究文档**（docs only） |
-| MVP 定位 | **拼多多客服 AI 副驾驶：先 Preview，后自动发送** |
+| MVP 定位 | **拼多多售前咨询 AI 副驾驶：先 Preview，后按需自动发送**（见 [phase12b1_consultation_only_scope.md](phase12b1_consultation_only_scope.md)） |
 | 关联 | [phase12a_merchant_onboarding_ux.md](phase12a_merchant_onboarding_ux.md) · [phase12a_ai_provider_and_billing_model.md](phase12a_ai_provider_and_billing_model.md) |
 
 ---
 
 ## 1. MVP 一句话
 
-**帮拼多多商家在正式自动回复买家之前，先看见 AI 会怎么回、拦截 risky 内容、随时一键暂停 — AI 由平台提供，无需自己配 API。**
+**帮拼多多商家用 AI 副驾驶处理重复的商品咨询：默认先预览、拦截高风险内容、退款投诉转人工、随时一键暂停 — AI 由平台提供，无需自己配 API。**
 
 ---
 
@@ -18,13 +18,16 @@
 
 | 类别 | 功能 |
 |------|------|
+| **定位** | **PDD 售前咨询 AI 副驾驶**（非通用无人客服） |
 | **平台** | 仅 **PDD** 可绑店、可收消息、可（在模式下）发送 |
 | **绑定** | PDD 店铺绑定 + 授权状态 + 连接健康（见 binding playbook） |
-| **模式** | **Preview / Dry-run 默认**；Growth 试用可开 Assisted/Auto |
-| **安全** | 禁诺模板、转人工词、低置信转人工、一键暂停（全局+单店） |
-| **内容** | FAQ、欢迎语（基础）、语气预设 |
-| **可观测** | 回复日志（建议/发送/拦截/原因）、今日概览 |
-| **AI** | **平台托管**；用量/额度展示 |
+| **Intent** | **售前咨询 intent gate**（allow / block / uncertain）；block 默认转人工 |
+| **模式** | **Preview / Dry-run 默认**；Growth 试用可开 Assisted/Auto（仅 allowlist + 高置信） |
+| **安全** | 禁诺模板、转人工词、**禁止退款/赔偿/投诉类 auto 回复**、低置信转人工、一键暂停 |
+| **内容** | 商品咨询 FAQ、欢迎语（基础）、语气预设 |
+| **可观测** | **回复日志**（建议/发送/拦截/intent/原因）、今日概览 |
+| **转人工** | 退款/投诉/售后/改单等 **规则 + intent** 转人工 |
+| **AI** | **平台托管**；**用量统计** / 额度展示 |
 | **计费** | Starter 试用 + 升级 Growth；计量 AI 条数 |
 | **多平台** | 抖店/淘宝/京东 **waitlist UI only** |
 
@@ -35,9 +38,13 @@
 | 排除项 | 原因 |
 |--------|------|
 | 绑定即 **默认全自动** | 信任风险 |
+| **全自动无人客服** / 秒回一切 | 与 consultation-only 冲突 |
+| **售后纠纷自动处理** | 高风险 |
+| **退款自动处理** | 合规与纠纷 |
+| **赔偿自动处理** | 合规 |
+| **改价 / 改订单 / 改地址** 自动执行 | 须人工 |
 | **真实 Doudian** production | 未接 API |
 | 淘宝 / 京东 production | 未调研绑定 |
-| 自动退款 / 改价 / 改地址执行 | 纠纷与合规 |
 | 完整 CRM / 工单 / 外呼 | 范围蔓延 |
 | **商家默认自配 AI API** | 吓跑 SMB |
 | 复杂订单引擎 | 后期 |

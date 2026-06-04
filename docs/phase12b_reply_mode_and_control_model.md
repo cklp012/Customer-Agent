@@ -3,7 +3,7 @@
 | 项 | 值 |
 |----|-----|
 | 类型 | docs only |
-| 关联 | [phase12a_safety_and_preview_spec.md](phase12a_safety_and_preview_spec.md) |
+| 关联 | [phase12a_safety_and_preview_spec.md](phase12a_safety_and_preview_spec.md) · [phase12b1_intent_boundary.md](phase12b1_intent_boundary.md) |
 
 ---
 
@@ -13,9 +13,11 @@
 |----|----------|------|
 | `preview` | 只写 ReplyLog.suggested；**不调用**平台 send | **✅** |
 | `assisted` | 商家 approve 后 send | Growth |
-| `auto` | 过 Safety 后自动 send | 须二次确认 |
+| `auto` | 过 **intent safety gate + Safety** 后自动 send | 须二次确认 |
 
 **`paused`：** 非 `reply_mode` 值；由标志推导 **effective_mode**。
+
+> **`reply_mode` 只是模式，不是最终发送许可。** Send 前须经 **intent safety gate**（12b.1）：`blocked` intent **永远不能** auto send；`auto` 仅允许 **consultation allowlist + 高置信 + 低风险**。
 
 ---
 
@@ -39,11 +41,16 @@ def effective_send_allowed(shop_binding, workspace) -> bool:
 | 优先级 | 条件 | 结果 |
 |--------|------|------|
 | 1 | `workspace_pause` OR `shop_pause` | **paused** — 不自动发 |
-| 2 | `reply_mode == preview` | 不发送 |
-| 3 | 未 `connected` / auth 失败 | 不发送 |
-| 4 | Safety 拦截 | 不发送 / 转人工 |
-| 5 | `assisted` 无 approve | 不发送 |
-| 6 | `auto` | 发送 |
+| 2 | `human_takeover` | 不自动发 |
+| 3 | `intent_bucket=blocked` | **不 auto send**；转人工 |
+| 4 | `intent_bucket=uncertain` OR 低置信 | **不 auto send** |
+| 5 | `reply_mode == preview` | 不发送 |
+| 6 | 未 `connected` / auth 失败 | 不发送 |
+| 7 | Safety / commitment 拦截 | 不发送 / 转人工 |
+| 8 | `assisted` 无 approve | 不发送 |
+| 9 | `auto` + allowed intent + 高置信 | 发送 |
+
+**`reply_mode=auto` 不能覆盖 intent safety gate**（见 [phase12b1_intent_boundary.md](phase12b1_intent_boundary.md)）。
 
 ---
 
@@ -108,7 +115,7 @@ def effective_send_allowed(shop_binding, workspace) -> bool:
 | 投诉 | 关键词 | `transfer` |
 | quiet_hours | 时间 | 强制 `assisted` 或 preview |
 
-**强制转 assisted / human：** `reply_mode=auto` 时命中高风险 → 降级为 **仅写 suggested + 待人工**（不发送）。
+**强制转 assisted / human：** `reply_mode=auto` 时命中 **blocked intent** 或高风险 → 降级为 **仅写 suggested + 待人工**（不发送）。**blocked intent 永远不能 auto send**，与 reply_mode 无关。
 
 ---
 
@@ -132,7 +139,7 @@ MVP 可仅在 ReplyLog 记 `outcome=transfer`；**12c** 定义运行时会话 ca
 |--------------|--------------|
 | `USE_UNIFIED_OUTBOUND_RESOLVER` env | **不** 作为商家可见开关 |
 | `reply_mode` 列 | **店铺级** 产品配置 |
-| Preview gate send | 12c 技术设计 |
+| Intent gate + Preview send gate | **12c** 技术设计（[phase12b1_send_gate_requirements.md](phase12b1_send_gate_requirements.md)） |
 
 **默认：** 新 ShopBinding `reply_mode=preview`；**不** 依赖 env 默认。
 

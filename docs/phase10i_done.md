@@ -46,8 +46,9 @@
 
 | 优先级 | 内容 |
 |--------|------|
-| **10j** | [phase10i_plan.md §15](phase10i_plan.md#15-phase-10j-prompt) — doudian 优先 spike 计划 |
-| **11+** | 真实 API + flag-gated factory 路由 + 新 lifecycle（独立 Phase，以 matrix 门槛验收） |
+| **10j**（已完成） | [phase10j_done.md](phase10j_done.md) — doudian spike 计划（纯文档） |
+| **10k** | fixture + mapper contract tests；仍无真实 API |
+| **11+** | 真实 API + flag-gated factory 路由 + 新 lifecycle（见 [phase10j_plan.md §12](phase10j_plan.md) gate） |
 
 ---
 

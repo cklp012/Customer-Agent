@@ -51,7 +51,8 @@
 | Phase | 状态 | 内容 |
 |-------|------|------|
 | **13b** | ✅ | shadow SendDecision logging — [phase13b_done.md](phase13b_done.md) |
-| **13c** | 待做 | 单测试店 Preview gate（H3） |
+| **13c** | ✅ | 单测试店 Preview gate 规划 — [phase13c_done.md](phase13c_done.md) |
+| **13d** | 待做 | Preview gate 实现（H3 代码） |
 | **12g** | 待做 | merchant console wireframe |
 
 ---

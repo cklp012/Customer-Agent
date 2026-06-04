@@ -95,6 +95,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **12f** | Preview send gate implementation plan (docs) | ✅ | [phase12f_done.md](phase12f_done.md) |
 | **13a** | Product gate pure functions + unit tests | ✅ | [phase13a_done.md](phase13a_done.md) |
 | **13b** | Shadow SendDecision logging (observe-only) | ✅ | [phase13b_done.md](phase13b_done.md) |
+| **13c** | Single test shop preview gate planning (docs) | ✅ | [phase13c_done.md](phase13c_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -107,7 +108,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **shadow logging（13b）** | **13a–13b 代码**；**gate 拦截未开始** |
+| **Productization** | 商家 SaaS + product gate + shadow + **preview gate 规划（13c）** | **13a–13b 代码**；**13c docs**；**enforcement 未开始** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -152,7 +153,17 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | AI handler fail-open hook | `AIReplyHandler._try_shadow_log_send_decision` |
 | 单元测试 | `tests/test_product_gate_*.py` · `tests/test_handler_shadow_*.py` |
 
-**product gate enforcement（send 拦截）：未开始。**
+**product gate enforcement（send 拦截）：未开始（13d 实现）。**
+
+**Single test shop preview gate（13c · planning-only）：**
+
+| 文档 | 内容 |
+|------|------|
+| [phase13c_single_test_shop_preview_plan.md](phase13c_single_test_shop_preview_plan.md) | 总目标 · 不变量 |
+| [phase13c_test_shop_gate_selection.md](phase13c_test_shop_gate_selection.md) | allowlist · 选型 |
+| [phase13c_preview_integration_flow.md](phase13c_preview_integration_flow.md) | handler flow |
+| [phase13c_zero_send_test_plan.md](phase13c_zero_send_test_plan.md) | Z1–Z10 |
+| [phase13c_rollback_and_safety.md](phase13c_rollback_and_safety.md) | Go/No-Go · 回滚 |
 
 **Preview send gate 设计（12f）：**
 
@@ -189,7 +200,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase12b_reply_mode_and_control_model.md](phase12b_reply_mode_and_control_model.md) | ReplyMode / Safety |
 | [phase12b_plan_usage_model.md](phase12b_plan_usage_model.md) | Plan / Usage |
 
-**下一产品化 Phase：** **13c** Preview 单店集成 · **12g** wireframe。
+**下一产品化 Phase：** **13d** Preview 单店实现 · **13e** ReplyLog/Dashboard · **12g** wireframe。
 
 ---
 
@@ -350,7 +361,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–13b）：** **consultation-first**；**13b** shadow SendDecision（gate off）；**product_gate_enabled 默认 false**；发送仍 legacy。
+**Productization（12a–13c）：** **consultation-first**；**13b** shadow；**13c** 单店 preview gate 已规划（docs only）；**product_gate_enabled 默认 false**；发送仍 legacy。
 
 ---
 
@@ -588,7 +599,9 @@ flowchart TB
 | **12g** | PDD MVP merchant console wireframe | [phase12f_done.md](phase12f_done.md) |
 | **13a** ✅ | product gate pure functions + tests（H1） | [phase13a_done.md](phase13a_done.md) |
 | **13b** ✅ | shadow SendDecision logging（H2 · observe-only） | [phase13b_done.md](phase13b_done.md) |
-| **13c** | single test shop preview gate（H3） | [phase13b_done.md](phase13b_done.md) |
+| **13c** ✅ | single test shop preview gate planning（H3 · docs only） | [phase13c_done.md](phase13c_done.md) |
+| **13d** | preview gate implementation + in-memory config/log | [phase13c_done.md](phase13c_done.md) |
+| **13e** | preview ReplyLog + Dashboard read model | [phase13c_done.md](phase13c_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

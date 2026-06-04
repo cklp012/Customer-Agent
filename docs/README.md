@@ -120,6 +120,7 @@ python scripts/diagnose_runtime.py
 | **12f** | [phase12f_done.md](phase12f_done.md) | Preview send gate implementation plan：`send_text_guarded`、H0–H6、T1–T12（纯文档） |
 | **13a** | [phase13a_done.md](phase13a_done.md) | Product gate 纯函数 + 单元测试（`Message/gates/`） |
 | **13b** | [phase13b_done.md](phase13b_done.md) | Shadow SendDecision logging（观察-only，fail-open，不改变发送） |
+| **13c** | [phase13c_done.md](phase13c_done.md) | 单测试店 Preview gate **规划**（docs only；allowlist · Z1–Z10 · 13d/13e 实现） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

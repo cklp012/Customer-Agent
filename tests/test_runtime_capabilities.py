@@ -1,4 +1,4 @@
-"""Phase 8d：runtime_capabilities 单元测试。"""
+"""Phase 8d / 9d：runtime_capabilities 单元测试。"""
 
 from __future__ import annotations
 
@@ -26,7 +26,7 @@ class TestReadAllRuntimeFlags(unittest.TestCase):
         ):
             os.environ.pop(key, None)
 
-    def test_defaults_all_false(self) -> None:
+    def test_defaults_registry_on_wrapper_off(self) -> None:
         for key in (
             "USE_PINDUODUO_CHANNEL_WRAPPER",
             "USE_PINDUODUO_OUTBOUND",
@@ -41,17 +41,18 @@ class TestReadAllRuntimeFlags(unittest.TestCase):
         self.assertFalse(flags["USE_PINDUODUO_OUTBOUND"])
         self.assertFalse(flags["USE_UNIFIED_OUTBOUND_RESOLVER"])
         self.assertFalse(flags["USE_UNIFIED_MESSAGE_DUAL_TRACK"])
-        self.assertFalse(flags["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"])
+        self.assertTrue(flags["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"])
 
-    def test_infer_autoreply_source_defaults(self) -> None:
+    def test_infer_autoreply_source_unset_no_registry(self) -> None:
+        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
         flags = read_all_runtime_flags()
         self.assertEqual(
             infer_autoreply_channel_source(flags=flags, registry_platforms=[]),
-            "legacy_factory",
+            "registry_fallback",
         )
 
-    def test_infer_autoreply_source_registry_on_registered(self) -> None:
-        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "true"
+    def test_infer_autoreply_source_unset_registered(self) -> None:
+        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
         flags = read_all_runtime_flags()
         self.assertEqual(
             infer_autoreply_channel_source(
@@ -61,12 +62,15 @@ class TestReadAllRuntimeFlags(unittest.TestCase):
             "registry",
         )
 
-    def test_infer_autoreply_source_registry_on_missing(self) -> None:
-        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "true"
+    def test_infer_autoreply_source_explicit_false(self) -> None:
+        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "false"
         flags = read_all_runtime_flags()
         self.assertEqual(
-            infer_autoreply_channel_source(flags=flags, registry_platforms=[]),
-            "registry_fallback",
+            infer_autoreply_channel_source(
+                flags=flags,
+                registry_platforms=["pinduoduo"],
+            ),
+            "legacy_factory",
         )
 
     def test_unified_outbound_flag(self) -> None:
@@ -109,6 +113,7 @@ class TestRuntimeCapabilityReport(unittest.TestCase):
             "Bootstrap status",
             "Default registration plan",
             "AutoReply channel source",
+            "Phase 9d",
         ):
             self.assertIn(token, text, msg=f"missing {token}")
 

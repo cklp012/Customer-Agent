@@ -78,13 +78,13 @@ class TestAutoreplyRegistryParity(_EnvIsolationMixin, unittest.TestCase):
 
     @patch("Channel.pinduoduo.channel_factory.ChannelRegistry.create")
     @patch("Channel.pinduoduo.channel_factory.PDDChannel")
-    def test_default_flags_use_legacy_path(
+    def test_opt_out_false_uses_legacy_path(
         self,
         pdd_cls: MagicMock,
         registry_create: MagicMock,
     ) -> None:
         os.environ.pop("USE_PINDUODUO_CHANNEL_WRAPPER", None)
-        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
+        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "false"
         legacy = MagicMock(spec=PDDChannel)
         pdd_cls.return_value = legacy
         register_pinduoduo_channel()
@@ -103,7 +103,7 @@ class TestAutoreplyRegistryParity(_EnvIsolationMixin, unittest.TestCase):
         warn_mock: MagicMock,
     ) -> None:
         os.environ.pop("USE_PINDUODUO_CHANNEL_WRAPPER", None)
-        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "true"
+        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
         legacy = MagicMock(spec=PDDChannel)
         pdd_cls.return_value = legacy
 

@@ -36,18 +36,19 @@
 
 `AutoReplyThread` 仍只调用 `create_auto_reply_runtime_channel()`；未改 `threads.py`。
 
-### 灰度 Registry path（Phase 9c，默认仍 off）
+### AutoReply Registry path（Phase 9d，默认 on）
 
-- **`USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 默认仍为 false**（未设置 → legacy path）。
-- 9b 后 registry path 与 legacy path **已等价**；9c 用单测固定该契约。
-- 显式灰度（需重启 `app.py`）：
+- **`USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 未设置 → true**（AutoReply 经 `ChannelRegistry.create`）。
+- 9b 后 registry path 与 legacy path **等价**；失败仍 fallback `_create_auto_reply_legacy`。
+- **回滚** legacy 直连（需重启 `app.py`）：
 
 ```powershell
-$env:USE_CHANNEL_REGISTRY_FOR_AUTOREPLY = "true"
+$env:USE_CHANNEL_REGISTRY_FOR_AUTOREPLY = "false"
 python app.py
 ```
 
-- 默认改为 registry path 计划在 **Phase 9d**，不在 9c。
+- 显式 `true` 仅确认开启（通常不必再设）。
+- `diagnose_runtime.py` 独立进程未 bootstrap 时 `autoreply_channel_source` 可能为 `registry_fallback`，不代表 `app.py` 未注册。
 
 ### ChannelRegistry bootstrap（Phase 8e，独立）
 

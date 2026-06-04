@@ -82,7 +82,8 @@ python scripts/diagnose_runtime.py
 | **8f** | [phase8f_done.md](phase8f_done.md) | app.py 启动一行 registry bootstrap |
 | **9a** | [phase9_done.md](phase9_done.md) | AutoReply `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 门控 Registry.create |
 | **9b** | [phase9b_done.md](phase9b_done.md) | `create_pinduoduo_registry_channel` parity factory |
-| **9c** | [phase9c_done.md](phase9c_done.md) | Registry path parity tests；默认仍 legacy |
+| **9c** | [phase9c_done.md](phase9c_done.md) | Registry path parity tests |
+| **9d** | [phase9d_done.md](phase9d_done.md) | AutoReply Registry 默认 on；`false` 回滚 |
 | **9** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | AutoReply Registry / 多平台规划 |
 
 ---
@@ -93,7 +94,7 @@ python scripts/diagnose_runtime.py
 |--------|------|
 | **默认开发 / 交付** | 不设置环境变量 → `legacy-default`（`PDDChannel` + `SendMessage`） |
 | **新架构联调** | `USE_PINDUODUO_CHANNEL_WRAPPER=true` 且 `USE_PINDUODUO_OUTBOUND=true` → `wrapper-and-outbound`；先用 `diagnose_runtime.py` 确认模式 |
-| **接第二平台前** | 黄金路径 + `app.py` bootstrap；灰度 AutoReply Registry：`USE_CHANNEL_REGISTRY_FOR_AUTOREPLY=true`（9b 后 wrapper on/off 均可经 Registry）；**10+** 真实平台 |
+| **接第二平台前** | 黄金路径 + `app.py` bootstrap；9d 起 AutoReply 默认 Registry path；回滚 `$env:USE_CHANNEL_REGISTRY_FOR_AUTOREPLY='false'`；**10+** 真实平台 |
 | **明确不做（当前）** | Phase 5b 统一 bool 解析、接淘宝/抖店/京东运行时、Phase 4c consumer metadata 镜像 — 见 architecture §7 |
 
 ---

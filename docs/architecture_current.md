@@ -59,9 +59,10 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **8d** | runtime diagnostics | ✅ | `runtime_capabilities` + `diagnose_runtime` capability report |
 | **8e** | runtime bootstrap | ✅ | `runtime_bootstrap`；只 register |
 | **8f** | app startup bootstrap | ✅ | `apply_app_startup_bootstrap()` in `app.py` `main()` |
-| **9a** | AutoReply registry gated create | ✅ | `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 默认 off |
+| **9a** | AutoReply registry gated create | ✅ | 9d 起默认 on |
 | **9b** | PDD registry factory parity | ✅ | `create_pinduoduo_registry_channel` |
-| **9c** | Registry path parity tests | ✅ | 默认仍 `legacy_factory`；可灰度 registry |
+| **9c** | Registry path parity tests | ✅ | 9d 前灰度准备 |
+| **9d** | AutoReply Registry default-on | ✅ | unset → `ChannelRegistry.create`；`false` 回滚 |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -163,15 +164,15 @@ register_pinduoduo_channel() → create_pinduoduo_registry_channel
   └─ _create_auto_reply_legacy()  # 读 USE_PINDUODUO_CHANNEL_WRAPPER
 
 create_auto_reply_runtime_channel()
-  USE_CHANNEL_REGISTRY_FOR_AUTOREPLY=false → _create_auto_reply_legacy()
-  registry=true, 已注册                  → ChannelRegistry.create(PINDUODUO)
-       └─ registry factory → wrapper off: PDDChannel / on: PinduoduoChannel
-  registry=true, 未注册/失败             → warning + _create_auto_reply_legacy()
+  USE_CHANNEL_REGISTRY_FOR_AUTOREPLY=false → _create_auto_reply_legacy()（回滚）
+  unset 或 true（9d 默认）, 已注册        → ChannelRegistry.create(PINDUODUO)
+       └─ create_pinduoduo_registry_channel → wrapper off: PDDChannel / on: PinduoduoChannel
+  未注册/失败                              → warning + _create_auto_reply_legacy()
 ```
 
 `create_pinduoduo_channel` 仍为 **wrapper-only** 直接工厂，不经 Registry 注册。
 
-**Phase 9c：** 生产默认仍为 `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY=false` → `_create_auto_reply_legacy`；设 flag true 且 app 已 bootstrap 时可灰度 `ChannelRegistry.create`（与 legacy 等价，见 `test_autoreply_registry_parity`）。
+**Phase 9d：** 生产默认 `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 未设置 → Registry path（app bootstrap 后）；显式 `false` 回滚 legacy；见 `test_autoreply_registry_default`。
 
 ---
 

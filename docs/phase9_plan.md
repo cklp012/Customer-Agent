@@ -2,8 +2,8 @@
 
 | 项 | 值 |
 |---|---|
-| 状态 | **9a** ✅ / **9b** ✅ 见 [phase9_done.md](phase9_done.md)、[phase9b_done.md](phase9b_done.md) |
-| 路线 | **B**：`USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 默认 false |
+| 状态 | **9a–9d** ✅ 见 phase9*_done.md |
+| 路线 | 9a–9c：门控 + parity；**9d**：默认 Registry path |
 
 ---
 
@@ -31,7 +31,7 @@
 | **9a** ✅ | flag + `channel_factory` 扩展 + capabilities/diagnose + 测试 |
 | **9b** ✅ | `create_pinduoduo_registry_channel` + register parity |
 | **9c** ✅ | parity hardening；默认仍 legacy path（Route B） |
-| **9d** | 可选：`USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 默认 true |
+| **9d** ✅ | `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 未设置 → true（Route C） |
 | **10+** | UI 多平台、routing、真实第二平台 |
 
 ---

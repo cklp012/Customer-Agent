@@ -18,7 +18,7 @@ class TestAutoReplyChannelSwitch(unittest.TestCase):
     def setUp(self) -> None:
         self._env_backup = os.environ.get("USE_PINDUODUO_CHANNEL_WRAPPER")
         self._registry_backup = os.environ.get("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY")
-        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
+        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "false"
 
     def tearDown(self) -> None:
         if self._env_backup is None:
@@ -53,7 +53,7 @@ class TestAutoReplyChannelSwitch(unittest.TestCase):
         self, pdd_cls: MagicMock
     ) -> None:
         os.environ.pop("USE_PINDUODUO_CHANNEL_WRAPPER", None)
-        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
+        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "false"
         legacy = MagicMock()
         pdd_cls.return_value = legacy
         channel = create_auto_reply_runtime_channel()
@@ -65,7 +65,7 @@ class TestAutoReplyChannelSwitch(unittest.TestCase):
         self, create_mock: MagicMock
     ) -> None:
         os.environ["USE_PINDUODUO_CHANNEL_WRAPPER"] = "true"
-        os.environ.pop("USE_CHANNEL_REGISTRY_FOR_AUTOREPLY", None)
+        os.environ["USE_CHANNEL_REGISTRY_FOR_AUTOREPLY"] = "false"
         wrapper = MagicMock(spec=PinduoduoChannel)
         create_mock.return_value = wrapper
         channel = create_auto_reply_runtime_channel()

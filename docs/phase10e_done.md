@@ -75,9 +75,9 @@ platform_id 决定「属于哪个平台」（与队列前缀相关但不相等�
 
 | 项 | 内容 |
 |----|------|
-| API | `build_queue_name(platform_id: str, shop_id: str) -> str` |
+| API | `build_queue_name` — 已实现：[Message/queue_naming.py](../Message/queue_naming.py) · [phase10f_done.md](phase10f_done.md) |
 | PDD | `pinduoduo`（及缺省）→ **仍** `pdd_{shop_id}` |
-| 范围 | **仅 helper + `tests/test_queue_naming.py`** |
+| 范围 | helper + `tests/test_queue_naming.py`；**lifecycle 未接入** |
 | 可选 | Demo 入队改用 helper（输出仍为 `demo_{shop}`） |
 | 明确不做 | 10f **不强制** 替换 `pdd_lifecycle` 内 f-string（若替换则单测断言输出不变） |
 

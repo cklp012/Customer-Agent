@@ -146,6 +146,8 @@ account_data["channel_name"]
 
 详见 [phase10c_plan.md](phase10c_plan.md) · [phase10c_done.md](phase10c_done.md)。
 
+**Queue 名（Phase 10f）：** 实现见 [Message/queue_naming.py](../Message/queue_naming.py) — `build_queue_name("pinduoduo", shop_id)` → `pdd_{shop_id}`；生产 `pdd_lifecycle` 尚未调用 helper。
+
 ---
 
 ## 5. account_key 规则

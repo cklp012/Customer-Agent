@@ -3,7 +3,7 @@ AI回复处理器
 专注的AI处理，移除复杂预处理和发送逻辑
 """
 
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
 from bridge.context import Context, ContextType
 from .base import BaseHandler
 from .preprocessor import MessagePreprocessor
@@ -50,6 +50,9 @@ class AIReplyHandler(BaseHandler):
             # 1. 预处理消息
             processed_content = self.preprocessor.process(context.content, context.type)
 
+            # 1b. Shadow SendDecision（观察-only，fail-open，不改变发送路径）
+            self._try_shadow_log_send_decision(processed_content, metadata)
+
             # 2. 调用AI生成回复
             reply = await self._get_ai_reply(processed_content, context)
             if not reply:
@@ -69,6 +72,21 @@ class AIReplyHandler(BaseHandler):
         except Exception as e:
             self.logger.error(f"AI回复处理失败: {e}")
             return await self._handle_fallback(context, metadata)
+
+    def _try_shadow_log_send_decision(
+        self,
+        processed_content: Any,
+        metadata: Dict[str, Any],
+    ) -> None:
+        """旁路记录 SendDecision（product_gate_enabled=False），失败不影响主流程。"""
+        try:
+            from Message.gates.shadow_decision_logger import (
+                append_shadow_decision_from_handler,
+            )
+
+            append_shadow_decision_from_handler(processed_content, metadata)
+        except Exception as exc:
+            self.logger.debug("shadow SendDecision logging skipped: %s", exc)
 
     async def _get_ai_reply(self, query: str, context: Context) -> Optional[str]:
         """获取AI回复"""

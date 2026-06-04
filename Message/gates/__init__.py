@@ -21,6 +21,13 @@ from Message.gates.intent_types import (
     SendMode,
 )
 from Message.gates.send_decision import SendDecision, build_send_decision
+from Message.gates.shadow_decision_logger import (
+    InMemoryShadowDecisionLogger,
+    ShadowDecisionRecord,
+    append_shadow_decision_from_handler,
+    build_shadow_decision_record,
+    shadow_decision_logger,
+)
 
 __all__ = [
     "ALLOWED_INTENTS",
@@ -34,8 +41,13 @@ __all__ = [
     "RiskLevel",
     "SendDecision",
     "SendMode",
+    "InMemoryShadowDecisionLogger",
+    "ShadowDecisionRecord",
+    "append_shadow_decision_from_handler",
     "build_send_decision",
+    "build_shadow_decision_record",
     "classify_consultation_intent",
     "evaluate_guarded_send",
     "keyword_risk_scan",
+    "shadow_decision_logger",
 ]

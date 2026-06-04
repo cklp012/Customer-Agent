@@ -17,7 +17,8 @@
 | handler / SendMessage | **未接** |
 | `database/models.py` / migration | **未改** |
 | PDD / Doudian 热路径 | **未改** |
-| 生产默认 | `product_gate_enabled=false`；handler **不 import** gates |
+| 生产默认 | `product_gate_enabled=false` |
+| 13b+ | handler **fail-open shadow** 仅观察（见 [phase13b_done.md](phase13b_done.md)） |
 
 ---
 
@@ -47,11 +48,11 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **13b** | shadow SendDecision logging（H2） |
-| **13c** | 单测试店 Preview gate handler 集成（H3） |
-| **12g** | merchant console wireframe（可并行） |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **13b** | ✅ | shadow SendDecision logging — [phase13b_done.md](phase13b_done.md) |
+| **13c** | 待做 | 单测试店 Preview gate（H3） |
+| **12g** | 待做 | merchant console wireframe |
 
 ---
 

@@ -57,11 +57,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **12g** | PDD MVP merchant console wireframe |
-| **13a** | product gate **纯函数 + tests only**（H1） |
-| **13b** | shadow SendDecision logging（H2） |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **13a** | ✅ | product gate 纯函数 + tests — [phase13a_done.md](phase13a_done.md) |
+| **13b** | 待做 | shadow SendDecision logging（H2） |
+| **13c** | 待做 | single test shop preview gate（H3） |
+| **12g** | 待做 | PDD MVP merchant console wireframe |
 
 ---
 

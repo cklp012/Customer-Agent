@@ -118,6 +118,7 @@ python scripts/diagnose_runtime.py
 | **12d** | [phase12d_done.md](phase12d_done.md) | Dashboard IA + Connection/Reply read model + Alert + API contract（纯文档） |
 | **12e** | [phase12e_done.md](phase12e_done.md) | DB migration planning：shadow-first product gate schema（纯文档） |
 | **12f** | [phase12f_done.md](phase12f_done.md) | Preview send gate implementation plan：`send_text_guarded`、H0–H6、T1–T12（纯文档） |
+| **13a** | [phase13a_done.md](phase13a_done.md) | Product gate 纯函数 + 单元测试（`Message/gates/`，未接 handler） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

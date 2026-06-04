@@ -76,7 +76,14 @@ python app.py
 python scripts/diagnose_runtime.py
 ```
 
-完整说明见 [runtime_modes.md](./runtime_modes.md)。
+灰度 AutoReply Registry 创建路径（Phase 9c，默认仍 legacy；需重启 app）：
+
+```powershell
+$env:USE_CHANNEL_REGISTRY_FOR_AUTOREPLY = "true"
+python app.py
+```
+
+完整说明见 [runtime_modes.md](./runtime_modes.md) 与 [phase9c_done.md](./phase9c_done.md)（手动验证清单）。
 
 ## 最小配置
 

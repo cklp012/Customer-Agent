@@ -82,6 +82,7 @@ python scripts/diagnose_runtime.py
 | **8f** | [phase8f_done.md](phase8f_done.md) | app.py 启动一行 registry bootstrap |
 | **9a** | [phase9_done.md](phase9_done.md) | AutoReply `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 门控 Registry.create |
 | **9b** | [phase9b_done.md](phase9b_done.md) | `create_pinduoduo_registry_channel` parity factory |
+| **9c** | [phase9c_done.md](phase9c_done.md) | Registry path parity tests；默认仍 legacy |
 | **9** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | AutoReply Registry / 多平台规划 |
 
 ---

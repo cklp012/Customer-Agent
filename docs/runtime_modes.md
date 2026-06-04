@@ -36,6 +36,19 @@
 
 `AutoReplyThread` 仍只调用 `create_auto_reply_runtime_channel()`；未改 `threads.py`。
 
+### 灰度 Registry path（Phase 9c，默认仍 off）
+
+- **`USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 默认仍为 false**（未设置 → legacy path）。
+- 9b 后 registry path 与 legacy path **已等价**；9c 用单测固定该契约。
+- 显式灰度（需重启 `app.py`）：
+
+```powershell
+$env:USE_CHANNEL_REGISTRY_FOR_AUTOREPLY = "true"
+python app.py
+```
+
+- 默认改为 registry path 计划在 **Phase 9d**，不在 9c。
+
 ### ChannelRegistry bootstrap（Phase 8e，独立）
 
 | 环境变量 | 作用 | 读取位置 |

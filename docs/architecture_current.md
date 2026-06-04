@@ -61,6 +61,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **8f** | app startup bootstrap | ✅ | `apply_app_startup_bootstrap()` in `app.py` `main()` |
 | **9a** | AutoReply registry gated create | ✅ | `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 默认 off |
 | **9b** | PDD registry factory parity | ✅ | `create_pinduoduo_registry_channel` |
+| **9c** | Registry path parity tests | ✅ | 默认仍 `legacy_factory`；可灰度 registry |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -169,6 +170,8 @@ create_auto_reply_runtime_channel()
 ```
 
 `create_pinduoduo_channel` 仍为 **wrapper-only** 直接工厂，不经 Registry 注册。
+
+**Phase 9c：** 生产默认仍为 `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY=false` → `_create_auto_reply_legacy`；设 flag true 且 app 已 bootstrap 时可灰度 `ChannelRegistry.create`（与 legacy 等价，见 `test_autoreply_registry_parity`）。
 
 ---
 

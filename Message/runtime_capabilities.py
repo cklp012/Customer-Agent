@@ -346,6 +346,8 @@ def format_capability_report_for_console(report: RuntimeCapabilityReport) -> str
         "  AutoReply channel source:          " + report.autoreply_channel_source,
         "",
         "  Notes:",
+        "    - Phase 9c: USE_CHANNEL_REGISTRY_FOR_AUTOREPLY still defaults false",
+        "      (legacy_factory); registry path parity-tested in 9b/9c (9d may default-on).",
         "    - pdd_message_handler still uses resolve_pinduoduo_outbound only.",
         "    - Demo runtime is for unittest/integration tests, not production.",
         "    - See diagnose ## Platform bootstrap for Registry vs AutoReplyThread.",

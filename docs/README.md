@@ -103,6 +103,7 @@ python scripts/diagnose_runtime.py
 | **10k** | [phase10k_done.md](phase10k_done.md) | doudian fixture + mapper contract tests（无真实 API） |
 | **10l** | [phase10l_done.md](phase10l_done.md) | doudian mock transport + enqueue runtime flow（patch 入队） |
 | **10m** | [phase10m_done.md](phase10m_done.md) | doudian mock outbound（`DoudianMockOutbound`） |
+| **11a** | [phase11a_done.md](phase11a_done.md) | Doudian registry/factory 边界规划（[规划](phase11a_plan.md)，纯文档） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

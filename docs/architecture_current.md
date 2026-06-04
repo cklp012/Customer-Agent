@@ -78,6 +78,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **10k** | doudian fixture + mapper contract tests | ✅ | [phase10k_done.md](phase10k_done.md) |
 | **10l** | doudian mock transport + enqueue runtime flow | ✅ | [phase10l_done.md](phase10l_done.md) |
 | **10m** | doudian mock outbound | ✅ | [phase10m_done.md](phase10m_done.md) |
+| **11a** | Doudian registry/factory boundary (docs) | ✅ | [phase11a_done.md](phase11a_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -372,6 +373,7 @@ flowchart TB
 | `USE_PINDUODUO_OUTBOUND` | `outbound_flags.py` → `outbound_resolver.resolve_*` | **false** |
 | `USE_UNIFIED_OUTBOUND_RESOLVER` | `unified_outbound_flags.py` → handler 选 `resolve_outbound` | **false** |
 | `USE_DEMO_CHANNEL_REGISTRATION` | `bootstrap_flags.py` → `register_default_platforms` 含 Demo | **false** |
+| `USE_DOUDIAN_CHANNEL_REGISTRATION` | 11b 规划 → `register_doudian_channel`（**11a 未实现**） | **false**（规划） |
 
 真值：`1` / `true` / `yes` / `on`（大小写不敏感）。
 
@@ -445,7 +447,8 @@ flowchart TB
 | **10k** ✅ | doudian fixture + mapper contract（mock，非 production） | [phase10k_done.md](phase10k_done.md) |
 | **10l** ✅ | mock transport + enqueue runtime flow（patch，非 production） | [phase10l_done.md](phase10l_done.md) |
 | **10m** ✅ | mock outbound（非 production） | [phase10m_done.md](phase10m_done.md) |
-| **11a** | flag-gated Doudian registry/factory | 规划 |
+| **11a** ✅ | registry/factory 边界规划（docs，Route A） | [phase11a_done.md](phase11a_done.md) |
+| **11b** | `USE_DOUDIAN_CHANNEL_REGISTRATION` + `DoudianMockChannel`（默认不注册） | [phase11a_plan.md §13](phase11a_plan.md) |
 | **11+** | 真实第二平台（flag-gated；**抖店 > 京东 > 淘宝**） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |
 

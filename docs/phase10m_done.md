@@ -37,7 +37,8 @@ fixtures → mappers/routing → mock transport → enqueue_doudian_raw_message
 
 | Phase | 内容 |
 |-------|------|
-| **11a** | flag-gated `ChannelRegistry` / AutoReply factory 规划或实现 |
+| **11a**（已完成） | [phase11a_done.md](phase11a_done.md) — registry/factory 边界规划（纯文档） |
+| **11b** | flag-gated `register_doudian_channel` + `DoudianMockChannel`（见 phase11a_plan §13） |
 
 ---
 

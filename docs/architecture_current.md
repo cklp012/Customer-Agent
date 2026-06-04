@@ -85,6 +85,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **11e** | DoudianMockChannel outbound auto-registration | ✅ | [phase11e_done.md](phase11e_done.md) |
 | **11f** | Handler unified outbound path (docs) | ✅ | [phase11f_done.md](phase11f_done.md) |
 | **11g** | Doudian handler unified outbound path tests | ✅ | [phase11g_done.md](phase11g_done.md) |
+| **11h** | Doudian mock spike gate review (docs) | ✅ | [phase11h_done.md](phase11h_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -237,12 +238,15 @@ create_auto_reply_runtime_channel()
 | **11e（Route C）** | **`start_account` register / `stop_account` unregister** → `channel_outbound_registry` — [phase11e_done.md](phase11e_done.md) |
 | **11f（docs）** | **Handler unified outbound 测试边界** — [phase11f_done.md](phase11f_done.md) |
 | **11g（Route C）** | **`test_handler_doudian_unified_outbound.py`** — handler + unified flag（仅测试）→ Doudian mock send — [phase11g_done.md](phase11g_done.md) |
+| **11h（docs）** | **Mock spike 收口 + production gate G1–G12 + Phase 12 拆分** — [phase11h_done.md](phase11h_done.md) |
 
 **Queue naming SSOT：** 生产 PDD lifecycle → `pdd_queue_name` → **`pdd_{shop_id}`**；抖店 spike（10k）测试 → **`doudian_{shop_id}`**（`build_queue_name`），**不得**占用 `pdd_` 前缀。
 
 **Doudian mock runtime（11e）：** 仅当显式创建 `DoudianMockChannel` 并 `start_account` 时，outbound 写入 `channel_outbound_registry`；`USE_DOUDIAN_CHANNEL_REGISTRATION` 默认 **false**，bootstrap **不** 创建抖店 channel；AutoReply 仍 PDD-only。
 
 **Handler unified outbound（11g）：** 生产 handler 默认仍 `resolve_pinduoduo_outbound`；抖店 handler 出站链 **仅** 在测试内 `USE_UNIFIED_OUTBOUND_RESOLVER=true` 验证；默认 env **不变**。
+
+**Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API 集成 **No-Go**，下一入口为 **Phase 12a**（API research docs）。PDD 默认路径 **冻结不变**。
 
 ---
 
@@ -469,8 +473,11 @@ flowchart TB
 | **11e** ✅ | `DoudianMockChannel` lifecycle register/unregister | [phase11e_done.md](phase11e_done.md) |
 | **11f** ✅ | handler unified outbound 测试边界（docs） | [phase11f_done.md](phase11f_done.md) |
 | **11g** ✅ | handler unified outbound Doudian tests（测试内 flag） | [phase11g_done.md](phase11g_done.md) |
-| **11h** | handler fallback / no-registry safety（可选） | [phase11g_done.md](phase11g_done.md) |
-| **11+** | 真实第二平台（flag-gated；**抖店 > 京东 > 淘宝**） | 平台 |
+| **11h** ✅ | mock spike gate review + Phase 12 拆分（docs） | [phase11h_done.md](phase11h_done.md) |
+| **12a** | Doudian real API research docs（G1） | [phase11h_plan.md §6](phase11h_plan.md) |
+| **12b–12f** | login / transport / outbound / DB+UI / prototype planning | [phase11h_plan.md](phase11h_plan.md) |
+| **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md §7](phase11h_plan.md) |
+| **11+** | → 重命名为 **12–13** 序列（见 11h） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |
 
 接第二平台前建议：**D 模式** + 真实 PDD 店跑通 `docs/phase0_audit.md` 黄金路径，再冻结本文件为 v1 基线。

@@ -110,6 +110,7 @@ python scripts/diagnose_runtime.py
 | **11e** | [phase11e_done.md](phase11e_done.md) | `DoudianMockChannel` outbound auto-registration（[规划](phase11e_plan.md)） |
 | **11f** | [phase11f_done.md](phase11f_done.md) | Handler unified outbound 测试边界规划（[规划](phase11f_plan.md)，纯文档） |
 | **11g** | [phase11g_done.md](phase11g_done.md) | Doudian handler unified outbound path tests（[规划](phase11g_plan.md)） |
+| **11h** | [phase11h_done.md](phase11h_done.md) | Doudian mock spike gate review（[规划](phase11h_plan.md)，纯文档） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

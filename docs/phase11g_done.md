@@ -37,8 +37,8 @@
 
 | Phase | 内容 |
 |-------|------|
-| **11h（可选）** | handler fallback / no-registry safety 深化规划 |
-| **12a（可选）** | production gate review（仍 PDD-only 默认） |
+| **11h** ✅ | mock spike gate review — [phase11h_done.md](phase11h_done.md) |
+| **12a** | Doudian real API research docs（G1） |
 
 ---
 

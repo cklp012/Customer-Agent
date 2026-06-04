@@ -16,6 +16,7 @@ from Channel.base.channel import (
 )
 from Channel.base.types import ChannelStatus, PlatformType
 from Channel.doudian.doudian_outbound import DoudianMockOutbound
+from Message.handlers import channel_outbound_registry
 
 
 class DoudianMockChannel(BaseChannel):
@@ -81,10 +82,21 @@ class DoudianMockChannel(BaseChannel):
         self._status = ChannelStatus.CONNECTING
 
         self._outbound = DoudianMockOutbound(self._shop_id, self._account_id)
+        channel_outbound_registry.register(
+            PlatformType.DOUDIAN,
+            self._shop_id,
+            self._account_id,
+            self._outbound,
+        )
         self._status = ChannelStatus.CONNECTED
         on_success()
 
     async def stop_account(self, shop_id: str, account_id: str) -> None:
+        channel_outbound_registry.unregister(
+            PlatformType.DOUDIAN,
+            shop_id,
+            account_id,
+        )
         if (
             self._shop_id is not None
             and self._account_id is not None

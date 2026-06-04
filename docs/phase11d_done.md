@@ -35,7 +35,7 @@
 
 | Phase | 内容 |
 |-------|------|
-| **11e** | Route C：`doudian_channel.py` + `test_doudian_channel_outbound_lifecycle.py` |
+| **11e** ✅ | Route C：`doudian_channel.py` + lifecycle tests — [phase11e_done.md](phase11e_done.md) |
 | **11f（可选）** | handler + unified flag 抖店联调测试 |
 
 ---

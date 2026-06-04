@@ -112,6 +112,7 @@ python scripts/diagnose_runtime.py
 | **11g** | [phase11g_done.md](phase11g_done.md) | Doudian handler unified outbound path tests（[规划](phase11g_plan.md)） |
 | **11h** | [phase11h_done.md](phase11h_done.md) | Doudian mock spike gate review（[规划](phase11h_plan.md)，纯文档） |
 | **12a** | [phase12a_done.md](phase12a_done.md) | 商家 UX / 绑定 / 安全 Preview / MVP 套餐（产品化 SSOT，纯文档） |
+| **12b** | [phase12b_done.md](phase12b_done.md) | SaaS 数据模型：Merchant/Workspace/ShopBinding/CredentialRef（纯文档） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

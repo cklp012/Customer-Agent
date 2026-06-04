@@ -87,6 +87,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **11g** | Doudian handler unified outbound path tests | ✅ | [phase11g_done.md](phase11g_done.md) |
 | **11h** | Doudian mock spike gate review (docs) | ✅ | [phase11h_done.md](phase11h_done.md) |
 | **12a** | Merchant UX + binding + safety + MVP/pricing (docs) | ✅ | [phase12a_done.md](phase12a_done.md) |
+| **12b** | SaaS data model + state machines (docs) | ✅ | [phase12b_done.md](phase12b_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -113,7 +114,18 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase12a_ai_provider_and_billing_model.md](phase12a_ai_provider_and_billing_model.md) | 平台托管 AI |
 | [phase12a_mvp_scope_and_pricing.md](phase12a_mvp_scope_and_pricing.md) | MVP + 三档套餐 |
 
-**下一产品化 Phase：** 12b 数据模型 · 12c Preview 技术设计 · 12d Dashboard。
+**数据模型（12b · implementation 未开始）：**
+
+| 文档 | 内容 |
+|------|------|
+| [phase12b_data_model_plan.md](phase12b_data_model_plan.md) | SaaS 对象总览 |
+| [phase12b_merchant_workspace_model.md](phase12b_merchant_workspace_model.md) | Merchant / Workspace / Member |
+| [phase12b_shop_binding_state_model.md](phase12b_shop_binding_state_model.md) | ShopBinding 状态机 |
+| [phase12b_credential_security_model.md](phase12b_credential_security_model.md) | CredentialRef |
+| [phase12b_reply_mode_and_control_model.md](phase12b_reply_mode_and_control_model.md) | ReplyMode / Safety |
+| [phase12b_plan_usage_model.md](phase12b_plan_usage_model.md) | Plan / Usage |
+
+**下一产品化 Phase：** 12c Preview 技术设计 · 12d Dashboard · 12e DB migration 规划。
 
 ---
 
@@ -503,9 +515,10 @@ flowchart TB
 | **11g** ✅ | handler unified outbound Doudian tests（测试内 flag） | [phase11g_done.md](phase11g_done.md) |
 | **11h** ✅ | mock spike gate review + Phase 12 拆分（docs） | [phase11h_done.md](phase11h_done.md) |
 | **12a** ✅ | Merchant UX / binding / safety / MVP·pricing（docs） | [phase12a_done.md](phase12a_done.md) |
-| **12b** | Shop binding + merchant/workspace data model | [phase12a_done.md](phase12a_done.md) |
-| **12c** | Reply preview / dry-run technical design | [phase12a_done.md](phase12a_done.md) |
-| **12d** | Connection status dashboard design | [phase12a_done.md](phase12a_done.md) |
+| **12b** ✅ | SaaS data model：Merchant/Workspace/ShopBinding/CredentialRef（docs） | [phase12b_done.md](phase12b_done.md) |
+| **12c** | Reply preview / dry-run technical design | [phase12b_done.md](phase12b_done.md) |
+| **12d** | Connection status dashboard design | [phase12b_done.md](phase12b_done.md) |
+| **12e** | Merchant account DB migration planning | [phase12b_done.md](phase12b_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

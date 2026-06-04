@@ -46,12 +46,13 @@
 
 | Phase | 内容 |
 |-------|------|
-| **12b** | Shop binding data model + merchant account / workspace model |
+| **12b** ✅ | SaaS 数据模型 — [phase12b_done.md](phase12b_done.md) |
 | **12c** | Reply preview / dry-run **技术设计**（店铺级 gate send） |
 | **12d** | Connection status + Dashboard **信息架构** 设计 |
-| **12e** | Safety rules engine + 禁诺/转人工 **产品+技术** 设计 |
-| **12f** | Billing / plan limits / AI 额度计量 |
-| **12g** | PDD binding 升级（OAuth 或托管连接器）research |
+| **12e** | Merchant account **DB migration planning**（legacy → SaaS 表） |
+| **12f** | Safety rules engine + 禁诺/转人工 **产品+技术** 设计 |
+| **12g** | Billing / plan limits / AI 额度计量 |
+| **12h** | PDD binding 升级（OAuth 或托管连接器）research |
 | **13+** | 真实 API prototype（flag off） |
 
 **并行（11h 技术 gate）：** Doudian API research 可单列 **12g-T** 或并入 12g，**不阻塞** PDD MVP 产品化。

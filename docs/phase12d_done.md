@@ -57,11 +57,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **12e** | DB migration：Workspace / ShopBinding / SendDecision / ReplyLog / AuditLog |
-| **12f** | flag-gated preview send gate 实现 |
-| **12g** | PDD MVP merchant console wireframe |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **12e** | ✅ | DB migration planning — [phase12e_done.md](phase12e_done.md) |
+| **12f** | 待做 | flag-gated Preview Send Gate implementation plan |
+| **12g** | 待做 | PDD MVP merchant console wireframe |
+| **13a** | 待做 | first shadow table implementation（评审后） |
 
 ---
 

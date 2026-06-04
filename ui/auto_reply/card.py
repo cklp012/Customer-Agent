@@ -3,6 +3,11 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from PyQt6.QtWidgets import QLabel, QWidget, QHBoxLayout, QVBoxLayout
 from PyQt6.QtGui import QFont, QPixmap
 from qfluentwidgets import CardWidget, StrongBodyLabel, CaptionLabel, BodyLabel, PushButton, PrimaryPushButton, InfoBadge, FluentIcon as FIF
+from .platform_ui import (
+    AUTOREPLY_UNSUPPORTED_TOOLTIP,
+    is_autoreply_supported,
+    platform_display_name,
+)
 from .threads import LogoLoaderThread
 
 
@@ -22,10 +27,13 @@ class AutoReplyCard(CardWidget):
         self.shop_name = account_data.get("shop_name", "")
         self.shop_logo = account_data.get("shop_logo")
         self.account_name = account_data.get("username", "")
-        self.platform = account_data.get("channel_name", "")
+        self.platform_id = account_data.get("channel_name", "")
+        self.platform_label = platform_display_name(self.platform_id)
+        self.autoreply_supported = is_autoreply_supported(self.platform_id)
         self.status = self.getStatusText(account_data.get("status", 0))
         self.auto_reply_status = False  # 自动回复状态
         self.setupUI()
+        self._apply_autoreply_button_policy()
         self.connectSignals()
         self.loadLogo()
 
@@ -81,7 +89,7 @@ class AutoReplyCard(CardWidget):
         shop_name_label.setFont(QFont("Microsoft YaHei", 14, QFont.Weight.Bold))
         shop_name_label.setStyleSheet("color: #2c3e50;")
 
-        platform_badge = InfoBadge.info(self.platform, self)
+        platform_badge = InfoBadge.info(self.platform_label, self)
         platform_badge.setFont(QFont("Microsoft YaHei", 9))
 
         first_row_layout.addWidget(shop_name_label)
@@ -202,9 +210,19 @@ class AutoReplyCard(CardWidget):
                 self.offline_btn.setText("离线")
                 self.offline_btn.setEnabled(True)
 
+    def _apply_autoreply_button_policy(self):
+        """非拼多多账号：禁用自动回复按钮并提示。"""
+        if self.autoreply_supported:
+            return
+        self.auto_reply_btn.setEnabled(False)
+        self.auto_reply_btn.setToolTip(AUTOREPLY_UNSUPPORTED_TOOLTIP)
+
     def setAutoReplyStatus(self, is_running: bool):
         """设置自动回复状态"""
         self.auto_reply_status = is_running
+        if not self.autoreply_supported:
+            self._apply_autoreply_button_policy()
+            return
         if is_running:
             self.auto_reply_btn.setText("停止回复")
             self.auto_reply_btn.setIcon(FIF.CANCEL)

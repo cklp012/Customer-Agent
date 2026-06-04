@@ -3,11 +3,17 @@ from PyQt6.QtCore import Qt, QTimer
 from PyQt6.QtWidgets import QFrame, QWidget, QMessageBox
 from PyQt6.QtGui import QFont
 from qfluentwidgets import (SubtitleLabel, CaptionLabel, PushButton, PrimaryPushButton,
-                            ScrollArea, FluentIcon as FIF)
+                            ScrollArea, ComboBox, FluentIcon as FIF)
 from utils.logger_loguru import get_logger
 from database.db_manager import db_manager
 from .card import AutoReplyCard
 from .manager import auto_reply_manager
+from .platform_ui import (
+    AUTOREPLY_UNSUPPORTED_TOOLTIP,
+    PLATFORM_FILTER_OPTIONS,
+    account_matches_platform_filter,
+    is_autoreply_supported,
+)
 from .threads import SetStatusThread
 
 
@@ -19,6 +25,8 @@ class AutoReplyUI(QFrame):
         self.logger = get_logger()
         self.accounts_data = []
         self._loaded_once = False
+        self._platform_filter_channel = None  # None = 全部
+        self._last_platform_filter_index = 0
         self.setupUI()
         QTimer.singleShot(300, self._maybeLoadOnShow)
 
@@ -102,10 +110,23 @@ class AutoReplyUI(QFrame):
         self.stop_all_btn.setIcon(FIF.CANCEL)
         self.stop_all_btn.setFixedSize(120, 40)
 
+        filter_widget = QWidget()
+        filter_layout = QVBoxLayout(filter_widget)
+        filter_layout.setContentsMargins(0, 0, 0, 0)
+        filter_layout.setSpacing(4)
+        filter_caption = CaptionLabel("平台筛选")
+        filter_caption.setStyleSheet("color: #7f8c8d;")
+        self.platform_filter = ComboBox()
+        self.platform_filter.setFixedWidth(160)
+        self._setup_platform_filter_combo()
+        filter_layout.addWidget(filter_caption)
+        filter_layout.addWidget(self.platform_filter)
+
         buttons_widget = QWidget()
         buttons_layout = QHBoxLayout(buttons_widget)
         buttons_layout.setContentsMargins(0, 0, 0, 0)
         buttons_layout.setSpacing(10)
+        buttons_layout.addWidget(filter_widget)
         buttons_layout.addWidget(self.refresh_btn)
         buttons_layout.addWidget(self.start_all_btn)
         buttons_layout.addWidget(self.stop_all_btn)
@@ -115,6 +136,37 @@ class AutoReplyUI(QFrame):
         header_layout.addWidget(buttons_widget)
 
         return header_widget
+
+    def _setup_platform_filter_combo(self):
+        """填充平台筛选项；未来平台条目不可选。"""
+        self.platform_filter.clear()
+        for label, channel, selectable in PLATFORM_FILTER_OPTIONS:
+            self.platform_filter.addItem(label, channel)
+            idx = self.platform_filter.count() - 1
+            model_item = self.platform_filter.model().item(idx)
+            if model_item is not None:
+                model_item.setEnabled(selectable)
+        self.platform_filter.currentIndexChanged.connect(self._on_platform_filter_changed)
+        self._last_platform_filter_index = 0
+        self._platform_filter_channel = None
+
+    def _on_platform_filter_changed(self, index: int):
+        model_item = self.platform_filter.model().item(index)
+        if model_item is not None and not model_item.isEnabled():
+            self.platform_filter.blockSignals(True)
+            self.platform_filter.setCurrentIndex(self._last_platform_filter_index)
+            self.platform_filter.blockSignals(False)
+            return
+        self._last_platform_filter_index = index
+        self._platform_filter_channel = self.platform_filter.itemData(index)
+        self.refreshAccountList()
+
+    def _visible_accounts(self) -> list:
+        """按当前平台筛选后的账号列表（不修改 accounts_data）。"""
+        return [
+            acc for acc in self.accounts_data
+            if account_matches_platform_filter(acc, self._platform_filter_channel)
+        ]
 
     def createContentWidget(self):
         """创建内容区域"""
@@ -172,7 +224,7 @@ class AutoReplyUI(QFrame):
         """刷新账号列表"""
         self.clearAccountList()
 
-        for account_data in self.accounts_data:
+        for account_data in self._visible_accounts():
             account_card = AutoReplyCard(account_data)
 
             account_card.online_clicked.connect(self.onAccountOnline)
@@ -198,9 +250,16 @@ class AutoReplyUI(QFrame):
 
     def updateStats(self):
         """更新统计信息"""
-        count = len(self.accounts_data)
-        running_count = auto_reply_manager.get_running_count()
-        self.stats_label.setText(f"共 {count} 个账号")
+        visible = self._visible_accounts()
+        count = len(visible)
+        total = len(self.accounts_data)
+        running_count = sum(
+            1 for acc in visible if auto_reply_manager.is_running(acc)
+        )
+        if self._platform_filter_channel is None:
+            self.stats_label.setText(f"共 {count} 个账号")
+        else:
+            self.stats_label.setText(f"共 {count} 个账号（全部 {total} 个）")
         self.running_stats_label.setText(f"运行中: {running_count} 个")
 
     def _sync_auto_reply_status(self):
@@ -237,12 +296,21 @@ class AutoReplyUI(QFrame):
         """重新加载账号"""
         self.loadAccountsFromDB()
 
+    def _guard_autoreply_start(self, account_data: dict) -> bool:
+        """UI 层守卫：非拼多多不启动自动回复。"""
+        if is_autoreply_supported(account_data.get("channel_name")):
+            return True
+        QMessageBox.information(self, "提示", AUTOREPLY_UNSUPPORTED_TOOLTIP)
+        return False
+
     def onStartAllAutoReply(self):
         """开始所有符合条件的账号的自动回复"""
         try:
             eligible_accounts = [
-                acc_data for acc_data in self.accounts_data
-                if acc_data.get("status") == 1 and not auto_reply_manager.is_running(acc_data)
+                acc_data for acc_data in self._visible_accounts()
+                if is_autoreply_supported(acc_data.get("channel_name"))
+                and acc_data.get("status") == 1
+                and not auto_reply_manager.is_running(acc_data)
             ]
 
             if not eligible_accounts:
@@ -398,6 +466,8 @@ class AutoReplyUI(QFrame):
             if current_status:
                 self._stop_auto_reply(account_data, account_card)
             else:
+                if not self._guard_autoreply_start(account_data):
+                    return
                 self._start_auto_reply(account_data, account_card)
 
         except Exception as e:
@@ -407,6 +477,9 @@ class AutoReplyUI(QFrame):
     def _start_auto_reply(self, account_data: dict, account_card):
         """启动自动回复"""
         try:
+            if not self._guard_autoreply_start(account_data):
+                return
+
             if account_data.get("status") != 1:
                 QMessageBox.warning(self, "提示", "账号必须先上线才能开始自动回复！")
                 return

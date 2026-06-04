@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase **9d** 运行时 / **9e** checkpoint / **10a** account SSOT |
+| 文档版本 | Phase **9d** 运行时 / **10a** account SSOT / **10b** UI skeleton |
 | Checkpoint | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) · [phase10_account_model.md](phase10_account_model.md) |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
@@ -66,6 +66,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **9d** | AutoReply Registry default-on | ✅ | unset → `ChannelRegistry.create`；`false` 回滚 |
 | **9e** | Release checkpoint (docs) | ✅ | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
 | **10a** | Multi-platform account model (docs) | ✅ | [phase10_account_model.md](phase10_account_model.md) |
+| **10b** | AutoReply UI skeleton | ✅ | [phase10b_done.md](phase10b_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -190,7 +191,8 @@ create_auto_reply_runtime_channel()
 | UI 展示 | 自动回复 / 账号管理页已显示平台 badge |
 | **运行时** | **仍仅 PDD**：`AutoReplyThread` → `pinduoduo.channel_factory`；不按 `channel_name` 路由 |
 | 10a | 无 migration、无 schema 变更、无第二平台 seed |
-| SSOT | [phase10_account_model.md](phase10_account_model.md)；10b = UI skeleton（禁用非 PDD 自动回复） |
+| SSOT | [phase10_account_model.md](phase10_account_model.md) |
+| **10b（已实现）** | `platform_ui.py` + 筛选 + 非 PDD 禁用启动；**运行时仍仅 PDD** |
 
 ---
 
@@ -398,7 +400,7 @@ flowchart TB
 | **9a–9d** ✅ | AutoReply Registry 接线 + 默认 on | 架构 |
 | **9e** ✅ | Release checkpoint 文档 | 运维 |
 | **10a** ✅ | Account model SSOT | 仅文档 |
-| **10b** | UI skeleton（平台筛选 / 非 PDD 禁用自动回复） | 产品 |
+| **10b** ✅ | UI skeleton（平台筛选 / 非 PDD 禁用自动回复） | 产品 |
 | **10c** | routing / content_type 规划 | 架构 |
 | **7+ spike** | 真实第二平台（**抖店 > 京东 > 淘宝**） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |

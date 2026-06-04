@@ -188,17 +188,17 @@ account_key = f"{channel_name}_{shop_id}_{username}"
 
 ---
 
-## 9. Phase 10b UI skeleton recommendation（规划，未实现）
+## 9. Phase 10b UI skeleton（已实现）
 
-| 项 | 建议 |
+| 项 | 实现 |
 |----|------|
-| 平台筛选 | `AutoReplyUI` 增加：全部 / 拼多多 / （灰显）未来平台 |
-| 卡片 | `AutoReplyCard` 已对非 PDD 显示 badge；保持 |
-| 自动回复按钮 | `channel_name != "pinduoduo"` → **disabled** |
-| Tooltip | 「该平台自动回复即将支持」 |
-| 启动守卫 | `onAutoReplyToggle` / `_start_auto_reply`：**不调用** `AutoReplyManager.start_auto_reply` |
-| 明确不改 | `AutoReplyThread`、`channel_factory`、PDD WS、handlers、consumer |
-| 真实平台 | **不接** 淘宝/抖店/京东 WS |
+| 平台筛选 | `AutoReplyUI` ComboBox：全部 / 拼多多；抖店/京东/淘宝 **disabled** 占位 |
+| 展示 helper | `ui/auto_reply/platform_ui.py` — `platform_display_name`、`is_autoreply_supported` |
+| 卡片 badge | 中文名（如「拼多多」）；unknown 显示原始 `channel_name` |
+| 自动回复按钮 | 非 `pinduoduo` → **disabled** + Tooltip |
+| 启动守卫 | `_guard_autoreply_start`；不调用 `start_auto_reply` |
+| 运行时 | **仍仅 PDD** — `threads.py` / `channel_factory` **未改** |
+| 交付记录 | [phase10b_done.md](phase10b_done.md) |
 
 ---
 

@@ -90,6 +90,7 @@ python scripts/diagnose_runtime.py
 | **9d** | [phase9d_done.md](phase9d_done.md) | AutoReply Registry 默认 on；`false` 回滚 |
 | **9e** | [phase9e_done.md](phase9e_done.md) | Release checkpoint（[主文档](release_checkpoint_phase9.md)） |
 | **10a** | [phase10a_done.md](phase10a_done.md) | 多平台 account model 规划（[SSOT](phase10_account_model.md)） |
+| **10b** | [phase10b_done.md](phase10b_done.md) | AutoReply UI skeleton（筛选、非 PDD 禁用启动） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---
@@ -100,7 +101,7 @@ python scripts/diagnose_runtime.py
 |--------|------|
 | **默认开发 / 交付** | 不设置环境变量 → Registry 创建 + `legacy-default`（`PDDChannel` + `SendMessage`）；见 [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
 | **新架构联调** | `USE_PINDUODUO_CHANNEL_WRAPPER=true` 且 `USE_PINDUODUO_OUTBOUND=true` → `wrapper-and-outbound`；先用 `diagnose_runtime.py` 确认模式 |
-| **接第二平台前** | 读 [phase10_account_model.md](phase10_account_model.md)；黄金路径 + 9d Registry；**10b** UI 守卫；真实 WS → 独立 spike |
+| **接第二平台前** | 10b UI 已禁用非 PDD 启动；真实 WS / Thread 路由 → 独立 spike + 10c+ |
 | **明确不做（当前）** | Phase 5b 统一 bool 解析、接淘宝/抖店/京东运行时、Phase 4c consumer metadata 镜像 — 见 architecture §7 |
 
 ---

@@ -80,6 +80,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **10m** | doudian mock outbound | ✅ | [phase10m_done.md](phase10m_done.md) |
 | **11a** | Doudian registry/factory boundary (docs) | ✅ | [phase11a_done.md](phase11a_done.md) |
 | **11b** | Doudian flag-gated ChannelRegistry registration | ✅ | [phase11b_done.md](phase11b_done.md) |
+| **11c** | Doudian outbound resolver contract (docs / Route B tests) | 📋 | [phase11c_plan.md](phase11c_plan.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -227,6 +228,7 @@ create_auto_reply_runtime_channel()
 | **10k（spike）** | **Doudian mock mappers** + fixtures + contract tests；**非 production**（无 transport/login） — [phase10k_done.md](phase10k_done.md) |
 | **10l（spike）** | **Mock transport** + `enqueue_doudian_raw_message`；drop 不入队；测试 patch 入队（无 Consumer 线程） — [phase10l_done.md](phase10l_done.md) |
 | **10m（spike）** | **`DoudianMockOutbound`** — `sent_messages` 记录；测试内 registry；非 production — [phase10m_done.md](phase10m_done.md) |
+| **11c（规划）** | **`resolve_outbound`** + `channel_outbound_registry` 抖店路径；handler 默认仍 PDD；unified flag 默认 off — [phase11c_plan.md](phase11c_plan.md) |
 
 **Queue naming SSOT：** 生产 PDD lifecycle → `pdd_queue_name` → **`pdd_{shop_id}`**；抖店 spike（10k）测试 → **`doudian_{shop_id}`**（`build_queue_name`），**不得**占用 `pdd_` 前缀。
 
@@ -450,7 +452,8 @@ flowchart TB
 | **10m** ✅ | mock outbound（非 production） | [phase10m_done.md](phase10m_done.md) |
 | **11a** ✅ | registry/factory 边界规划（docs，Route A） | [phase11a_done.md](phase11a_done.md) |
 | **11b** ✅ | `USE_DOUDIAN_CHANNEL_REGISTRATION` + `DoudianMockChannel`（默认不注册） | [phase11b_done.md](phase11b_done.md) |
-| **11c** | Doudian outbound resolver mock 路径 | 规划 |
+| **11c** | Doudian `resolve_outbound` + registry 契约（规划；Route B 测试） | [phase11c_plan.md](phase11c_plan.md) |
+| **11d** | `DoudianMockChannel` auto register outbound | [phase11c_plan.md §13](phase11c_plan.md) |
 | **11+** | 真实第二平台（flag-gated；**抖店 > 京东 > 淘宝**） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |
 

@@ -105,6 +105,7 @@ python scripts/diagnose_runtime.py
 | **10m** | [phase10m_done.md](phase10m_done.md) | doudian mock outbound（`DoudianMockOutbound`） |
 | **11a** | [phase11a_done.md](phase11a_done.md) | Doudian registry/factory 边界规划（[规划](phase11a_plan.md)，纯文档） |
 | **11b** | [phase11b_done.md](phase11b_done.md) | `USE_DOUDIAN_CHANNEL_REGISTRATION` + `DoudianMockChannel`（默认不注册） |
+| **11c** | [phase11c_done.md](phase11c_done.md) | Doudian outbound resolver 契约规划（[规划](phase11c_plan.md)，Route B 测试） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

@@ -27,7 +27,8 @@
 
 | Phase | 内容 |
 |-------|------|
-| **11c** | registry + outbound resolver mock 路径规划或联调测试 |
+| **11c**（规划已完成） | [phase11c_done.md](phase11c_done.md) — outbound resolver contract（Route B 测试待做） |
+| **11d** | `DoudianMockChannel` auto register outbound（见 phase11c_plan §13） |
 
 ---
 

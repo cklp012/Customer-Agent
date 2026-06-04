@@ -1,1 +1,5 @@
-"""抖店（Doudian）spike 包 — Phase 10k：仅 mapper，无 transport / login。"""
+"""抖店（Doudian）spike 包 — fixture / mapper / mock inbound & outbound（非生产）。"""
+
+from Channel.doudian.doudian_outbound import DoudianMockOutbound
+
+__all__ = ["DoudianMockOutbound"]

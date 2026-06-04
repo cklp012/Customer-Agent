@@ -28,8 +28,8 @@
 
 | Phase | 内容 |
 |-------|------|
-| **11a** | flag-gated `ChannelRegistry` / factory 规划或实现 |
-| **10m**（可选） | Doudian outbound mock |
+| **10m**（已完成） | [phase10m_done.md](phase10m_done.md) — Doudian mock outbound |
+| **11a** | flag-gated `ChannelRegistry` / AutoReply factory |
 
 ---
 

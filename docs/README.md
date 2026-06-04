@@ -102,6 +102,7 @@ python scripts/diagnose_runtime.py
 | **10j** | [phase10j_done.md](phase10j_done.md) | doudian second-platform spike 计划（[规划](phase10j_plan.md)，纯文档） |
 | **10k** | [phase10k_done.md](phase10k_done.md) | doudian fixture + mapper contract tests（无真实 API） |
 | **10l** | [phase10l_done.md](phase10l_done.md) | doudian mock transport + enqueue runtime flow（patch 入队） |
+| **10m** | [phase10m_done.md](phase10m_done.md) | doudian mock outbound（`DoudianMockOutbound`） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

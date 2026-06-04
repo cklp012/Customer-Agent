@@ -60,11 +60,12 @@
 
 ## 后续 Phase
 
-| Phase | 内容 |
-|-------|------|
-| **12c** | **Intent gate + dry-run send gate** 技术设计（须满足 [phase12b1_send_gate_requirements.md](phase12b1_send_gate_requirements.md)） |
-| **12d** | Connection status Dashboard |
-| **12e** | DB migration：`intent`、`risk_level`、`human_takeover_reason`、`blocked_reason`、`allowed_to_send` 等 |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **12c** | ✅ | Intent gate + SendDecision + preview dry-run — [phase12c_done.md](phase12c_done.md) |
+| **12d** | 待做 | Connection Status Dashboard IA + API Contract |
+| **12e** | 待做 | DB migration：SendDecision / ReplyLog / ShopBinding |
+| **12f** | 待做 | flag-gated implementation：preview send gate + tests T1–T10 |
 
 ---
 

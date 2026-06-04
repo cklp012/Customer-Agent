@@ -89,6 +89,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **12a** | Merchant UX + binding + safety + MVP/pricing (docs) | ✅ | [phase12a_done.md](phase12a_done.md) |
 | **12b** | SaaS data model + state machines (docs) | ✅ | [phase12b_done.md](phase12b_done.md) |
 | **12b.1** | Consultation-only scope alignment (docs) | ✅ | [phase12b1_done.md](phase12b1_done.md) |
+| **12c** | Intent gate + send decision + preview dry-run design (docs) | ✅ | [phase12c_done.md](phase12c_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -101,11 +102,21 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS：**consultation-first** 绑定、Preview、intent gate、安全、计费 | **12a + 12b.1 文档已定义**；**无** SaaS 代码 |
+| **Productization** | 商家 SaaS：**consultation-first** 绑定、Preview、**intent gate / SendDecision / preview dry-run**、安全、计费 | **12a + 12b.1 + 12c 文档已定义**；**implementation 未开始** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
 **产品边界（12b.1）：** 非「通用 PDD 自动客服」；生产代码尚未 intent gate — 见 [phase12b1_consultation_only_scope.md](phase12b1_consultation_only_scope.md)。
+
+**技术设计（12c · implementation 未开始）：**
+
+| 文档 | 内容 |
+|------|------|
+| [phase12c_intent_gate_design.md](phase12c_intent_gate_design.md) | Intent gate 管线 |
+| [phase12c_send_decision_model.md](phase12c_send_decision_model.md) | SendDecision SSOT |
+| [phase12c_preview_dry_run_technical_design.md](phase12c_preview_dry_run_technical_design.md) | Preview 零 send |
+| [phase12c_handler_integration_plan.md](phase12c_handler_integration_plan.md) | Handler A/B/C 插入点 |
+| [phase12c_test_plan.md](phase12c_test_plan.md) | T1–T10 测试计划 |
 
 **产品化文档索引：**
 
@@ -132,7 +143,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase12b_reply_mode_and_control_model.md](phase12b_reply_mode_and_control_model.md) | ReplyMode / Safety |
 | [phase12b_plan_usage_model.md](phase12b_plan_usage_model.md) | Plan / Usage |
 
-**下一产品化 Phase：** **12c** intent gate + Preview/send gate 技术设计 · 12d Dashboard · **12e** DB migration（含 `intent`、`blocked_reason`、`allowed_to_send`）。
+**下一产品化 Phase：** **12d** Connection Dashboard · **12e** DB migration（SendDecision / ReplyLog）· **12f** flag-gated preview send gate 实现。
 
 ---
 
@@ -293,7 +304,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a + 12b.1）：** **consultation-first** 售前咨询副驾驶；MVP = **PDD Preview + intent gate（待 12c）**；refund/complaint/after-sales **human takeover by default**；工程与产品 **双轨** 推进。
+**Productization（12a + 12b.1 + 12c）：** **consultation-first** 售前咨询副驾驶；**12c** 已定义 intent gate + SendDecision + preview dry-run；**代码未接**；refund/complaint/after-sales **human takeover by default**；工程与产品 **双轨** 推进。
 
 ---
 
@@ -524,8 +535,8 @@ flowchart TB
 | **12a** ✅ | Merchant UX / binding / safety / MVP·pricing（docs） | [phase12a_done.md](phase12a_done.md) |
 | **12b** ✅ | SaaS data model：Merchant/Workspace/ShopBinding/CredentialRef（docs） | [phase12b_done.md](phase12b_done.md) |
 | **12b.1** ✅ | Consultation-only scope alignment（docs） | [phase12b1_done.md](phase12b1_done.md) |
-| **12c** | Intent gate + reply preview / dry-run send gate technical design | [phase12b1_done.md](phase12b1_done.md) |
-| **12d** | Connection status dashboard design | [phase12b_done.md](phase12b_done.md) |
+| **12c** ✅ | Intent gate + send decision + preview dry-run technical design（docs） | [phase12c_done.md](phase12c_done.md) |
+| **12d** | Connection status dashboard IA + API contract | [phase12c_done.md](phase12c_done.md) |
 | **12e** | Merchant account DB migration planning | [phase12b_done.md](phase12b_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |

@@ -26,7 +26,6 @@ class AutoReplyUI(QFrame):
         self.accounts_data = []
         self._loaded_once = False
         self._platform_filter_channel = None  # None = 全部
-        self._last_platform_filter_index = 0
         self.setupUI()
         QTimer.singleShot(300, self._maybeLoadOnShow)
 
@@ -138,27 +137,18 @@ class AutoReplyUI(QFrame):
         return header_widget
 
     def _setup_platform_filter_combo(self):
-        """填充平台筛选项；未来平台条目不可选。"""
+        """填充平台筛选项（qfluentwidgets ComboBox 无 model API，仅可用项）。"""
         self.platform_filter.clear()
-        for label, channel, selectable in PLATFORM_FILTER_OPTIONS:
-            self.platform_filter.addItem(label, channel)
-            idx = self.platform_filter.count() - 1
-            model_item = self.platform_filter.model().item(idx)
-            if model_item is not None:
-                model_item.setEnabled(selectable)
+        for label, _channel in PLATFORM_FILTER_OPTIONS:
+            self.platform_filter.addItem(label)
         self.platform_filter.currentIndexChanged.connect(self._on_platform_filter_changed)
-        self._last_platform_filter_index = 0
         self._platform_filter_channel = None
 
     def _on_platform_filter_changed(self, index: int):
-        model_item = self.platform_filter.model().item(index)
-        if model_item is not None and not model_item.isEnabled():
-            self.platform_filter.blockSignals(True)
-            self.platform_filter.setCurrentIndex(self._last_platform_filter_index)
-            self.platform_filter.blockSignals(False)
-            return
-        self._last_platform_filter_index = index
-        self._platform_filter_channel = self.platform_filter.itemData(index)
+        if 0 <= index < len(PLATFORM_FILTER_OPTIONS):
+            self._platform_filter_channel = PLATFORM_FILTER_OPTIONS[index][1]
+        else:
+            self._platform_filter_channel = None
         self.refreshAccountList()
 
     def _visible_accounts(self) -> list:

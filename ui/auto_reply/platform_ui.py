@@ -14,13 +14,10 @@ PLATFORM_DISPLAY_NAMES = {
     "douyin": "抖音",
 }
 
-# (label, filter channel_name or None for all, selectable)
-PLATFORM_FILTER_OPTIONS: List[Tuple[str, Optional[str], bool]] = [
-    ("全部", None, True),
-    ("拼多多", "pinduoduo", True),
-    ("抖店（即将支持）", "doudian", False),
-    ("京东（即将支持）", "jingdong", False),
-    ("淘宝（即将支持）", "taobao", False),
+# (label, filter channel_name or None for「全部」) — 仅运行时 ComboBox 可用项
+PLATFORM_FILTER_OPTIONS: List[Tuple[str, Optional[str]]] = [
+    ("全部", None),
+    ("拼多多", "pinduoduo"),
 ]
 
 PRODUCTION_AUTOREPLY_PLATFORM = "pinduoduo"

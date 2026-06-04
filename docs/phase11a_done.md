@@ -38,7 +38,8 @@
 
 | Phase | 内容 |
 |-------|------|
-| **11b** | [phase11a_plan.md §13](phase11a_plan.md) — flag + `register_doudian_channel` + `DoudianMockChannel` + 测试 |
+| **11b**（已完成） | [phase11b_done.md](phase11b_done.md) — flag + `DoudianMockChannel` + bootstrap |
+| **11c** | outbound resolver mock 路径（规划） |
 | **12+** | Route D：AutoReply 按 `channel_name`（独立 flag，非本阶段） |
 
 ---

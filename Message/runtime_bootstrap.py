@@ -11,6 +11,7 @@ from typing import List
 
 from Channel.base.registry import ChannelRegistry
 from Channel.base.types import PlatformType
+from Channel.doudian.doudian_flags import use_doudian_channel_registration
 from Message.bootstrap_flags import use_demo_channel_registration
 
 
@@ -48,6 +49,11 @@ def list_available_platforms() -> List[PlatformBootstrapInfo]:
             production_safe=False,
             test_only=True,
         ),
+        PlatformBootstrapInfo(
+            platform_id=PlatformType.DOUDIAN.value,
+            production_safe=False,
+            test_only=True,
+        ),
     ]
 
 
@@ -56,6 +62,8 @@ def get_default_registration_plan() -> List[str]:
     plan = [PlatformType.PINDUODUO.value]
     if use_demo_channel_registration():
         plan.append(PlatformType.DEMO.value)
+    if use_doudian_channel_registration():
+        plan.append(PlatformType.DOUDIAN.value)
     return plan
 
 
@@ -78,6 +86,12 @@ def register_default_platforms(*, force: bool = False) -> List[str]:
 
         register_demo_channel()
         registered_now.append(PlatformType.DEMO.value)
+
+    if use_doudian_channel_registration():
+        from Channel.doudian.doudian_factory import register_doudian_channel
+
+        register_doudian_channel()
+        registered_now.append(PlatformType.DOUDIAN.value)
 
     return registered_now
 
@@ -175,6 +189,8 @@ def format_bootstrap_for_console(status: BootstrapStatus) -> str:
             "    - Registry registration does not mean GUI switched to Registry.",
             "    - Demo is test-only; default plan excludes demo unless "
             "USE_DEMO_CHANNEL_REGISTRATION=true.",
+            "    - Doudian is test-only; default plan excludes doudian unless "
+            "USE_DOUDIAN_CHANNEL_REGISTRATION=true.",
         ]
     )
     return "\n".join(lines)

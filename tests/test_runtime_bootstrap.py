@@ -19,6 +19,7 @@ from Message.runtime_bootstrap import (
 class TestBootstrapFlags(unittest.TestCase):
     def tearDown(self) -> None:
         os.environ.pop("USE_DEMO_CHANNEL_REGISTRATION", None)
+        os.environ.pop("USE_DOUDIAN_CHANNEL_REGISTRATION", None)
         clear_channel_registry_for_tests()
 
     def test_default_plan_only_pinduoduo(self) -> None:
@@ -35,6 +36,7 @@ class TestBootstrapFlags(unittest.TestCase):
 class TestRegisterDefaultPlatforms(unittest.TestCase):
     def tearDown(self) -> None:
         os.environ.pop("USE_DEMO_CHANNEL_REGISTRATION", None)
+        os.environ.pop("USE_DOUDIAN_CHANNEL_REGISTRATION", None)
         clear_channel_registry_for_tests()
 
     def test_registers_pinduoduo_by_default(self) -> None:
@@ -79,9 +81,9 @@ class TestBootstrapStatus(unittest.TestCase):
         self.assertEqual(status.status, "default_applied")
         self.assertIn("pinduoduo", status.registered)
 
-    def test_available_lists_pinduoduo_and_demo(self) -> None:
+    def test_available_lists_pinduoduo_demo_doudian(self) -> None:
         ids = {p.platform_id for p in list_available_platforms()}
-        self.assertEqual(ids, {"pinduoduo", "demo"})
+        self.assertEqual(ids, {"pinduoduo", "demo", "doudian"})
 
 
 if __name__ == "__main__":

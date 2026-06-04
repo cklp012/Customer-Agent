@@ -51,7 +51,8 @@
 
 | Phase | 内容 |
 |-------|------|
-| **11d** | `DoudianMockChannel.start_account` auto register + 可选 handler 联调 |
+| **11d** | outbound auto-registration **规划**（docs） — [phase11d_plan.md](phase11d_plan.md) |
+| **11e** | Route C 实现 + lifecycle tests；可选 handler 联调 → 11f |
 
 ---
 

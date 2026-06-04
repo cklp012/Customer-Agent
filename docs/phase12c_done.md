@@ -61,11 +61,12 @@
 
 ## 下一步建议
 
-| Phase | 内容 |
-|-------|------|
-| **12d** | Connection Status Dashboard IA + API Contract |
-| **12e** | DB migration planning：SendDecision / ReplyLog / ShopBinding 字段 |
-| **12f** | flag-gated implementation plan：preview send gate + inbound gate + tests T1–T10 |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **12d** | ✅ | Dashboard IA + read model + API contract — [phase12d_done.md](phase12d_done.md) |
+| **12e** | 待做 | DB migration：Workspace / ShopBinding / SendDecision / ReplyLog / AuditLog |
+| **12f** | 待做 | flag-gated preview send gate implementation |
+| **12g** | 待做 | PDD MVP merchant console wireframe |
 
 ---
 

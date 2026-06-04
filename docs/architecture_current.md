@@ -90,6 +90,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **12b** | SaaS data model + state machines (docs) | ✅ | [phase12b_done.md](phase12b_done.md) |
 | **12b.1** | Consultation-only scope alignment (docs) | ✅ | [phase12b1_done.md](phase12b1_done.md) |
 | **12c** | Intent gate + send decision + preview dry-run design (docs) | ✅ | [phase12c_done.md](phase12c_done.md) |
+| **12d** | Dashboard IA + read model + API contract (docs) | ✅ | [phase12d_done.md](phase12d_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -102,7 +103,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS：**consultation-first** 绑定、Preview、**intent gate / SendDecision / preview dry-run**、安全、计费 | **12a + 12b.1 + 12c 文档已定义**；**implementation 未开始** |
+| **Productization** | 商家 SaaS：**consultation-first** + **Dashboard / read model / API contract** | **12a–12d 文档已定义**；**implementation 未开始** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -117,6 +118,16 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase12c_preview_dry_run_technical_design.md](phase12c_preview_dry_run_technical_design.md) | Preview 零 send |
 | [phase12c_handler_integration_plan.md](phase12c_handler_integration_plan.md) | Handler A/B/C 插入点 |
 | [phase12c_test_plan.md](phase12c_test_plan.md) | T1–T10 测试计划 |
+
+**Dashboard（12d · implementation 未开始）：**
+
+| 文档 | 内容 |
+|------|------|
+| [phase12d_dashboard_ia.md](phase12d_dashboard_ia.md) | 模块 A–H IA |
+| [phase12d_connection_status_read_model.md](phase12d_connection_status_read_model.md) | effective_status |
+| [phase12d_reply_activity_read_model.md](phase12d_reply_activity_read_model.md) | 活动 / 队列 / 日志 |
+| [phase12d_exception_and_alert_model.md](phase12d_exception_and_alert_model.md) | Alert 模型 |
+| [phase12d_api_contract.md](phase12d_api_contract.md) | REST 草案 |
 
 **产品化文档索引：**
 
@@ -143,7 +154,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase12b_reply_mode_and_control_model.md](phase12b_reply_mode_and_control_model.md) | ReplyMode / Safety |
 | [phase12b_plan_usage_model.md](phase12b_plan_usage_model.md) | Plan / Usage |
 
-**下一产品化 Phase：** **12d** Connection Dashboard · **12e** DB migration（SendDecision / ReplyLog）· **12f** flag-gated preview send gate 实现。
+**下一产品化 Phase：** **12e** DB migration · **12f** preview send gate 实现 · **12g** merchant console wireframe。
 
 ---
 
@@ -304,7 +315,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a + 12b.1 + 12c）：** **consultation-first** 售前咨询副驾驶；**12c** 已定义 intent gate + SendDecision + preview dry-run；**代码未接**；refund/complaint/after-sales **human takeover by default**；工程与产品 **双轨** 推进。
+**Productization（12a–12d）：** **consultation-first** 售前咨询副驾驶；**12c** intent/send gate · **12d** Dashboard read model + API contract；**implementation 未开始**；refund/complaint/after-sales **human takeover by default**；工程与产品 **双轨** 推进。
 
 ---
 
@@ -536,8 +547,10 @@ flowchart TB
 | **12b** ✅ | SaaS data model：Merchant/Workspace/ShopBinding/CredentialRef（docs） | [phase12b_done.md](phase12b_done.md) |
 | **12b.1** ✅ | Consultation-only scope alignment（docs） | [phase12b1_done.md](phase12b1_done.md) |
 | **12c** ✅ | Intent gate + send decision + preview dry-run technical design（docs） | [phase12c_done.md](phase12c_done.md) |
-| **12d** | Connection status dashboard IA + API contract | [phase12c_done.md](phase12c_done.md) |
-| **12e** | Merchant account DB migration planning | [phase12b_done.md](phase12b_done.md) |
+| **12d** ✅ | Dashboard IA + connection/reply read model + API contract（docs） | [phase12d_done.md](phase12d_done.md) |
+| **12e** | DB migration：SendDecision / ReplyLog / ShopBinding / AuditLog | [phase12d_done.md](phase12d_done.md) |
+| **12f** | flag-gated preview send gate implementation | [phase12d_done.md](phase12d_done.md) |
+| **12g** | PDD MVP merchant console wireframe | [phase12d_done.md](phase12d_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

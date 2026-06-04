@@ -75,6 +75,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **10h** | lifecycle Route C：`pdd_lifecycle` + lifecycle-safe wrapper | ✅ | [phase10h_done.md](phase10h_done.md) |
 | **10i** | multi-platform capability matrix + spike boundary (docs) | ✅ | [phase10i_done.md](phase10i_done.md) |
 | **10j** | doudian second-platform spike plan (docs) | ✅ | [phase10j_done.md](phase10j_done.md) |
+| **10k** | doudian fixture + mapper contract tests | ✅ | [phase10k_done.md](phase10k_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -219,8 +220,9 @@ create_auto_reply_runtime_channel()
 | **10h（Route C）** | 生产 PDD lifecycle 经 `_lifecycle_pdd_queue_name` 使用 `pdd_queue_name`；正常 `shop_id` → `pdd_{shop_id}`；`None`/空/空白保持历史 f-string — [phase10h_done.md](phase10h_done.md) |
 | **10i（docs）** | **Capability matrix SSOT** + 第二平台 spike 边界；PDD/Demo/真实平台最小 spike 表；PDD-only 路径冻结 — [phase10i_plan.md](phase10i_plan.md) |
 | **10j（docs）** | **Doudian spike plan**：fixture/mapper/routing 设计、`doudian_{shop_id}`、10k–11+ 拆分；不接真实 API — [phase10j_plan.md](phase10j_plan.md) |
+| **10k（spike）** | **Doudian mock mappers** + fixtures + contract tests；**非 production**（无 transport/login） — [phase10k_done.md](phase10k_done.md) |
 
-**Queue naming SSOT（生产）：** PDD lifecycle 使用 lifecycle-safe wrapper → `pdd_queue_name`；队列字符串仍为 `pdd_{shop_id}`。第二平台 spike 使用 `build_queue_name(platform_id, shop_id)`，**不得**占用 `pdd_` 前缀（见 10i matrix）。
+**Queue naming SSOT：** 生产 PDD lifecycle → `pdd_queue_name` → **`pdd_{shop_id}`**；抖店 spike（10k）测试 → **`doudian_{shop_id}`**（`build_queue_name`），**不得**占用 `pdd_` 前缀。
 
 ---
 
@@ -436,7 +438,7 @@ flowchart TB
 | **10h** ✅ | lifecycle 接入 `pdd_queue_name`（Route C，队列名不变） | [phase10h_done.md](phase10h_done.md) |
 | **10i** ✅ | capability matrix + spike boundary（docs only） | [phase10i_done.md](phase10i_done.md) |
 | **10j** ✅ | doudian spike plan（docs only） | [phase10j_done.md](phase10j_done.md) |
-| **10k** | doudian fixture + mapper contract tests（无真实 API） | [phase10j_plan.md §13](phase10j_plan.md) |
+| **10k** ✅ | doudian fixture + mapper contract（mock，非 production） | [phase10k_done.md](phase10k_done.md) |
 | **10l** | mock transport + enqueue runtime flow | [phase10j_plan.md §13](phase10j_plan.md) |
 | **11+** | 真实第二平台（flag-gated；**抖店 > 京东 > 淘宝**） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |

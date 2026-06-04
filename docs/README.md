@@ -100,6 +100,7 @@ python scripts/diagnose_runtime.py
 | **10h** | [phase10h_done.md](phase10h_done.md) | lifecycle Route C：`pdd_lifecycle` + lifecycle-safe wrapper，队列名仍为 `pdd_{shop_id}` |
 | **10i** | [phase10i_done.md](phase10i_done.md) | capability matrix + 第二平台 spike 边界（[规划](phase10i_plan.md)，纯文档） |
 | **10j** | [phase10j_done.md](phase10j_done.md) | doudian second-platform spike 计划（[规划](phase10j_plan.md)，纯文档） |
+| **10k** | [phase10k_done.md](phase10k_done.md) | doudian fixture + mapper contract tests（无真实 API） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

@@ -39,7 +39,7 @@
 
 | Phase | 允许内容 |
 |-------|----------|
-| **10k** | `tests/fixtures/doudian/` + `Channel/doudian/mappers/` + `test_doudian_queue_naming` + `test_doudian_mapper_contract` + `test_doudian_routing_parity`；**仍不接真实 API** |
+| **10k**（已完成） | [phase10k_done.md](phase10k_done.md) — fixtures + mappers + contract tests |
 | **10l** | mock transport + `test_doudian_spike_runtime_flow` |
 | **11+** | 见 [phase10j_plan.md §12–13](phase10j_plan.md) production gate |
 

@@ -1,0 +1,12 @@
+{
+  "platform": "doudian",
+  "shop_id": "DD_SHOP_001",
+  "account_id": "DD_ACC_001",
+  "conversation_id": "DD_CONV_SYS",
+  "buyer_id": "DD_BUYER_000",
+  "message_id": "DD_MSG_SYS_001",
+  "message_type": "system_notice",
+  "notice_type": "shop_broadcast",
+  "content": "店铺营业状态已更新",
+  "timestamp": 1710000002
+}

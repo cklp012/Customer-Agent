@@ -1,0 +1,13 @@
+{
+  "platform": "doudian",
+  "shop_id": "DD_SHOP_001",
+  "account_id": "DD_ACC_001",
+  "conversation_id": "DD_CONV_002",
+  "buyer_id": "DD_BUYER_002",
+  "message_id": "DD_MSG_PRODUCT_001",
+  "message_type": "product_inquiry",
+  "content": "想咨询一下这款商品的规格",
+  "product_id": "DD_PROD_10001",
+  "product_title": "Mock Spike 测试商品",
+  "timestamp": 1710000001
+}

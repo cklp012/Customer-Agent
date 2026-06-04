@@ -1,0 +1,11 @@
+{
+  "platform": "doudian",
+  "shop_id": "DD_SHOP_001",
+  "account_id": "DD_ACC_001",
+  "conversation_id": "DD_CONV_001",
+  "buyer_id": "DD_BUYER_001",
+  "message_id": "DD_MSG_TEXT_001",
+  "message_type": "text",
+  "content": "你好，这个商品还有货吗？",
+  "timestamp": 1710000000
+}

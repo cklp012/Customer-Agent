@@ -4,8 +4,8 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase **9d** 运行时 / **9e** release checkpoint |
-| Checkpoint | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
+| 文档版本 | Phase **9d** 运行时 / **9e** checkpoint / **10a** account SSOT |
+| Checkpoint | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) · [phase10_account_model.md](phase10_account_model.md) |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -65,6 +65,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **9c** | Registry path parity tests | ✅ | 9d 前灰度准备 |
 | **9d** | AutoReply Registry default-on | ✅ | unset → `ChannelRegistry.create`；`false` 回滚 |
 | **9e** | Release checkpoint (docs) | ✅ | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
+| **10a** | Multi-platform account model (docs) | ✅ | [phase10_account_model.md](phase10_account_model.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -179,6 +180,17 @@ create_auto_reply_runtime_channel()
 `create_pinduoduo_channel` 仍为 **wrapper-only** 直接工厂，不经 Registry 注册。
 
 **Phase 9d：** 生产默认 `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 未设置 → Registry path（app bootstrap 后）；显式 `false` 回滚 legacy；见 `test_autoreply_registry_default`。
+
+### 多平台账号与 UI 规划（Phase 10a，仅文档）
+
+| 项 | 说明 |
+|----|------|
+| 数据模型 | DB 已有 `channels.channel_name`；**即** `platform_id`（= `PlatformType.value`） |
+| 账号 dict | `get_all_accounts_with_details()` → `channel_name`, `shop_id`, `user_id`, … |
+| UI 展示 | 自动回复 / 账号管理页已显示平台 badge |
+| **运行时** | **仍仅 PDD**：`AutoReplyThread` → `pinduoduo.channel_factory`；不按 `channel_name` 路由 |
+| 10a | 无 migration、无 schema 变更、无第二平台 seed |
+| SSOT | [phase10_account_model.md](phase10_account_model.md)；10b = UI skeleton（禁用非 PDD 自动回复） |
 
 ---
 
@@ -383,9 +395,13 @@ flowchart TB
 | **8d** ✅ | runtime diagnostics：[phase8d_done.md](phase8d_done.md) | 运维 |
 | **8e** ✅ | runtime bootstrap：[phase8e_done.md](phase8e_done.md) | 运维 |
 | **8f** ✅ | app startup bootstrap：[phase8f_done.md](phase8f_done.md) | 产品/运维 |
-| **9+** | AutoReply → `ChannelRegistry.create()` | 架构 |
-| **7+ spike** | 真实第二平台（**抖店/飞鸽 > 京东/京麦 > 淘宝/千牛**） | 平台 |
-| **10** | UI 多平台、SaaS 化 | 产品 |
+| **9a–9d** ✅ | AutoReply Registry 接线 + 默认 on | 架构 |
+| **9e** ✅ | Release checkpoint 文档 | 运维 |
+| **10a** ✅ | Account model SSOT | 仅文档 |
+| **10b** | UI skeleton（平台筛选 / 非 PDD 禁用自动回复） | 产品 |
+| **10c** | routing / content_type 规划 | 架构 |
+| **7+ spike** | 真实第二平台（**抖店 > 京东 > 淘宝**） | 平台 |
+| **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |
 
 接第二平台前建议：**D 模式** + 真实 PDD 店跑通 `docs/phase0_audit.md` 黄金路径，再冻结本文件为 v1 基线。
 

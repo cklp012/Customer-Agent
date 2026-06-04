@@ -52,7 +52,7 @@
 | `outbound_resolver` 仅拼多多 | handler 无法平台无关解析 outbound | Phase 7 |
 | `ChannelRegistry` 未在 `app.py` 启动时注册 PDD | UI 仍 `import PDDChannel`，非 `Registry.create` | Phase 7+ / 产品化 |
 | `bridge.context.ChannelType` 无 `DEMO` | Demo 平台需 6b 扩展枚举或复用测试专用值 | Phase 6b |
-| 账号表 / UI 无「平台」维度 | 无法在同一 GUI 选第二平台账号 | Phase 8 或更晚 |
+| 账号表 / UI 无「平台」维度 | 无法在同一 GUI 选第二平台账号 | **Phase 10a** 已文档化：DB 有 `channel_name`；见 [phase10_account_model.md](phase10_account_model.md)；10b UI skeleton |
 | 各平台登录 / WS / API 未调研落地 | 真实第二平台无法开工 | 独立 spike（6b 之后） |
 
 ### 2.3 结论
@@ -60,6 +60,8 @@
 **足够支持 Phase 6b：** 第二个 `BaseChannel` + `ChannelOutbound` 实现、`ChannelRegistry` 多平台注册、单元测试验证契约。
 
 **不足以支持：** 不改 UI/Handler 的前提下，让淘宝/抖店/京东与 PDD 并列生产运行。
+
+> **脚注（Phase 10a）：** 6a 表中「账号表 / UI 无平台维度」缺口已转入 [phase10_account_model.md](phase10_account_model.md)：DB 已有 `channel_name`（= `platform_id`）；自动回复运行时仍仅 PDD；10b 为 UI skeleton。
 
 ---
 

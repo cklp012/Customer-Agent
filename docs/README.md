@@ -14,6 +14,7 @@
 2. **怎么启动** — [runbook.md](runbook.md)（安装、`uv sync` / pip、`python app.py`、Playwright、PDD 账号）
 3. **当前架构** — [architecture_current.md](architecture_current.md)（模块职责、legacy / 新链路、边界）
 3b. **Phase 9 发布快照** — [release_checkpoint_phase9.md](release_checkpoint_phase9.md)（8a–9d 默认路径、flag、回滚）
+3c. **多平台账号模型** — [phase10_account_model.md](phase10_account_model.md)（`channel_name` = platform_id；运行时仍仅 PDD）
 4. **运行模式** — [runtime_modes.md](runtime_modes.md)（`USE_PINDUODUO_*` 四组合、Registry 默认 on）
 5. **怎么诊断环境** — 见下方「运维与诊断」；细节见 [runtime_modes.md §6](runtime_modes.md#6-诊断脚本) 与 [runbook.md §运行模式](runbook.md#运行模式高级可选)
 6. **各 Phase 交付记录** — 见下方「Phase 交付索引」
@@ -29,7 +30,8 @@
 | [architecture_current.md](architecture_current.md) | **架构基线（SSOT）**：目标、Phase 0–5a 完成情况、默认/新链路、模块表、风险与路线图 |
 | [runtime_modes.md](runtime_modes.md) | **运行模式（SSOT）**：两个 flag、四种组合、PowerShell 示例、回退 |
 | [phase0_audit.md](phase0_audit.md) | Phase 0 审计、GUI 验证、**黄金路径** #3–#8（真实 PDD 测试店） |
-| [release_checkpoint_phase9.md](release_checkpoint_phase9.md) | **Phase 9 发布检查点**（8a–9d 默认行为、回滚、验证、Phase 10 边界） |
+| [release_checkpoint_phase9.md](release_checkpoint_phase9.md) | **Phase 9 发布检查点**（8a–9d 默认行为、回滚、验证） |
+| [phase10_account_model.md](phase10_account_model.md) | **Phase 10 账号模型 SSOT**（UI 规划、契约、平台能力矩阵） |
 
 ---
 
@@ -87,7 +89,8 @@ python scripts/diagnose_runtime.py
 | **9c** | [phase9c_done.md](phase9c_done.md) | Registry path parity tests |
 | **9d** | [phase9d_done.md](phase9d_done.md) | AutoReply Registry 默认 on；`false` 回滚 |
 | **9e** | [phase9e_done.md](phase9e_done.md) | Release checkpoint（[主文档](release_checkpoint_phase9.md)） |
-| **9** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | AutoReply Registry / 多平台规划 |
+| **10a** | [phase10a_done.md](phase10a_done.md) | 多平台 account model 规划（[SSOT](phase10_account_model.md)） |
+| **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---
 
@@ -97,7 +100,7 @@ python scripts/diagnose_runtime.py
 |--------|------|
 | **默认开发 / 交付** | 不设置环境变量 → Registry 创建 + `legacy-default`（`PDDChannel` + `SendMessage`）；见 [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
 | **新架构联调** | `USE_PINDUODUO_CHANNEL_WRAPPER=true` 且 `USE_PINDUODUO_OUTBOUND=true` → `wrapper-and-outbound`；先用 `diagnose_runtime.py` 确认模式 |
-| **接第二平台前** | 黄金路径 + `app.py` bootstrap；9d 起 AutoReply 默认 Registry path；回滚 `$env:USE_CHANNEL_REGISTRY_FOR_AUTOREPLY='false'`；**10+** 真实平台 |
+| **接第二平台前** | 读 [phase10_account_model.md](phase10_account_model.md)；黄金路径 + 9d Registry；**10b** UI 守卫；真实 WS → 独立 spike |
 | **明确不做（当前）** | Phase 5b 统一 bool 解析、接淘宝/抖店/京东运行时、Phase 4c consumer metadata 镜像 — 见 architecture §7 |
 
 ---

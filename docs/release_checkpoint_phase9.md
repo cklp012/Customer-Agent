@@ -301,13 +301,13 @@ python app.py                          # 再看启动与启账号日志
 
 | 阶段 | 建议内容 |
 |------|----------|
-| **10a** | 多平台 UI / 账号模型 **规划**（平台字段、配置结构） |
-| **10b** | UI **骨架**（平台选择、展示）；**不接**真实第二平台 WS |
-| **10c** | routing / `content_type` **规划**（8 规划 Route C）；handler 行为需新 flag 门控 |
-| **独立 spike** | 真实第二平台（6a 优先级：抖店 > 京东 > 淘宝） |
-| **可选** | 默认 `wrapper-and-outbound` 生产化 — 单独立项，非 10 前置 |
+| **10a** ✅ | 多平台 account model SSOT — [phase10_account_model.md](phase10_account_model.md) |
+| **10b** | UI **骨架**（筛选、非 PDD 禁用自动回复）；**不接**真实 WS |
+| **10c** | routing / `content_type` **规划**（8 规划 Route C） |
+| **独立 spike** | 真实第二平台（6a：抖店 > 京东 > 淘宝） |
+| **10d+** | `AutoReplyThread` 按 `channel_name` 路由（flag，默认 PDD） |
 
-**Phase 10 首迭代建议：** 文档 + UI 模型 + 边界清晰；**不**在 10 第一轮接真实平台协议。
+**Phase 10 入口：** [phase10_account_model.md](phase10_account_model.md)（账号契约、`channel_name` = `platform_id`、PDD 绑定点、10b 建议）。
 
 ---
 

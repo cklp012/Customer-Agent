@@ -33,7 +33,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **12a** | Doudian real API research docs（G1） |
+| **12a** ✅ | Merchant UX / binding / safety / MVP — [phase12a_done.md](phase12a_done.md) |
+| **12b** | Shop binding + merchant account data model |
+| **12c** | Reply preview / dry-run technical design |
+| **12d** | Connection status dashboard design |
 
 ---
 

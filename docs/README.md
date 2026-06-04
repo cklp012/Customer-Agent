@@ -108,6 +108,7 @@ python scripts/diagnose_runtime.py
 | **11c** | [phase11c_done.md](phase11c_done.md) | Doudian outbound resolver 契约测试（[规划](phase11c_plan.md)，Route B） |
 | **11d** | [phase11d_done.md](phase11d_done.md) | Doudian channel outbound auto-registration 规划（[规划](phase11d_plan.md)，纯文档） |
 | **11e** | [phase11e_done.md](phase11e_done.md) | `DoudianMockChannel` outbound auto-registration（[规划](phase11e_plan.md)） |
+| **11f** | [phase11f_done.md](phase11f_done.md) | Handler unified outbound 测试边界规划（[规划](phase11f_plan.md)，纯文档） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

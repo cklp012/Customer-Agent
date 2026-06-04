@@ -83,6 +83,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **11c** | Doudian outbound resolver contract tests | ✅ | [phase11c_done.md](phase11c_done.md) |
 | **11d** | Doudian channel outbound auto-registration (docs) | ✅ | [phase11d_done.md](phase11d_done.md) |
 | **11e** | DoudianMockChannel outbound auto-registration | ✅ | [phase11e_done.md](phase11e_done.md) |
+| **11f** | Handler unified outbound path (docs) | 📋 | [phase11f_plan.md](phase11f_plan.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -232,11 +233,14 @@ create_auto_reply_runtime_channel()
 | **10m（spike）** | **`DoudianMockOutbound`** — `sent_messages` 记录；测试内 registry；非 production — [phase10m_done.md](phase10m_done.md) |
 | **11c（Route B）** | **`resolve_outbound`** + `channel_outbound_registry` 抖店契约测试；handler 默认仍 PDD — [phase11c_done.md](phase11c_done.md) |
 | **11d（docs）** | **`DoudianMockChannel` lifecycle auto-register 规划** — [phase11d_done.md](phase11d_done.md) |
-| **11e（Route C）** | **`start_account` register / `stop_account` unregister** → `channel_outbound_registry`；`resolve_outbound` 在 channel start 后命中 — [phase11e_done.md](phase11e_done.md) |
+| **11e（Route C）** | **`start_account` register / `stop_account` unregister** → `channel_outbound_registry` — [phase11e_done.md](phase11e_done.md) |
+| **11f（docs）** | **Handler unified outbound 测试边界**；flag 仅测试内开启 — [phase11f_plan.md](phase11f_plan.md) |
 
 **Queue naming SSOT：** 生产 PDD lifecycle → `pdd_queue_name` → **`pdd_{shop_id}`**；抖店 spike（10k）测试 → **`doudian_{shop_id}`**（`build_queue_name`），**不得**占用 `pdd_` 前缀。
 
 **Doudian mock runtime（11e）：** 仅当显式创建 `DoudianMockChannel` 并 `start_account` 时，outbound 写入 `channel_outbound_registry`；`USE_DOUDIAN_CHANNEL_REGISTRATION` 默认 **false**，bootstrap **不** 创建抖店 channel；AutoReply 仍 PDD-only。
+
+**Handler unified outbound（11f 规划）：** 生产 handler 默认仍 `resolve_pinduoduo_outbound`；抖店 handler 出站链仅能在测试内 `USE_UNIFIED_OUTBOUND_RESOLVER=true` 验证（实现 → **11g**）。
 
 ---
 
@@ -461,7 +465,8 @@ flowchart TB
 | **11c** ✅ | Doudian `resolve_outbound` + registry 契约（Route B tests） | [phase11c_done.md](phase11c_done.md) |
 | **11d** ✅ | outbound auto-register 规划（docs） | [phase11d_done.md](phase11d_done.md) |
 | **11e** ✅ | `DoudianMockChannel` lifecycle register/unregister | [phase11e_done.md](phase11e_done.md) |
-| **11f** | handler unified outbound 抖店联调（可选，测试内 flag） | [phase11e_done.md](phase11e_done.md) |
+| **11f** | handler unified outbound 抖店联调（docs） | 📋 | [phase11f_plan.md](phase11f_plan.md) |
+| **11g** | Route C：`test_handler_doudian_unified_outbound.py` | [phase11f_plan.md §14](phase11f_plan.md) |
 | **11+** | 真实第二平台（flag-gated；**抖店 > 京东 > 淘宝**） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |
 

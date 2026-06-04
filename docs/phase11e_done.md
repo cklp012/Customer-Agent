@@ -45,7 +45,8 @@
 
 | Phase | 内容 |
 |-------|------|
-| **11f（可选）** | handler unified outbound path 联调测试规划（测试内 flag） |
+| **11f** ✅ | handler unified outbound 测试边界规划 — [phase11f_done.md](phase11f_done.md) |
+| **11g** | Route C：`test_handler_doudian_unified_outbound.py` |
 
 ---
 

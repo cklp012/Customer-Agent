@@ -57,7 +57,7 @@ pdd_queue_name(shop_id) == f"pdd_{shop_id}"
 |----|------|
 | 生产路径 | 仍使用 `f"pdd_{shop_id}"`（5 处，见 phase10g_plan） |
 | 本 Phase | **未接入** helper |
-| 下一步 | **Phase 10h Route C** — lifecycle 单点替换 + mock 测试（须 parity 仍绿） |
+| 下一步 | **Phase 10h** — [phase10h_plan.md](phase10h_plan.md)（Route C + legacy-compatible 封装） |
 
 ---
 

@@ -213,7 +213,7 @@ create_auto_reply_runtime_channel()
 | **10e（已规划）** | queue：`pdd_{shop_id}` 保持；分工见 [phase10e_done.md](phase10e_done.md) |
 | **10f（已实现）** | SSOT：[Message/queue_naming.py](../Message/queue_naming.py)；生产 lifecycle **未接入** |
 | **10g（Route B）** | `pdd_queue_name`；**lifecycle 未接入** — [phase10g_done.md](phase10g_done.md) |
-| **10h** | lifecycle 接入 `pdd_queue_name`（Route C） | [phase10g_plan.md](phase10g_plan.md) |
+| **10h** | lifecycle 接入 `pdd_queue_name`（规划） | [phase10h_plan.md](phase10h_plan.md) |
 
 ---
 

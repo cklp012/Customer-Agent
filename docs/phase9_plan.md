@@ -2,8 +2,8 @@
 
 | 项 | 值 |
 |---|---|
-| 状态 | **9a–9d** ✅ 见 phase9*_done.md |
-| 路线 | 9a–9c：门控 + parity；**9d**：默认 Registry path |
+| 状态 | **9a–9e** ✅；checkpoint：[release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
+| 路线 | 9a–9d：Registry 接线；**9e**：发布文档 |
 
 ---
 
@@ -32,7 +32,11 @@
 | **9b** ✅ | `create_pinduoduo_registry_channel` + register parity |
 | **9c** ✅ | parity hardening；默认仍 legacy path（Route B） |
 | **9d** ✅ | `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 未设置 → true（Route C） |
-| **10+** | UI 多平台、routing、真实第二平台 |
+| **9e** ✅ | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
+| **10a+** | 多平台 UI / account 规划 |
+| **10b+** | UI skeleton（无真实 WS） |
+| **10c+** | routing / content_type 规划 |
+| **独立** | 真实第二平台 spike（非 10 第一轮） |
 
 ---
 

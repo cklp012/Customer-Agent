@@ -1,8 +1,22 @@
 # Customer-Agent 运行模式说明
 
-**文档导航：** [docs 目录](README.md) · [运行手册](runbook.md) · [当前架构](architecture_current.md)
+**文档导航：** [docs 目录](README.md) · [运行手册](runbook.md) · [当前架构](architecture_current.md) · **[Phase 9 发布检查点](release_checkpoint_phase9.md)**
 
 本文档说明拼多多相关**环境变量运行模式**。LLM、数据库路径等仍见 `config.json` 与 [runbook.md](./runbook.md)。
+
+### 默认一览（Phase 9d，9e checkpoint）
+
+| 环境变量 | 未设置 (None) | 显式回滚 / off |
+|----------|---------------|----------------|
+| `USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` | **true** | `false` / `0` / `no` / `off` |
+| `USE_PINDUODUO_CHANNEL_WRAPPER` | false | — |
+| `USE_PINDUODUO_OUTBOUND` | false | — |
+| `USE_UNIFIED_OUTBOUND_RESOLVER` | false | — |
+| `USE_UNIFIED_MESSAGE_SHADOW` | false | — |
+| `USE_UNIFIED_MESSAGE_DUAL_TRACK` | false | — |
+| `USE_DEMO_CHANNEL_REGISTRATION` | false | — |
+
+`USE_CHANNEL_REGISTRY_FOR_AUTOREPLY` 的空字符串或未知值 → **false**（见 `autoreply_registry_flags.py`）。
 
 ---
 

@@ -1,6 +1,6 @@
 # Agent-Customer 本地运行手册（Phase 0）
 
-**文档导航：** [docs 目录](README.md) · [当前架构](architecture_current.md) · [运行模式](runtime_modes.md) · [Phase 0 审计](phase0_audit.md)
+**文档导航：** [docs 目录](README.md) · [当前架构](architecture_current.md) · [运行模式](runtime_modes.md) · **[Phase 9 发布检查点](release_checkpoint_phase9.md)** · [Phase 0 审计](phase0_audit.md)
 
 > **本机已验证**（2026-06-01，Windows，`D:\agent`）：`install_playwright.py` → `app.py` GUI → 自动回复 / 关键词 / 账号(0) / 知识库 各页可打开。PDD 登录与 WS 待添加测试店铺后补测。详见 [phase0_audit.md](./phase0_audit.md) §2.2。
 
@@ -60,7 +60,7 @@ python app.py
 
 ## 运行模式（高级，可选）
 
-**默认无需设置任何环境变量**，即为 legacy 生产模式（`PDDChannel` + `SendMessage`）。
+**默认无需设置环境变量**：AutoReply 经 **ChannelRegistry** 创建（9d），实例仍为 **`PDDChannel`** + **`SendMessage`**（wrapper/outbound 默认 off）。详见 [release_checkpoint_phase9.md](release_checkpoint_phase9.md)。
 
 测试新架构（需真实 PDD 测试店联调）：
 
@@ -84,6 +84,28 @@ python app.py
 ```
 
 完整说明见 [runtime_modes.md](./runtime_modes.md) 与 [phase9d_done.md](./phase9d_done.md)。
+
+## Phase 9 发布前检查（9e checkpoint）
+
+发布或交付前建议：
+
+```powershell
+cd D:\agent
+python -m unittest discover -s tests -v
+python scripts/diagnose_runtime.py
+python app.py
+```
+
+检查项（细节见 [release_checkpoint_phase9.md §11](release_checkpoint_phase9.md#11-verification-checklist)）：
+
+| 项 | 预期 |
+|----|------|
+| 单测 | 全绿 |
+| diagnose | 退出码 0；PDD core import ok |
+| app 启账号 | 无 `ChannelRegistry.create fallback for AutoReply` |
+| diagnose `registry_fallback` | 独立进程未 bootstrap 时**可接受** |
+
+**diagnose 解读：** `autoreply_channel_source=registry_fallback` 在仅跑 diagnose 时正常；以 **app 进程日志** 为准。见 [release_checkpoint_phase9.md §12](release_checkpoint_phase9.md#12-diagnostics-cheat-sheet)。
 
 ## 最小配置
 

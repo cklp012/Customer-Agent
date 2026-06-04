@@ -2,7 +2,7 @@
 
 本项目正在从拼多多单平台客服改造为**多平台电商 AI 客服工作台**。当前**运行时仅拼多多**；`Channel/base` 为多平台预留，尚未接入淘宝 / 抖店 / 京东。
 
-**文档导航：** [运行手册](runbook.md) · [当前架构](architecture_current.md) · [运行模式](runtime_modes.md) · [Phase 0 审计](phase0_audit.md)
+**文档导航：** [运行手册](runbook.md) · [当前架构](architecture_current.md) · [运行模式](runtime_modes.md) · **[Phase 9 发布检查点](release_checkpoint_phase9.md)** · [Phase 0 审计](phase0_audit.md)
 
 ---
 
@@ -13,7 +13,8 @@
 1. **项目是什么** — 仓库根 [README.md](../README.md) 功能概览 + 本文「核心文档」
 2. **怎么启动** — [runbook.md](runbook.md)（安装、`uv sync` / pip、`python app.py`、Playwright、PDD 账号）
 3. **当前架构** — [architecture_current.md](architecture_current.md)（模块职责、legacy / 新链路、边界）
-4. **运行模式** — [runtime_modes.md](runtime_modes.md)（`USE_PINDUODUO_*` 四组合、回退）
+3b. **Phase 9 发布快照** — [release_checkpoint_phase9.md](release_checkpoint_phase9.md)（8a–9d 默认路径、flag、回滚）
+4. **运行模式** — [runtime_modes.md](runtime_modes.md)（`USE_PINDUODUO_*` 四组合、Registry 默认 on）
 5. **怎么诊断环境** — 见下方「运维与诊断」；细节见 [runtime_modes.md §6](runtime_modes.md#6-诊断脚本) 与 [runbook.md §运行模式](runbook.md#运行模式高级可选)
 6. **各 Phase 交付记录** — 见下方「Phase 交付索引」
 7. **后续开发从哪开始** — 见下方「后续开发」；路线图以 [architecture_current.md §8](architecture_current.md#8-后续建议路线) 为准
@@ -28,6 +29,7 @@
 | [architecture_current.md](architecture_current.md) | **架构基线（SSOT）**：目标、Phase 0–5a 完成情况、默认/新链路、模块表、风险与路线图 |
 | [runtime_modes.md](runtime_modes.md) | **运行模式（SSOT）**：两个 flag、四种组合、PowerShell 示例、回退 |
 | [phase0_audit.md](phase0_audit.md) | Phase 0 审计、GUI 验证、**黄金路径** #3–#8（真实 PDD 测试店） |
+| [release_checkpoint_phase9.md](release_checkpoint_phase9.md) | **Phase 9 发布检查点**（8a–9d 默认行为、回滚、验证、Phase 10 边界） |
 
 ---
 
@@ -84,6 +86,7 @@ python scripts/diagnose_runtime.py
 | **9b** | [phase9b_done.md](phase9b_done.md) | `create_pinduoduo_registry_channel` parity factory |
 | **9c** | [phase9c_done.md](phase9c_done.md) | Registry path parity tests |
 | **9d** | [phase9d_done.md](phase9d_done.md) | AutoReply Registry 默认 on；`false` 回滚 |
+| **9e** | [phase9e_done.md](phase9e_done.md) | Release checkpoint（[主文档](release_checkpoint_phase9.md)） |
 | **9** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | AutoReply Registry / 多平台规划 |
 
 ---
@@ -92,7 +95,7 @@ python scripts/diagnose_runtime.py
 
 | 优先级 | 建议 |
 |--------|------|
-| **默认开发 / 交付** | 不设置环境变量 → `legacy-default`（`PDDChannel` + `SendMessage`） |
+| **默认开发 / 交付** | 不设置环境变量 → Registry 创建 + `legacy-default`（`PDDChannel` + `SendMessage`）；见 [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
 | **新架构联调** | `USE_PINDUODUO_CHANNEL_WRAPPER=true` 且 `USE_PINDUODUO_OUTBOUND=true` → `wrapper-and-outbound`；先用 `diagnose_runtime.py` 确认模式 |
 | **接第二平台前** | 黄金路径 + `app.py` bootstrap；9d 起 AutoReply 默认 Registry path；回滚 `$env:USE_CHANNEL_REGISTRY_FOR_AUTOREPLY='false'`；**10+** 真实平台 |
 | **明确不做（当前）** | Phase 5b 统一 bool 解析、接淘宝/抖店/京东运行时、Phase 4c consumer metadata 镜像 — 见 architecture §7 |

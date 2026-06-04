@@ -4,7 +4,8 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase 8f 里程碑（app startup bootstrap） |
+| 文档版本 | Phase **9d** 运行时 / **9e** release checkpoint |
+| Checkpoint | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -63,6 +64,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **9b** | PDD registry factory parity | ✅ | `create_pinduoduo_registry_channel` |
 | **9c** | Registry path parity tests | ✅ | 9d 前灰度准备 |
 | **9d** | AutoReply Registry default-on | ✅ | unset → `ChannelRegistry.create`；`false` 回滚 |
+| **9e** | Release checkpoint (docs) | ✅ | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -73,8 +75,9 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 ### Feature flags（默认）
 
 ```text
-USE_PINDUODUO_CHANNEL_WRAPPER=false   # 或未设置
-USE_PINDUODUO_OUTBOUND=false          # 或未设置
+USE_CHANNEL_REGISTRY_FOR_AUTOREPLY=true   # 未设置 → true（9d）
+USE_PINDUODUO_CHANNEL_WRAPPER=false     # 未设置 → false
+USE_PINDUODUO_OUTBOUND=false            # 未设置 → false
 ```
 
 ### 端到端路径
@@ -83,8 +86,11 @@ USE_PINDUODUO_OUTBOUND=false          # 或未设置
 用户 GUI（自动回复页）
   → ui/auto_reply/manager.py
   → ui/auto_reply/threads.py :: AutoReplyThread
-       → create_auto_reply_runtime_channel()  # 9a 可选 Registry（默认仍 legacy）
-       → PDDChannel() 或 PinduoduoChannel（wrapper flag；见下决策树）
+       → create_auto_reply_runtime_channel()
+            → ChannelRegistry.create(PINDUODUO)   # 9d 默认（app 已 bootstrap）
+            → create_pinduoduo_registry_channel()
+            → _create_auto_reply_legacy()
+       → PDDChannel()（wrapper 默认 off）或 PinduoduoChannel（wrapper on）
        → LifecycleMixin.start_account
             → init → WebSocket 连接
             → _setup_message_consumer → handler_chain
@@ -97,7 +103,7 @@ USE_PINDUODUO_OUTBOUND=false          # 或未设置
   → 出站：SendMessage.send_text / move_conversation（同步 API）
 ```
 
-**含义：** 与 Phase 0 审计时的 legacy 路径一致；Strangler 层存在但默认不启用。
+**含义：** 默认仍为 **PDDChannel + SendMessage**（与 Phase 0 一致）；9d 仅 Channel **创建** 经 Registry 分发（9b parity）。详见 [release_checkpoint_phase9.md §3](release_checkpoint_phase9.md#3-current-default-runtime-path)。
 
 ```mermaid
 flowchart TB

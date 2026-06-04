@@ -94,6 +94,7 @@ python scripts/diagnose_runtime.py
 | **10b** | [phase10b_done.md](phase10b_done.md) | AutoReply UI skeleton（筛选、非 PDD 禁用启动） |
 | **10c** | [phase10c_done.md](phase10c_done.md) | routing / content_type / platform SSOT（[规划](phase10c_plan.md)） |
 | **10d** | [phase10d_done.md](phase10d_done.md) | 契约测试锁定 10c（routing parity + platform contract） |
+| **10e** | [phase10e_done.md](phase10e_done.md) | queue 命名与 Consumer 边界（[规划](phase10e_plan.md)，纯文档） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

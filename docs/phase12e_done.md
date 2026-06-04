@@ -59,11 +59,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **12f** | flag-gated Preview Send Gate **implementation plan** |
-| **12g** | PDD MVP merchant console wireframe |
-| **13a** | first shadow table implementation（**评审后**） |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **12f** | ✅ | Preview send gate implementation plan — [phase12f_done.md](phase12f_done.md) |
+| **12g** | 待做 | PDD MVP merchant console wireframe |
+| **13a** | 待做 | product gate pure functions + tests only（H1） |
+| **13b** | 待做 | shadow SendDecision logging（H2） |
 
 ---
 

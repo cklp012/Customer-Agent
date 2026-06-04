@@ -117,6 +117,7 @@ python scripts/diagnose_runtime.py
 | **12c** | [phase12c_done.md](phase12c_done.md) | Intent gate + SendDecision + Preview dry-run 技术设计（纯文档，implementation 未开始） |
 | **12d** | [phase12d_done.md](phase12d_done.md) | Dashboard IA + Connection/Reply read model + Alert + API contract（纯文档） |
 | **12e** | [phase12e_done.md](phase12e_done.md) | DB migration planning：shadow-first product gate schema（纯文档） |
+| **12f** | [phase12f_done.md](phase12f_done.md) | Preview send gate implementation plan：`send_text_guarded`、H0–H6、T1–T12（纯文档） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

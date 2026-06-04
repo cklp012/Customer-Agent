@@ -2,7 +2,7 @@
 
 | 项 | 值 |
 |---|---|
-| 状态 | **仅规划**（本文档） |
+| 状态 | Route B 交付见 [phase10g_done.md](phase10g_done.md)；Route C → Phase 10h |
 | 前置 | [phase10f_done.md](phase10f_done.md)、[phase10e_done.md](phase10e_done.md) |
 | 硬约束 | 生产 queue 字符串 **必须** 仍为 `pdd_{shop_id}`（与现网 f-string 一致） |
 

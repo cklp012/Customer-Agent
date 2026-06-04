@@ -47,6 +47,15 @@ def queue_prefix_for_platform(platform_id: Any) -> str:
     return _PLATFORM_QUEUE_PREFIX.get(normalized, normalized)
 
 
+def pdd_queue_name(shop_id: Any) -> str:
+    """
+    拼多多生产队列名（与历史 pdd_lifecycle 中 f"pdd_{shop_id}" 对齐）。
+
+    当前未接入 lifecycle；见 Phase 10g Route B / 10h Route C 规划。
+    """
+    return build_queue_name("pinduoduo", shop_id)
+
+
 def build_queue_name(platform_id: Any, shop_id: Any) -> str:
     """
     构造消息队列名：{prefix}_{shop_id}。
@@ -70,5 +79,6 @@ def build_queue_name(platform_id: Any, shop_id: Any) -> str:
 __all__ = [
     "build_queue_name",
     "normalize_platform_id",
+    "pdd_queue_name",
     "queue_prefix_for_platform",
 ]

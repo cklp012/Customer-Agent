@@ -6,7 +6,18 @@ from websockets import exceptions as ws_exceptions
 from typing import Optional, Any
 from utils.logger_loguru import get_logger
 from Channel.pinduoduo.utils.API.get_token import GetToken
+from Message.queue_naming import pdd_queue_name
 from config import config
+
+
+def _lifecycle_pdd_queue_name(shop_id: Any) -> str:
+    """
+    PDD 队列名：正常 shop_id 走 pdd_queue_name；None/空/空白保持历史 f-string。
+    """
+    try:
+        return pdd_queue_name(shop_id)
+    except ValueError:
+        return f"pdd_{shop_id}"
 
 
 class LifecycleMixin:
@@ -112,7 +123,7 @@ class LifecycleMixin:
 
             await self.cleanup_processing_tasks()
 
-            queue_name = f"pdd_{shop_id}"
+            queue_name = _lifecycle_pdd_queue_name(shop_id)
             await self._cleanup_resources(queue_name)
 
             self.logger.info(f"成功停止店铺 {shop_id} 账号 {username}")
@@ -122,13 +133,13 @@ class LifecycleMixin:
 
     async def init(self, shop_id: str, user_id: str, username: str, on_success: callable, on_failure: callable):
         """初始化WebSocket连接和消息处理系统"""
+        queue_name = _lifecycle_pdd_queue_name(shop_id)
         try:
             self._stop_event = asyncio.Event()
 
             token = GetToken(shop_id, user_id)
             access_token = token.get_token()
 
-            queue_name = f"pdd_{shop_id}"
             await self._setup_message_consumer(queue_name)
 
             params = {
@@ -221,7 +232,7 @@ class LifecycleMixin:
                             self.logger.debug(f"等待任务取消时出错: {e}")
 
                     if should_cleanup:
-                        await self._cleanup_resources(f"pdd_{shop_id}")
+                        await self._cleanup_resources(queue_name)
 
                 except asyncio.CancelledError:
                     self.logger.debug(f"WebSocket任务被取消: {shop_id}-{username}")
@@ -244,7 +255,7 @@ class LifecycleMixin:
                             await asyncio.wait_for(health_task, timeout=3.0)
                         except (asyncio.CancelledError, asyncio.TimeoutError, asyncio.InvalidStateError):
                             pass
-                    await self._cleanup_resources(f"pdd_{shop_id}")
+                    await self._cleanup_resources(queue_name)
 
         except ws_exceptions.ConnectionClosed as e:
             self.status_manager.update_status(shop_id, user_id, username, ConnectionState.ERROR, str(e))
@@ -254,7 +265,7 @@ class LifecycleMixin:
             self.status_manager.update_status(shop_id, user_id, username, ConnectionState.ERROR, str(e))
             self.logger.error(f"WebSocket连接错误: {shop_id}-{username}, 错误: {str(e)}")
             on_failure(f"WebSocket连接错误: {e}")
-            await self._cleanup_resources(f"pdd_{shop_id}")
+            await self._cleanup_resources(queue_name)
 
     def request_stop(self):
         """请求停止WebSocket连接"""

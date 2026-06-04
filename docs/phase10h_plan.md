@@ -344,4 +344,4 @@ git diff 聚焦 pdd_lifecycle + tests + docs
 
 ---
 
-*规划版本：Phase 10h · 2026-06-03 · 无代码变更*
+*规划版本：Phase 10h · 2026-06-03 · Route C 已实现 → [phase10h_done.md](phase10h_done.md)*

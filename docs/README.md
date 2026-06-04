@@ -97,7 +97,7 @@ python scripts/diagnose_runtime.py
 | **10e** | [phase10e_done.md](phase10e_done.md) | queue 命名与 Consumer 边界（[规划](phase10e_plan.md)，纯文档） |
 | **10f** | [phase10f_done.md](phase10f_done.md) | `build_queue_name` helper（PDD 仍 `pdd_{shop_id}`，lifecycle 未接入） |
 | **10g** | [phase10g_done.md](phase10g_done.md) | `pdd_queue_name` + legacy parity（lifecycle 未接入） |
-| **10h** | [phase10h_plan.md](phase10h_plan.md) | lifecycle 接入 `pdd_queue_name`（规划；Route C + S2） |
+| **10h** | [phase10h_done.md](phase10h_done.md) | lifecycle Route C：`pdd_lifecycle` + lifecycle-safe wrapper，队列名仍为 `pdd_{shop_id}` |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

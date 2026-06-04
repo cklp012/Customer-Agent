@@ -72,6 +72,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **10e** | queue naming / Consumer 边界 (docs) | ✅ | [phase10e_done.md](phase10e_done.md) |
 | **10f** | `build_queue_name` helper + tests | ✅ | [phase10f_done.md](phase10f_done.md) |
 | **10g** | `pdd_queue_name` + legacy parity (Route B) | ✅ | [phase10g_done.md](phase10g_done.md) |
+| **10h** | lifecycle Route C：`pdd_lifecycle` + lifecycle-safe wrapper | ✅ | [phase10h_done.md](phase10h_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -211,9 +212,9 @@ create_auto_reply_runtime_channel()
 | **handler** | 仍 `can_handle(Context.type)`；不以 routing 改生产默认（Route C → flag，推迟） |
 | **10d（已实现）** | 契约测试锁定 SSOT：`test_pdd_routing_parity`、`test_platform_message_contract`；**生产默认未变** |
 | **10e（已规划）** | queue：`pdd_{shop_id}` 保持；分工见 [phase10e_done.md](phase10e_done.md) |
-| **10f（已实现）** | SSOT：[Message/queue_naming.py](../Message/queue_naming.py)；生产 lifecycle **未接入** |
-| **10g（Route B）** | `pdd_queue_name`；**lifecycle 未接入** — [phase10g_done.md](phase10g_done.md) |
-| **10h** | lifecycle 接入 `pdd_queue_name`（规划） | [phase10h_plan.md](phase10h_plan.md) |
+| **10f（已实现）** | SSOT：[Message/queue_naming.py](../Message/queue_naming.py) |
+| **10g（Route B）** | `pdd_queue_name` + parity 测试 — [phase10g_done.md](phase10g_done.md) |
+| **10h（Route C）** | 生产 PDD lifecycle 经 `_lifecycle_pdd_queue_name` 使用 `pdd_queue_name`；正常 `shop_id` → `pdd_{shop_id}`；`None`/空/空白保持历史 f-string — [phase10h_done.md](phase10h_done.md) |
 
 ---
 
@@ -426,6 +427,7 @@ flowchart TB
 | **10e** ✅ | queue 命名 / Consumer 边界（docs） | [phase10e_done.md](phase10e_done.md) |
 | **10f** ✅ | queue_name helper + 单测 | [phase10f_done.md](phase10f_done.md) |
 | **10g** | `pdd_queue_name` + legacy parity (Route B) | [phase10g_done.md](phase10g_done.md) |
+| **10h** ✅ | lifecycle 接入 `pdd_queue_name`（Route C，队列名不变） | [phase10h_done.md](phase10h_done.md) |
 | **7+ spike** | 真实第二平台（**抖店 > 京东 > 淘宝**） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |
 

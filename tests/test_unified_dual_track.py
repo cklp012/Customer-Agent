@@ -145,5 +145,49 @@ class TestDualTrackMapperFailure(unittest.TestCase):
         self.assertEqual(unified.content_type, "text")
 
 
+class TestFixtureMapperEnrichChain(unittest.TestCase):
+    """Phase 10d：fixture → mapper → enrich（不启 WS / Consumer 线程）。"""
+
+    def tearDown(self) -> None:
+        os.environ.pop("USE_UNIFIED_MESSAGE_DUAL_TRACK", None)
+
+    def test_fixture_to_enriched_metadata(self) -> None:
+        from Channel.pinduoduo.mappers.pdd_to_unified import pdd_message_to_unified
+
+        with open(_FIXTURE, encoding="utf-8") as f:
+            pdd = PDDChatMessage(json.load(f))
+        ctx = _make_context()
+        unified = pdd_message_to_unified(
+            pdd,
+            shop_id="demo_shop_001",
+            user_id="demo_cs_uid_001",
+            username="demo_cs_user",
+            shop_name="Demo Shop",
+        )
+        wrapper = MessageWrapper(
+            message_id="10d-chain",
+            context=ctx,
+            timestamp=1.0,
+            unified_message=unified,
+        )
+        meta = enrich_metadata_from_unified(wrapper)
+
+        self.assertTrue(meta["has_unified"])
+        self.assertEqual(meta["platform"], "pinduoduo")
+        self.assertEqual(meta["routing"], "queue")
+        self.assertEqual(meta["content_type"], "text")
+        self.assertEqual(meta["routing"], unified.conversation.extra["routing"])
+
+    def test_dual_track_flag_only_when_set_in_test(self) -> None:
+        os.environ.pop("USE_UNIFIED_MESSAGE_DUAL_TRACK", None)
+        self.assertFalse(use_unified_message_dual_track())
+        os.environ["USE_UNIFIED_MESSAGE_DUAL_TRACK"] = "true"
+        try:
+            self.assertTrue(use_unified_message_dual_track())
+        finally:
+            os.environ.pop("USE_UNIFIED_MESSAGE_DUAL_TRACK", None)
+        self.assertFalse(use_unified_message_dual_track())
+
+
 if __name__ == "__main__":
     unittest.main()

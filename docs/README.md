@@ -92,7 +92,8 @@ python scripts/diagnose_runtime.py
 | **9e** | [phase9e_done.md](phase9e_done.md) | Release checkpoint（[主文档](release_checkpoint_phase9.md)） |
 | **10a** | [phase10a_done.md](phase10a_done.md) | 多平台 account model 规划（[SSOT](phase10_account_model.md)） |
 | **10b** | [phase10b_done.md](phase10b_done.md) | AutoReply UI skeleton（筛选、非 PDD 禁用启动） |
-| **10c** | [phase10c_done.md](phase10c_done.md) | routing / content_type / platform SSOT（[规划](phase10c_plan.md)，仅文档） |
+| **10c** | [phase10c_done.md](phase10c_done.md) | routing / content_type / platform SSOT（[规划](phase10c_plan.md)） |
+| **10d** | [phase10d_done.md](phase10d_done.md) | 契约测试锁定 10c（routing parity + platform contract） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

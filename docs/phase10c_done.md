@@ -89,7 +89,9 @@ account_data["channel_name"]
 
 ## 7. Phase 10d 入口
 
-**只做契约测试，不改默认行为。**
+**已完成：** [phase10d_done.md](phase10d_done.md) — 契约测试验证本 SSOT，不改默认行为。
+
+**原规划（已实现要点）：**
 
 建议范围：
 

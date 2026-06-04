@@ -4,7 +4,7 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase **9d** 运行时 / **10a–10c** 多平台文档 SSOT / **10b** UI skeleton |
+| 文档版本 | Phase **9d** 运行时 / **10a–10d** SSOT + 契约测试 / **10b** UI skeleton |
 | Checkpoint | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) · [phase10_account_model.md](phase10_account_model.md) · [phase10c_plan.md](phase10c_plan.md) |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
@@ -68,6 +68,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **10a** | Multi-platform account model (docs) | ✅ | [phase10_account_model.md](phase10_account_model.md) |
 | **10b** | AutoReply UI skeleton | ✅ | [phase10b_done.md](phase10b_done.md) |
 | **10c** | routing / content_type / platform SSOT (docs) | ✅ | [phase10c_done.md](phase10c_done.md) |
+| **10d** | routing / platform 契约测试 | ✅ | [phase10d_done.md](phase10d_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -205,7 +206,8 @@ create_auto_reply_runtime_channel()
 | **routing** | `immediate` \| `queue` \| `drop`；PDD 由 `compute_pdd_routing`；存 `conversation.extra["routing"]` |
 | **content_type** | 跨平台 snake 字符串；PDD = `ContextType.value` |
 | **handler** | 仍 `can_handle(Context.type)`；不以 routing 改生产默认（Route C → flag，推迟） |
-| **10d** | 契约单测 only；见 [phase10c_done.md](phase10c_done.md) |
+| **10d（已实现）** | 契约测试锁定 SSOT：`test_pdd_routing_parity`、`test_platform_message_contract`；**生产默认未变** |
+| **10e+** | 真实平台 spike、queue 前缀迁移 | 见 [phase10d_done.md](phase10d_done.md) |
 
 ---
 
@@ -415,7 +417,7 @@ flowchart TB
 | **10a** ✅ | Account model SSOT | 仅文档 |
 | **10b** ✅ | UI skeleton（平台筛选 / 非 PDD 禁用自动回复） | 产品 |
 | **10c** ✅ | routing / content_type / platform SSOT（docs） | [phase10c_done.md](phase10c_done.md) |
-| **10d** | 契约单测（routing/platform parity） | 架构 |
+| **10e+** | queue 命名 / 第二平台 spike / handler Route C（flag） | 架构 |
 | **7+ spike** | 真实第二平台（**抖店 > 京东 > 淘宝**） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |
 

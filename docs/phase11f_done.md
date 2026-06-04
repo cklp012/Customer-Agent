@@ -35,7 +35,8 @@
 
 | Phase | 内容 |
 |-------|------|
-| **11g** | Route C — handler unified outbound Doudian tests（测试内 flag） |
+| **11g** ✅ | Route C — [phase11g_done.md](phase11g_done.md) |
+| **11h（可选）** | handler fallback / no-registry safety 规划 |
 
 ---
 

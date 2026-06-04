@@ -41,7 +41,8 @@
 
 | Phase | 内容 |
 |-------|------|
-| **10l** | mock transport + `enqueue` runtime flow（仿 8a Demo） |
+| **10l**（已完成） | [phase10l_done.md](phase10l_done.md) — mock transport + enqueue runtime flow |
+| **11a / 10m** | flag-gated registry 或 outbound mock |
 
 ---
 

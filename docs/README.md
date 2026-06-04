@@ -101,6 +101,7 @@ python scripts/diagnose_runtime.py
 | **10i** | [phase10i_done.md](phase10i_done.md) | capability matrix + 第二平台 spike 边界（[规划](phase10i_plan.md)，纯文档） |
 | **10j** | [phase10j_done.md](phase10j_done.md) | doudian second-platform spike 计划（[规划](phase10j_plan.md)，纯文档） |
 | **10k** | [phase10k_done.md](phase10k_done.md) | doudian fixture + mapper contract tests（无真实 API） |
+| **10l** | [phase10l_done.md](phase10l_done.md) | doudian mock transport + enqueue runtime flow（patch 入队） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

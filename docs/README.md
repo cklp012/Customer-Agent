@@ -15,6 +15,7 @@
 3. **当前架构** — [architecture_current.md](architecture_current.md)（模块职责、legacy / 新链路、边界）
 3b. **Phase 9 发布快照** — [release_checkpoint_phase9.md](release_checkpoint_phase9.md)（8a–9d 默认路径、flag、回滚）
 3c. **多平台账号模型** — [phase10_account_model.md](phase10_account_model.md)（`channel_name` = platform_id；运行时仍仅 PDD）
+3d. **消息 routing SSOT** — [phase10c_plan.md](phase10c_plan.md) / [phase10c_done.md](phase10c_done.md)（Context-first；dual-track 默认 off）
 4. **运行模式** — [runtime_modes.md](runtime_modes.md)（`USE_PINDUODUO_*` 四组合、Registry 默认 on）
 5. **怎么诊断环境** — 见下方「运维与诊断」；细节见 [runtime_modes.md §6](runtime_modes.md#6-诊断脚本) 与 [runbook.md §运行模式](runbook.md#运行模式高级可选)
 6. **各 Phase 交付记录** — 见下方「Phase 交付索引」
@@ -91,6 +92,7 @@ python scripts/diagnose_runtime.py
 | **9e** | [phase9e_done.md](phase9e_done.md) | Release checkpoint（[主文档](release_checkpoint_phase9.md)） |
 | **10a** | [phase10a_done.md](phase10a_done.md) | 多平台 account model 规划（[SSOT](phase10_account_model.md)） |
 | **10b** | [phase10b_done.md](phase10b_done.md) | AutoReply UI skeleton（筛选、非 PDD 禁用启动） |
+| **10c** | [phase10c_done.md](phase10c_done.md) | routing / content_type / platform SSOT（[规划](phase10c_plan.md)，仅文档） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

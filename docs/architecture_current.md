@@ -4,8 +4,8 @@
 
 | 项 | 值 |
 |---|---|
-| 文档版本 | Phase **9d** 运行时 / **10a** account SSOT / **10b** UI skeleton |
-| Checkpoint | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) · [phase10_account_model.md](phase10_account_model.md) |
+| 文档版本 | Phase **9d** 运行时 / **10a–10c** 多平台文档 SSOT / **10b** UI skeleton |
+| Checkpoint | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) · [phase10_account_model.md](phase10_account_model.md) · [phase10c_plan.md](phase10c_plan.md) |
 | 项目路径 | `D:\agent`（本地开发根目录示例） |
 | 上游 | 基于 [JC0v0/Customer-Agent](https://github.com/JC0v0/Customer-Agent) 二次开发 |
 | 状态 | **拼多多单平台深化中**；多平台骨架已铺，未接淘宝/抖店/京东运行时 |
@@ -67,6 +67,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **9e** | Release checkpoint (docs) | ✅ | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) |
 | **10a** | Multi-platform account model (docs) | ✅ | [phase10_account_model.md](phase10_account_model.md) |
 | **10b** | AutoReply UI skeleton | ✅ | [phase10b_done.md](phase10b_done.md) |
+| **10c** | routing / content_type / platform SSOT (docs) | ✅ | [phase10c_done.md](phase10c_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -193,6 +194,18 @@ create_auto_reply_runtime_channel()
 | 10a | 无 migration、无 schema 变更、无第二平台 seed |
 | SSOT | [phase10_account_model.md](phase10_account_model.md) |
 | **10b（已实现）** | `platform_ui.py` + 筛选 + 非 PDD 禁用启动；**运行时仍仅 PDD** |
+
+### routing / content_type / platform SSOT（Phase 10c，仅文档）
+
+| 维度 | SSOT 摘要 |
+|------|-----------|
+| **生产入站** | `PDDChatMessage` → `Context` → queue / immediate / drop → `MessageConsumer` → handler（**Context-first**） |
+| **UnifiedMessage** | 7b mapper 已有；**shadow / dual-track 默认 off** |
+| **platform** | `channel_name` == `UnifiedMessage.platform.value` == `Context.channel_type.value`；缺省 → `pinduoduo` |
+| **routing** | `immediate` \| `queue` \| `drop`；PDD 由 `compute_pdd_routing`；存 `conversation.extra["routing"]` |
+| **content_type** | 跨平台 snake 字符串；PDD = `ContextType.value` |
+| **handler** | 仍 `can_handle(Context.type)`；不以 routing 改生产默认（Route C → flag，推迟） |
+| **10d** | 契约单测 only；见 [phase10c_done.md](phase10c_done.md) |
 
 ---
 
@@ -401,7 +414,8 @@ flowchart TB
 | **9e** ✅ | Release checkpoint 文档 | 运维 |
 | **10a** ✅ | Account model SSOT | 仅文档 |
 | **10b** ✅ | UI skeleton（平台筛选 / 非 PDD 禁用自动回复） | 产品 |
-| **10c** | routing / content_type 规划 | 架构 |
+| **10c** ✅ | routing / content_type / platform SSOT（docs） | [phase10c_done.md](phase10c_done.md) |
+| **10d** | 契约单测（routing/platform parity） | 架构 |
 | **7+ spike** | 真实第二平台（**抖店 > 京东 > 淘宝**） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |
 

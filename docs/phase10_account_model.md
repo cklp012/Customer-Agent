@@ -121,6 +121,31 @@ UserManagerWidget (ui/user_ui.py)
 - 新增冗余 `platform` 列。
 - 要求迁移现有 SQLite。
 
+### 4.1 与 UnifiedMessage.platform 对齐（Phase 10c）
+
+Message 管道与 UI 账号使用同一平台 ID 字符串（小写）：
+
+```text
+account_data["channel_name"]
+  == UnifiedMessage.platform.value      # Channel.base.PlatformType
+  == Context.channel_type.value       # bridge.context.ChannelType
+```
+
+| 层 | 字段 | 何时可见 |
+|----|------|----------|
+| DB / AutoReply UI | `channel_name` | 账号加载、10b 筛选与启动守卫 |
+| 入站 Unified（可选） | `UnifiedMessage.platform` | dual-track on 时入队；shadow on 时旁路 log |
+| 入站 legacy | `Context.channel_type` | **生产默认**；handler `can_handle` 仍看 `Context.type` |
+| Consumer metadata | `metadata["platform"]` | 仅 `has_unified` 时（7d enrich） |
+
+**10c 约定：**
+
+- 缺失 `channel_name` → 视为 `pinduoduo`（与 `normalize_channel_name` / SetStatusThread 一致）。
+- 非 PDD 账号可在 UI 展示，但 **无** 对应 WS 入站直至独立 spike；`metadata.platform` 与 UI 在无流量时无需强校验。
+- dual-track **默认 off**：生产 handler 行为与 Phase 9d 一致，不依赖 Unified 字段。
+
+详见 [phase10c_plan.md](phase10c_plan.md) · [phase10c_done.md](phase10c_done.md)。
+
 ---
 
 ## 5. account_key 规则
@@ -223,6 +248,8 @@ account_key = f"{channel_name}_{shop_id}_{username}"
 |------|------|
 | [phase10a_plan.md](phase10a_plan.md) | Phase 10a 范围与禁止项 |
 | [phase10a_done.md](phase10a_done.md) | 10a 交付记录 |
+| [phase10c_plan.md](phase10c_plan.md) | routing / content_type / platform SSOT |
+| [phase10c_done.md](phase10c_done.md) | 10c 交付记录 |
 | [phase6a_plan.md](phase6a_plan.md) | 第二平台 Adapter 选型（6a 缺口 → 10a） |
 | [release_checkpoint_phase9.md](release_checkpoint_phase9.md) | Phase 9 运行时基线 |
 

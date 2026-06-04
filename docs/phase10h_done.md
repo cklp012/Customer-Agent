@@ -36,5 +36,6 @@
 
 ## 后续
 
-- 第二平台 WS / lifecycle **仍推迟**至独立 spike。
+- **Phase 10i**（已完成）：[phase10i_done.md](phase10i_done.md) — multi-platform capability matrix + spike boundary（纯文档）。
+- 第二平台 WS / lifecycle **仍推迟**至 **10j spike 计划** / 11+ 代码 Phase。
 - 可选：DB 审计无边缘 `shop_id` 后，收紧 legacy fallback（非本阶段）。

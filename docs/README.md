@@ -98,6 +98,7 @@ python scripts/diagnose_runtime.py
 | **10f** | [phase10f_done.md](phase10f_done.md) | `build_queue_name` helper（PDD 仍 `pdd_{shop_id}`，lifecycle 未接入） |
 | **10g** | [phase10g_done.md](phase10g_done.md) | `pdd_queue_name` + legacy parity（lifecycle 未接入） |
 | **10h** | [phase10h_done.md](phase10h_done.md) | lifecycle Route C：`pdd_lifecycle` + lifecycle-safe wrapper，队列名仍为 `pdd_{shop_id}` |
+| **10i** | [phase10i_done.md](phase10i_done.md) | capability matrix + 第二平台 spike 边界（[规划](phase10i_plan.md)，纯文档） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

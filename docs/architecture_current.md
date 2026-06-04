@@ -423,6 +423,7 @@ flowchart TB
 | **10c** ✅ | routing / content_type / platform SSOT（docs） | [phase10c_done.md](phase10c_done.md) |
 | **10e** ✅ | queue 命名 / Consumer 边界（docs） | [phase10e_done.md](phase10e_done.md) |
 | **10f** ✅ | queue_name helper + 单测 | [phase10f_done.md](phase10f_done.md) |
+| **10g** | lifecycle 接入 helper 规划 | [phase10g_plan.md](phase10g_plan.md) |
 | **7+ spike** | 真实第二平台（**抖店 > 京东 > 淘宝**） | 平台 |
 | **10d+** | AutoReply 按 `channel_name` 路由 factory（flag，默认 PDD） | 架构 |
 

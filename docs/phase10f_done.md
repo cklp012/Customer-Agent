@@ -52,7 +52,7 @@ build_queue_name("demo", shop_id)     # → demo_{shop_id}
 |----|------|
 | `pdd_lifecycle` | **未接入** helper；仍为 `f"pdd_{shop_id}"` |
 | 与 helper 等价性 | `build_queue_name("pinduoduo", shop_id)` == 现网字符串 |
-| 后续接入 | **单独 Phase**；须单测断言输出不变 |
+| 后续接入 | **Phase 10g/10h** — [phase10g_plan.md](phase10g_plan.md)（10g Route B：`pdd_queue_name`；10h Route C：lifecycle） |
 
 ---
 

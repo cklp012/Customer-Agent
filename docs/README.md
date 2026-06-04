@@ -96,6 +96,7 @@ python scripts/diagnose_runtime.py
 | **10d** | [phase10d_done.md](phase10d_done.md) | 契约测试锁定 10c（routing parity + platform contract） |
 | **10e** | [phase10e_done.md](phase10e_done.md) | queue 命名与 Consumer 边界（[规划](phase10e_plan.md)，纯文档） |
 | **10f** | [phase10f_done.md](phase10f_done.md) | `build_queue_name` helper（PDD 仍 `pdd_{shop_id}`，lifecycle 未接入） |
+| **10g** | [phase10g_plan.md](phase10g_plan.md) | lifecycle 是否接入 helper（规划；推荐 Route B→10h Route C） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

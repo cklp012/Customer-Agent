@@ -133,6 +133,7 @@ python scripts/diagnose_runtime.py
 | **14g** | [phase14g_done.md](phase14g_done.md) | **PreviewReplyLogService** in-memory adapter（读 13e projection · 无 handler） |
 | **14h** | [phase14h_done.md](phase14h_done.md) | **Preview ReplyLog service integration planning**（docs only · H1–H10 规划） |
 | **14i** | [phase14i_done.md](phase14i_done.md) | **PreviewReplyLogService handler integration**（test shop only · zero-send · 无 DB） |
+| **14j** | [phase14j_done.md](phase14j_done.md) | **SQLite shadow write planning**（docs only · in-memory first · S1–S10） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

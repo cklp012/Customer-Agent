@@ -108,6 +108,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14g** | Preview ReplyLog service in-memory adapter | ✅ | [phase14g_done.md](phase14g_done.md) |
 | **14h** | Preview ReplyLog service integration planning (docs) | ✅ | [phase14h_done.md](phase14h_done.md) |
 | **14i** | PreviewReplyLogService handler integration (test shop only) | ✅ | [phase14i_done.md](phase14i_done.md) |
+| **14j** | SQLite shadow write planning (docs) | ✅ | [phase14j_done.md](phase14j_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -120,7 +121,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService（14g/14i）** | **13a–13e + 14f–14i**；DB **未实现** · test shop handler **已接 service（14i）** · zero-send **不变** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService（14g/14i）** | **13a–13e + 14f–14j**；DB persistence **未实现** · SQLite shadow **planned（14j）** · zero-send **不变** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -175,7 +176,17 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | `product_persistence/flags.py` | 默认 false |
 | `product_persistence/db_manager.py` | no-op · 无 engine |
 | `product_persistence/repositories/` | Protocol stubs |
-| `PreviewReplyLogService` | **in-memory read/write**（14g/14i）· test shop handler **已接** · DB **未实现** |
+| `PreviewReplyLogService` | **in-memory read/write**（14g/14i）· test shop handler **已接** · SQLite shadow **planned（14j）** · DB **未实现** |
+
+**SQLite shadow write（14j · planning-only）：**
+
+| 文档 | 内容 |
+|------|------|
+| [phase14j_sqlite_shadow_write_plan.md](phase14j_sqlite_shadow_write_plan.md) | 总体方案 · in-memory first |
+| [phase14j_product_gate_db_schema_plan.md](phase14j_product_gate_db_schema_plan.md) | `reply_logs` 最小 schema |
+| [phase14j_replylog_shadow_write_flow.md](phase14j_replylog_shadow_write_flow.md) | write flow · DB failure policy |
+| [phase14j_flags_failure_rollback.md](phase14j_flags_failure_rollback.md) | flags · rollback |
+| [phase14j_test_plan.md](phase14j_test_plan.md) | S1–S10 |
 
 **Preview ReplyLog service integration（14h · planning-only）：**
 
@@ -434,7 +445,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–14i）：** **14i** test shop preview 经 `PreviewReplyLogService.record_preview` → in-memory；**zero-send 不变**；non-test legacy 不变；无 DB · 无 SQLite。
+**Productization（12a–14j）：** **14i** test shop preview → in-memory via service；**14j** SQLite shadow write planned（in-memory first · flags-gated）；DB persistence **仍未实现**；zero-send 不变。
 
 ---
 
@@ -685,9 +696,11 @@ flowchart TB
 | **14g** ✅ | Preview ReplyLog service in-memory adapter | [phase14g_done.md](phase14g_done.md) |
 | **14h** ✅ | Preview ReplyLog service integration planning（docs） | [phase14h_done.md](phase14h_done.md) |
 | **14i** ✅ | PreviewReplyLogService handler integration（test shop only） | [phase14i_done.md](phase14i_done.md) |
-| **14j** | optional SQLite shadow write planning only | [phase14i_done.md](phase14i_done.md) |
-| **14k** | Dashboard read API planning only | [phase14i_done.md](phase14i_done.md) |
-| **14l** | SQLite shadow ReplyLog implementation behind flag (later) | [phase14i_done.md](phase14i_done.md) |
+| **14j** ✅ | SQLite shadow write planning（docs） | [phase14j_done.md](phase14j_done.md) |
+| **14k** | Dashboard read API planning only | [phase14j_done.md](phase14j_done.md) |
+| **14l** | SQLite ReplyLog shadow implementation behind flag | [phase14j_done.md](phase14j_done.md) |
+| **14m** | SendDecision snapshot shadow write | [phase14j_done.md](phase14j_done.md) |
+| **14n** | AuditLog / PendingAssisted planning | [phase14j_done.md](phase14j_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

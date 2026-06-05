@@ -56,11 +56,12 @@ service 抛异常 → handler fallback `append_preview_log` → `return True`（
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14j** | optional SQLite shadow write **planning only** |
-| **14k** | Dashboard read API **planning only** |
-| **14l** | SQLite shadow ReplyLog implementation behind flag (later) |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14j** | ✅ | SQLite shadow write planning — [phase14j_done.md](phase14j_done.md) |
+| **14k** | 待做 | Dashboard read API **planning only** |
+| **14l** | 待做 | SQLite ReplyLog shadow **implementation** behind flag |
+| **14m** | 待做 | SendDecision snapshot shadow write planning |
 
 ---
 

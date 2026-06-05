@@ -140,6 +140,7 @@ python scripts/diagnose_runtime.py
 | **14n** | [phase14n_done.md](phase14n_done.md) | **SendDecision snapshot SQLite shadow write** behind flags（append-only · M1–M7） |
 | **14o** | [phase14o_done.md](phase14o_done.md) | **Dashboard read API skeleton** — read-only GET · in-memory default |
 | **14p** | [phase14p_done.md](phase14p_done.md) | **AuditLog / PendingAssisted planning**（docs only · P1–P14） |
+| **14q** | [phase14q_done.md](phase14q_done.md) | **PendingAssisted + AuditLog schema** behind flags · repository skeleton |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

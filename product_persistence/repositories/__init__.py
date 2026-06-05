@@ -8,6 +8,12 @@ from product_persistence.repositories.reply_log_repository import ReplyLogReposi
 from product_persistence.repositories.send_decision_repository import (
     SendDecisionRepository,
 )
+from product_persistence.repositories.sqlite_audit_log_repository import (
+    AuditLogRepositorySQLite,
+)
+from product_persistence.repositories.sqlite_pending_assisted_repository import (
+    PendingAssistedRepositorySQLite,
+)
 from product_persistence.repositories.sqlite_reply_log_repository import (
     ReplyLogRepositorySQLite,
 )
@@ -17,7 +23,9 @@ from product_persistence.repositories.sqlite_send_decision_repository import (
 
 __all__ = [
     "AuditLogRepository",
+    "AuditLogRepositorySQLite",
     "PendingAssistedReplyRepository",
+    "PendingAssistedRepositorySQLite",
     "ReplyLogRepository",
     "ReplyLogRepositorySQLite",
     "SendDecisionRepository",

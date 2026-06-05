@@ -115,6 +115,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14n** | SendDecision snapshot SQLite shadow write behind flags | ✅ | [phase14n_done.md](phase14n_done.md) |
 | **14o** | Dashboard read API skeleton only | ✅ | [phase14o_done.md](phase14o_done.md) |
 | **14p** | AuditLog / PendingAssisted planning (docs) | ✅ | [phase14p_done.md](phase14p_done.md) |
+| **14q** | PendingAssisted + AuditLog schema behind flags | ✅ | [phase14q_done.md](phase14q_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -127,7 +128,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14o** implemented · **14p** Pending/Audit planned · assisted/auto **未实现** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14q** SQLite shadow + Dashboard read · assisted send **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -213,6 +214,17 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | default source | `in_memory` |
 | SQLite read | `READ_DASHBOARD` flag · fallback + warning |
 | auth | placeholder only |
+
+**AuditLog / PendingAssisted（14q · schema implemented）：**
+
+| 组件 | 状态 |
+|------|------|
+| `PendingAssistedReplyRow` | ✅ ORM + indexes |
+| `AuditLogRow` | ✅ ORM + indexes · append-only |
+| `PendingAssistedRepositorySQLite` | ✅ create/get/list/mark_status · **no send** |
+| `AuditLogRepositorySQLite` | ✅ append/list/get · **no update/delete** |
+| approve/reject / final guard / assisted send | ❌ **未实现** |
+| auto send | ❌ **未实现** |
 
 **AuditLog / PendingAssisted（14p · planning-only）：**
 
@@ -512,7 +524,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–14p）：** **14p** AuditLog / PendingAssisted planning（docs only · 未建表 · assisted/auto 未实现）；send path 不变。
+**Productization（12a–14q）：** **14q** PendingAssisted/AuditLog schema + repository skeleton behind flags；assisted approve/send **未实现**；send path 不变。
 
 ---
 
@@ -770,9 +782,10 @@ flowchart TB
 | **14n** ✅ | SendDecision snapshot SQLite shadow write behind flags | [phase14n_done.md](phase14n_done.md) |
 | **14o** ✅ | Dashboard read API skeleton only | [phase14o_done.md](phase14o_done.md) |
 | **14p** ✅ | AuditLog / PendingAssisted planning (docs) | [phase14p_done.md](phase14p_done.md) |
-| **14q** | PendingAssisted + AuditLog schema implementation behind flags | [phase14p_done.md](phase14p_done.md) |
-| **14r** | Assisted approve/reject service planning | [phase14p_done.md](phase14p_done.md) |
-| **14s** | Final guard implementation planning | [phase14p_done.md](phase14p_done.md) |
+| **14q** ✅ | PendingAssisted + AuditLog schema behind flags | [phase14q_done.md](phase14q_done.md) |
+| **14r** | Assisted approve/reject service planning | [phase14q_done.md](phase14q_done.md) |
+| **14s** | Final guard implementation planning | [phase14q_done.md](phase14q_done.md) |
+| **14t** | PendingAssisted dashboard read planning | [phase14q_done.md](phase14q_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

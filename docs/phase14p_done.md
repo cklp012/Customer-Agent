@@ -71,9 +71,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14q** | PendingAssisted + AuditLog **schema implementation** behind flags |
+| **14q** | ✅ PendingAssisted + AuditLog schema — [phase14q_done.md](phase14q_done.md) |
 | **14r** | Assisted approve/reject **service planning** |
 | **14s** | Final guard **implementation planning** |
+| **14t** | PendingAssisted dashboard read planning |
 
 ---
 

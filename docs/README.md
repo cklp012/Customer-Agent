@@ -123,6 +123,7 @@ python scripts/diagnose_runtime.py
 | **13c** | [phase13c_done.md](phase13c_done.md) | 单测试店 Preview gate **规划**（docs only） |
 | **13d** | [phase13d_done.md](phase13d_done.md) | 单测试店 Preview gate **实现**（allowlist · zero-send · in-memory preview log） |
 | **13e** | [phase13e_done.md](phase13e_done.md) | Preview ReplyLog **projection** + Dashboard read model bridge（in-memory） |
+| **13f** | [phase13f_done.md](phase13f_done.md) | **Assisted mode 规划**（docs only；商家确认后发送 · A1–A12 · auto 未实现） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

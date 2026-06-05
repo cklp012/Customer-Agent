@@ -41,11 +41,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **13f** | Assisted mode planning only（docs） |
-| **14a** | shadow DB tables for ReplyLog/SendDecision |
-| **14b** | Dashboard read API planning |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **13f** | ✅ | Assisted mode 规划 — [phase13f_done.md](phase13f_done.md) |
+| **14a** | 待做 | shadow DB schema：ReplyLog / PendingAssistedReply / AuditLog |
+| **14b** | 待做 | Assisted command/API planning only |
+| **14c** | 待做 | Single test shop assisted implementation |
 
 ---
 

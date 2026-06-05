@@ -117,6 +117,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14p** | AuditLog / PendingAssisted planning (docs) | ✅ | [phase14p_done.md](phase14p_done.md) |
 | **14q** | PendingAssisted + AuditLog schema behind flags | ✅ | [phase14q_done.md](phase14q_done.md) |
 | **14r** | Assisted approve/reject service planning (docs) | ✅ | [phase14r_done.md](phase14r_done.md) |
+| **14s** | Merchant Safety Policy + Template planning (docs) | ✅ | [phase14s_done.md](phase14s_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -129,7 +130,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14q** SQLite · **14r** Assisted service planned · send **未实现** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14q** SQLite · **14r–14s** Assisted + **Merchant Policy** planned · send **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -232,8 +233,8 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 组件 | 状态 |
 |------|------|
 | `AssistedReplyService` stub | ✅ `NotImplementedError` |
-| create_pending / approve / reject / expire | 📋 planned · 14t skeleton |
-| final guard integration | 📋 14s |
+| create_pending / approve / reject / expire | 📋 planned · 14x+ skeleton |
+| final guard integration | 📋 **14t** planning · **14v** impl |
 | audit + snapshot sequence | 📋 [phase14r_audit_and_snapshot_sequence.md](phase14r_audit_and_snapshot_sequence.md) |
 | state machine + idempotency | 📋 [phase14r_state_machine_and_idempotency.md](phase14r_state_machine_and_idempotency.md) |
 
@@ -244,6 +245,28 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase14r_approve_reject_service_flow.md](phase14r_approve_reject_service_flow.md) | approve/reject/expire |
 | [phase14r_failure_and_rollback.md](phase14r_failure_and_rollback.md) | failure · rollback |
 | [phase14r_test_plan.md](phase14r_test_plan.md) | R1–R15 |
+
+**Merchant Safety Policy + Template（14s · planning-only）：**
+
+| 组件 | 状态 |
+|------|------|
+| `MerchantSafetyPolicy` | 📋 planned · **未建表** |
+| `MerchantReplyTemplate` | 📋 planned · **未建表** |
+| `ai_intervention_mode` 五档 | 📋 documented |
+| `platform_mode_ceiling` | 📋 documented |
+| template validation / forbidden scan | 📋 planned · 未实现 |
+| policy snapshot on ReplyLog/Snapshot | 📋 planned |
+| assisted / auto send | ❌ **未实现** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase14s_merchant_safety_policy_plan.md](phase14s_merchant_safety_policy_plan.md) | 总体规划 |
+| [phase14s_intervention_modes_and_platform_ceiling.md](phase14s_intervention_modes_and_platform_ceiling.md) | mode · ceiling · 红线 |
+| [phase14s_pipeline_and_precedence.md](phase14s_pipeline_and_precedence.md) | pipeline |
+| [phase14s_default_policy_matrix.md](phase14s_default_policy_matrix.md) | 默认矩阵 |
+| [phase14s_template_validation_and_forbidden_scan.md](phase14s_template_validation_and_forbidden_scan.md) | scan |
+| [phase14s_policy_snapshot_and_audit.md](phase14s_policy_snapshot_and_audit.md) | snapshot · audit |
+| [phase14s_test_plan.md](phase14s_test_plan.md) | S1–S16 |
 
 **AuditLog / PendingAssisted（14p · planning-only）：**
 
@@ -543,7 +566,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–14r）：** **14r** AssistedReplyService planning（docs only · approve 须 final guard · 未实现 send）；assisted/auto 未实现。
+**Productization（12a–14s）：** **14s** Merchant Safety Policy + Template planning（商家可配置参与方式 · 红线/ guard 不可 override）；assisted/auto 未实现。
 
 ---
 
@@ -803,9 +826,10 @@ flowchart TB
 | **14p** ✅ | AuditLog / PendingAssisted planning (docs) | [phase14p_done.md](phase14p_done.md) |
 | **14q** ✅ | PendingAssisted + AuditLog schema behind flags | [phase14q_done.md](phase14q_done.md) |
 | **14r** ✅ | Assisted approve/reject service planning (docs) | [phase14r_done.md](phase14r_done.md) |
-| **14s** | Final guard implementation planning | [phase14r_done.md](phase14r_done.md) |
-| **14t** | Assisted service skeleton behind flags | [phase14r_done.md](phase14r_done.md) |
-| **14u** | PendingAssisted dashboard read planning | [phase14r_done.md](phase14r_done.md) |
+| **14s** ✅ | Merchant Safety Policy + Template planning (docs) | [phase14s_done.md](phase14s_done.md) |
+| **14t** | Final Guard planning with Merchant Policy integration | [phase14s_done.md](phase14s_done.md) |
+| **14u** | MerchantSafetyPolicy + MerchantReplyTemplate schema skeleton | [phase14s_done.md](phase14s_done.md) |
+| **14v** | Final Guard pure function implementation | [phase14s_done.md](phase14s_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

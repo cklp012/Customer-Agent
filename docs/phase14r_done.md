@@ -68,9 +68,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14s** | Final guard **implementation planning** |
-| **14t** | Assisted service **skeleton behind flags** |
-| **14u** | PendingAssisted dashboard read planning |
+| **14s** | ✅ Merchant Safety Policy + Template planning — [phase14s_done.md](phase14s_done.md) |
+| **14t** | Final Guard planning **with Merchant Policy integration** |
+| **14u** | MerchantSafetyPolicy + MerchantReplyTemplate **schema skeleton** behind flags |
+| **14v** | Final Guard **pure function** implementation |
 
 ---
 

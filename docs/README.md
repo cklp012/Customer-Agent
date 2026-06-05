@@ -142,6 +142,7 @@ python scripts/diagnose_runtime.py
 | **14p** | [phase14p_done.md](phase14p_done.md) | **AuditLog / PendingAssisted planning**（docs only · P1–P14） |
 | **14q** | [phase14q_done.md](phase14q_done.md) | **PendingAssisted + AuditLog schema** behind flags · repository skeleton |
 | **14r** | [phase14r_done.md](phase14r_done.md) | **Assisted approve/reject service planning**（docs only · R1–R15） |
+| **14s** | [phase14s_done.md](phase14s_done.md) | **Merchant Safety Policy + Template planning**（docs only · S1–S16） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

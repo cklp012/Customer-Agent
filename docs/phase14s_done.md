@@ -77,9 +77,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14t** | Final Guard Planning **with Merchant Policy Integration** |
+| **14t** | ✅ Final Guard + Merchant Policy integration planning — [phase14t_done.md](phase14t_done.md) |
 | **14u** | MerchantSafetyPolicy + MerchantReplyTemplate **schema skeleton** behind flags |
 | **14v** | Final Guard **pure function** implementation |
+| **14w** | Policy/template **validation service** skeleton |
 
 ---
 

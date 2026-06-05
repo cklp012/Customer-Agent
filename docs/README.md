@@ -136,6 +136,7 @@ python scripts/diagnose_runtime.py
 | **14j** | [phase14j_done.md](phase14j_done.md) | **SQLite shadow write planning**（docs only · in-memory first · S1–S10） |
 | **14k** | [phase14k_done.md](phase14k_done.md) | **Dashboard read API planning**（docs only · list/detail contract · D1–D11） |
 | **14l** | [phase14l_done.md](phase14l_done.md) | **SQLite ReplyLog shadow write** behind flags（in-memory first · S1–S8） |
+| **14m** | [phase14m_done.md](phase14m_done.md) | **SendDecision snapshot shadow write planning**（docs only · M1–M10） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

@@ -68,9 +68,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14o** | Dashboard read API **skeleton only** |
+| **14o** | ✅ Dashboard read API skeleton — [phase14o_done.md](phase14o_done.md) |
 | **14p** | AuditLog / PendingAssisted planning |
-| **14q** | Dashboard detail snapshots read integration planning |
+| **14q** | Dashboard detail snapshots SQLite read integration |
+| **14r** | Auth/permission enforcement planning |
 
 ---
 

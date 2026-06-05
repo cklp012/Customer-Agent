@@ -115,8 +115,12 @@ class ReplyLogRepositorySQLite:
         *,
         workspace_id: Optional[str] = None,
         shop_id: Optional[str] = None,
+        account_id: Optional[str] = None,
+        platform_id: Optional[str] = None,
         buyer_id: Optional[str] = None,
         send_status: Optional[str] = None,
+        intent_bucket: Optional[str] = None,
+        risk_level: Optional[str] = None,
         limit: int = 100,
     ) -> List[ReplyLogDTO]:
         session = self._db_manager.get_product_session()
@@ -128,10 +132,18 @@ class ReplyLogRepositorySQLite:
                 stmt = stmt.where(ReplyLogRow.workspace_id == workspace_id)
             if shop_id is not None:
                 stmt = stmt.where(ReplyLogRow.shop_id == shop_id)
+            if account_id is not None:
+                stmt = stmt.where(ReplyLogRow.account_id == account_id)
+            if platform_id is not None:
+                stmt = stmt.where(ReplyLogRow.platform_id == platform_id)
             if buyer_id is not None:
                 stmt = stmt.where(ReplyLogRow.buyer_id == buyer_id)
             if send_status is not None:
                 stmt = stmt.where(ReplyLogRow.send_status == send_status)
+            if intent_bucket is not None:
+                stmt = stmt.where(ReplyLogRow.intent_bucket == intent_bucket)
+            if risk_level is not None:
+                stmt = stmt.where(ReplyLogRow.risk_level == risk_level)
             stmt = stmt.order_by(ReplyLogRow.created_at.desc()).limit(limit)
             rows = session.scalars(stmt).all()
             return [_dto_from_row(row) for row in rows]
@@ -145,5 +157,40 @@ class ReplyLogRepositorySQLite:
             if row is None:
                 return None
             return _dto_from_row(row)
+        finally:
+            session.close()
+
+    def get_reply_log_detail(self, reply_log_id: str) -> Optional[dict]:
+        session = self._db_manager.get_product_session()
+        try:
+            row = session.get(ReplyLogRow, reply_log_id)
+            if row is None:
+                return None
+            return {
+                "reply_log_id": row.reply_log_id,
+                "workspace_id": row.workspace_id,
+                "platform_id": row.platform_id,
+                "shop_id": row.shop_id,
+                "account_id": row.account_id,
+                "buyer_id": row.buyer_id,
+                "conversation_id": row.conversation_id,
+                "inbound_message_id": row.inbound_message_id,
+                "buyer_message": row.buyer_message,
+                "ai_suggested_reply": row.ai_suggested_reply,
+                "final_reply": row.final_reply,
+                "reply_mode": row.reply_mode,
+                "send_mode": row.send_mode,
+                "send_status": row.send_status,
+                "intent": row.intent,
+                "intent_bucket": row.intent_bucket,
+                "intent_confidence": row.intent_confidence,
+                "risk_level": row.risk_level,
+                "blocked_reason": row.blocked_reason,
+                "human_takeover_reason": row.human_takeover_reason,
+                "not_sent_explanation": row.not_sent_explanation,
+                "product_gate_enabled": bool(row.product_gate_enabled),
+                "created_at": row.created_at,
+                "updated_at": row.updated_at,
+            }
         finally:
             session.close()

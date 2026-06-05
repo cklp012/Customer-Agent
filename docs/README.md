@@ -124,6 +124,7 @@ python scripts/diagnose_runtime.py
 | **13d** | [phase13d_done.md](phase13d_done.md) | 单测试店 Preview gate **实现**（allowlist · zero-send · in-memory preview log） |
 | **13e** | [phase13e_done.md](phase13e_done.md) | Preview ReplyLog **projection** + Dashboard read model bridge（in-memory） |
 | **13f** | [phase13f_done.md](phase13f_done.md) | **Assisted mode 规划**（docs only；商家确认后发送 · A1–A12 · auto 未实现） |
+| **14a** | [phase14a_done.md](phase14a_done.md) | **Shadow DB schema 规划**（ReplyLog / Pending / AuditLog / SendDecision · M0–M9 · 无 migration） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

@@ -48,11 +48,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14a** | DB shadow schema：`ReplyLog` / `PendingAssistedReply` / `AuditLog` |
-| **14b** | Assisted command/API planning only |
-| **14c** | Single test shop assisted implementation |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14a** | ✅ | Shadow DB schema 规划 — [phase14a_done.md](phase14a_done.md) |
+| **14b** | 待做 | Alembic/SQL migration draft only |
+| **14c** | 待做 | Shadow ReplyLog write（preview 双写） |
+| **14d** | 待做 | Dashboard read API planning only |
 
 ---
 

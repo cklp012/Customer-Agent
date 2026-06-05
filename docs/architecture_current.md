@@ -99,6 +99,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **13d** | Single test shop preview gate implementation (zero-send) | ✅ | [phase13d_done.md](phase13d_done.md) |
 | **13e** | Preview ReplyLog projection + dashboard read model bridge | ✅ | [phase13e_done.md](phase13e_done.md) |
 | **13f** | Assisted mode planning (docs) | ✅ | [phase13f_done.md](phase13f_done.md) |
+| **14a** | Shadow DB schema planning (docs) | ✅ | [phase14a_done.md](phase14a_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -111,7 +112,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + preview + ReplyLog + **assisted 规划（13f）** | **13a–13e 代码**；**13f docs**；assisted/auto **未实现** |
+| **Productization** | 商家 SaaS + product gate + **shadow DB 规划（14a）** | **13a–13e 代码**；**13f/14a docs**；persistent DB **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -157,7 +158,18 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | AI handler hooks | `_try_shadow_log_send_decision` · `_handle_preview_product_gate` |
 | 单元测试 | `tests/test_product_gate_*.py` · `tests/test_handler_*preview*` |
 
-**product gate enforcement：** 仅 **allowlisted test shop preview**（zero-send）；**assisted 已规划（13f）未实现**；**auto 未实现**；persistent DB **未开始**。
+**product gate enforcement：** 仅 **allowlisted test shop preview**（zero-send）；**assisted/auto send 未实现**；**persistent DB 未实现**（14a schema 已规划）。
+
+**Shadow DB schema（14a · planning-only）：**
+
+| 文档 | 内容 |
+|------|------|
+| [phase14a_shadow_db_schema_plan.md](phase14a_shadow_db_schema_plan.md) | 总目标 · shadow-first |
+| [phase14a_replylog_schema.md](phase14a_replylog_schema.md) | ReplyLog |
+| [phase14a_pending_assisted_reply_schema.md](phase14a_pending_assisted_reply_schema.md) | PendingAssistedReply |
+| [phase14a_auditlog_schema.md](phase14a_auditlog_schema.md) | AuditLog |
+| [phase14a_senddecision_schema.md](phase14a_senddecision_schema.md) | SendDecision snapshot |
+| [phase14a_migration_sequence.md](phase14a_migration_sequence.md) | M0–M9 |
 
 **Assisted mode（13f · planning-only）：**
 
@@ -214,7 +226,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase12b_reply_mode_and_control_model.md](phase12b_reply_mode_and_control_model.md) | ReplyMode / Safety |
 | [phase12b_plan_usage_model.md](phase12b_plan_usage_model.md) | Plan / Usage |
 
-**下一产品化 Phase：** **14a** shadow DB schema · **14b** assisted API planning · **14c** assisted implementation · **12g** wireframe。
+**下一产品化 Phase：** **14b** Alembic draft · **14c** shadow ReplyLog write · **14d** Dashboard API planning · **12g** wireframe。
 
 ---
 
@@ -375,7 +387,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–13f）：** **13f** assisted 规划完成；preview zero-send 不变；**auto 未实现**；**persistent DB 未开始**。
+**Productization（12a–14a）：** **14a** shadow DB schema 规划；13d preview in-memory 仍运行；**persistent DB 未实现**。
 
 ---
 
@@ -617,9 +629,10 @@ flowchart TB
 | **13d** ✅ | preview gate implementation + in-memory config/log（H3 · zero-send） | [phase13d_done.md](phase13d_done.md) |
 | **13e** ✅ | preview ReplyLog projection + dashboard read model bridge | [phase13e_done.md](phase13e_done.md) |
 | **13f** ✅ | assisted mode planning only（docs） | [phase13f_done.md](phase13f_done.md) |
-| **14a** | shadow DB schema：ReplyLog / PendingAssistedReply / AuditLog | [phase13f_done.md](phase13f_done.md) |
-| **14b** | assisted command/API planning only | [phase13f_done.md](phase13f_done.md) |
-| **14c** | single test shop assisted implementation | [phase13f_done.md](phase13f_done.md) |
+| **14a** ✅ | shadow DB schema planning（docs） | [phase14a_done.md](phase14a_done.md) |
+| **14b** | Alembic/SQL migration draft only | [phase14a_done.md](phase14a_done.md) |
+| **14c** | shadow ReplyLog write（preview 双写） | [phase14a_done.md](phase14a_done.md) |
+| **14d** | Dashboard read API planning only | [phase14a_done.md](phase14a_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

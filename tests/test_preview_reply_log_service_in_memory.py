@@ -122,6 +122,8 @@ class TestPreviewReplyLogServiceInMemory(unittest.TestCase):
         self.assertTrue(record.recorded)
         self.assertEqual(record.source, "in_memory")
         self.assertEqual(record.reason, "recorded_in_memory")
+        self.assertFalse(record.db_recorded)
+        self.assertIsNone(record.db_error)
         self.assertIsNotNone(record.reply_log_id)
         self.assertEqual(len(preview_log.all()), 1)
         listed = svc.list_reply_logs()
@@ -144,6 +146,7 @@ class TestPreviewReplyLogServiceInMemory(unittest.TestCase):
             )
         self.assertTrue(record.recorded)
         self.assertEqual(record.reason, "recorded_in_memory")
+        self.assertFalse(record.db_recorded)
         self.assertEqual(len(preview_log.all()), 1)
 
     def test_record_preview_minimal_args_no_write(self) -> None:

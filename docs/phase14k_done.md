@@ -61,11 +61,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14l** | SQLite ReplyLog shadow **implementation** behind flag |
-| **14m** | Dashboard read API **skeleton only** |
-| **14n** | SendDecision snapshot shadow write planning |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14l** | ✅ | SQLite shadow write — [phase14l_done.md](phase14l_done.md) |
+| **14m** | 待做 | SendDecision snapshot shadow write **planning** |
+| **14n** | 待做 | Dashboard read API **skeleton only** |
+| **14o** | 待做 | AuditLog / PendingAssisted planning |
 
 ---
 

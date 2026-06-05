@@ -1,15 +1,56 @@
 """
-Product persistence ORM placeholders (Phase 14f).
+Product persistence models (Phase 14f DTOs · Phase 14l ReplyLog ORM).
 
-SQLAlchemy models for reply_logs / send_decision_snapshots /
-pending_assisted_replies / audit_logs are deferred to Phase 14g+.
-No Base.metadata · no create_all · no tables.
+Independent from legacy database.models — product_gate.db only.
 """
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from typing import Any, Dict, Optional
+
+from sqlalchemy import Float, Index, Integer, Text
+from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
+
+
+class ProductBase(DeclarativeBase):
+    """SQLAlchemy base for product_gate.db only."""
+
+
+class ReplyLogRow(ProductBase):
+    __tablename__ = "reply_logs"
+
+    reply_log_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    workspace_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    shop_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    account_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    platform_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    buyer_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    conversation_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    inbound_message_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    buyer_message: Mapped[str] = mapped_column(Text, nullable=False)
+    ai_suggested_reply: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    final_reply: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    reply_mode: Mapped[str] = mapped_column(Text, nullable=False)
+    send_mode: Mapped[str] = mapped_column(Text, nullable=False)
+    send_status: Mapped[str] = mapped_column(Text, nullable=False)
+    intent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    intent_bucket: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    intent_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    risk_level: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    blocked_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    human_takeover_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    not_sent_explanation: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    product_gate_enabled: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    created_at: Mapped[str] = mapped_column(Text, nullable=False)
+    updated_at: Mapped[str] = mapped_column(Text, nullable=False)
+
+    __table_args__ = (
+        Index("idx_reply_logs_workspace_created_at", "workspace_id", "created_at"),
+        Index("idx_reply_logs_shop_created_at", "shop_id", "created_at"),
+        Index("idx_reply_logs_buyer_created_at", "buyer_id", "created_at"),
+        Index("idx_reply_logs_send_status", "send_status"),
+    )
 
 
 @dataclass(frozen=True)

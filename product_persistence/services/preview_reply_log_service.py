@@ -1,4 +1,4 @@
-"""Preview ReplyLog service — in-memory adapter (Phase 14g/14i). No DB, no send."""
+"""Preview ReplyLog service — in-memory + optional SQLite shadow (Phase 14g–14l)."""
 
 from __future__ import annotations
 
@@ -15,6 +15,8 @@ class PreviewRecordResult:
     reason: str
     source: Optional[str] = None
     reply_log_id: Optional[str] = None
+    db_recorded: bool = False
+    db_error: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -29,7 +31,7 @@ class PreviewReplyLogService:
     """
     Service-layer read/write boundary over Message/gates in-memory preview_log.
 
-    DB repository write is reserved for Phase 14j+; handler wired in 14i (test shop).
+    SQLite shadow write behind flags (Phase 14l); handler wired in 14i.
     """
 
     def __init__(self, repository: Any = None) -> None:
@@ -52,9 +54,7 @@ class PreviewReplyLogService:
         **_kwargs: Any,
     ) -> PreviewRecordResult:
         """
-        Write preview ReplyLog to in-memory store via append_preview_log.
-
-        Works regardless of PRODUCT_PERSISTENCE_ENABLED (14i handler boundary).
+        Write preview ReplyLog to in-memory store; optional SQLite shadow when flagged.
         """
         if (
             classification is None
@@ -69,11 +69,6 @@ class PreviewReplyLogService:
                     if not flags.is_product_persistence_enabled()
                     else "missing_preview_context"
                 ),
-            )
-
-        if self.repository is not None and flags.should_write_reply_log():
-            raise NotImplementedError(
-                "DB ReplyLog write is not available until Phase 14j+"
             )
 
         from Message.gates.preview_log import append_preview_log
@@ -91,13 +86,44 @@ class PreviewReplyLogService:
             shop_id=shop_id,
             account_id=account_id,
         )
-        return PreviewRecordResult(
+
+        common = dict(
             recorded=True,
             persistence_enabled=flags.is_product_persistence_enabled(),
             reason="recorded_in_memory",
-            source="in_memory",
             reply_log_id=record.reply_log_id,
         )
+
+        if not flags.should_write_reply_log():
+            return PreviewRecordResult(
+                **common,
+                source="in_memory",
+                db_recorded=False,
+                db_error=None,
+            )
+
+        try:
+            repository = self.repository
+            if repository is None:
+                from product_persistence.repositories.sqlite_reply_log_repository import (
+                    ReplyLogRepositorySQLite,
+                )
+
+                repository = ReplyLogRepositorySQLite()
+            repository.create_preview_reply_log(record)
+            return PreviewRecordResult(
+                **common,
+                source="in_memory+sqlite_shadow",
+                db_recorded=True,
+                db_error=None,
+            )
+        except Exception as exc:
+            return PreviewRecordResult(
+                **common,
+                source="in_memory",
+                db_recorded=False,
+                db_error=str(exc),
+            )
 
     def list_reply_logs(
         self,

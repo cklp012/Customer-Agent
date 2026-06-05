@@ -49,11 +49,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14d** | Migration 路径选型 + DDL fill **planning/review only**（或选定框架后首个 skeleton） |
-| **14e** | Shadow ReplyLog write planning only |
-| **14f** | Dashboard read API planning only |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14d** | ✅ | Persistence ADR — [phase14d_done.md](phase14d_done.md)（推荐 Option B） |
+| **14e** | 待做 | SaaS persistence module boundary planning |
+| **14f** | 待做 | Empty product persistence skeleton |
+| **14g** | 待做 | ReplyLog SQLite shadow write（test shop） |
 
 ---
 

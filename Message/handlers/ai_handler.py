@@ -136,6 +136,11 @@ class AIReplyHandler(BaseHandler):
                 send_decision=send_decision,
                 guarded_result=guarded_result,
                 metadata=metadata,
+                buyer_id=metadata.get("from_uid") or getattr(context, "from_uid", None),
+                workspace_id=gate_config.workspace_id,
+                platform_id=gate_config.platform_id,
+                shop_id=gate_config.shop_id,
+                account_id=gate_config.account_id,
             )
             await self.log_message(
                 context,

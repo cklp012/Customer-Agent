@@ -50,11 +50,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **13e** | Preview ReplyLog schema 对齐 + Dashboard read model bridge |
-| **13f** | Assisted mode planning only（docs） |
-| **14a** | DB shadow tables（评审后） |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **13e** | ✅ | ReplyLog projection — [phase13e_done.md](phase13e_done.md) |
+| **13f** | 待做 | Assisted mode planning only（docs） |
+| **14a** | 待做 | shadow DB tables for ReplyLog/SendDecision |
+| **14b** | 待做 | Dashboard read API planning |
 
 ---
 

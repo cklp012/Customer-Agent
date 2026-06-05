@@ -122,6 +122,7 @@ python scripts/diagnose_runtime.py
 | **13b** | [phase13b_done.md](phase13b_done.md) | Shadow SendDecision logging（观察-only，fail-open，不改变发送） |
 | **13c** | [phase13c_done.md](phase13c_done.md) | 单测试店 Preview gate **规划**（docs only） |
 | **13d** | [phase13d_done.md](phase13d_done.md) | 单测试店 Preview gate **实现**（allowlist · zero-send · in-memory preview log） |
+| **13e** | [phase13e_done.md](phase13e_done.md) | Preview ReplyLog **projection** + Dashboard read model bridge（in-memory） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

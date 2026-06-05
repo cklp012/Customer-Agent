@@ -27,6 +27,12 @@ from Message.gates.preview_log import (
     append_preview_log,
     preview_log,
 )
+from Message.gates.reply_log_projection import (
+    PreviewReplyLogListItem,
+    build_not_sent_explanation,
+    list_preview_reply_logs,
+    project_preview_record_to_reply_log,
+)
 from Message.gates.product_gate_config import (
     ProductGateConfig,
     TestShopAllowlistEntry,
@@ -58,7 +64,11 @@ __all__ = [
     "InMemoryPreviewLog",
     "InMemoryShadowDecisionLogger",
     "PreviewLogRecord",
+    "PreviewReplyLogListItem",
     "ProductGateConfig",
+    "build_not_sent_explanation",
+    "list_preview_reply_logs",
+    "project_preview_record_to_reply_log",
     "ShadowDecisionRecord",
     "TestShopAllowlistEntry",
     "append_preview_log",

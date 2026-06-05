@@ -144,6 +144,7 @@ python scripts/diagnose_runtime.py
 | **14r** | [phase14r_done.md](phase14r_done.md) | **Assisted approve/reject service planning**（docs only · R1–R15） |
 | **14s** | [phase14s_done.md](phase14s_done.md) | **Merchant Safety Policy + Template planning**（docs only · S1–S16） |
 | **14t** | [phase14t_done.md](phase14t_done.md) | **Final Guard + Merchant Policy integration planning**（docs only · T1–T25） |
+| **14u** | [phase14u_done.md](phase14u_done.md) | **MerchantSafetyPolicy + MerchantReplyTemplate schema** behind flags · repository skeleton |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

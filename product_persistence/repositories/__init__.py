@@ -20,10 +20,18 @@ from product_persistence.repositories.sqlite_reply_log_repository import (
 from product_persistence.repositories.sqlite_send_decision_repository import (
     SendDecisionRepositorySQLite,
 )
+from product_persistence.repositories.sqlite_merchant_policy_repository import (
+    MerchantPolicyRepositorySQLite,
+)
+from product_persistence.repositories.sqlite_reply_template_repository import (
+    MerchantReplyTemplateRepositorySQLite,
+)
 
 __all__ = [
     "AuditLogRepository",
     "AuditLogRepositorySQLite",
+    "MerchantPolicyRepositorySQLite",
+    "MerchantReplyTemplateRepositorySQLite",
     "PendingAssistedReplyRepository",
     "PendingAssistedRepositorySQLite",
     "ReplyLogRepository",

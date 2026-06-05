@@ -64,9 +64,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14u** | MerchantSafetyPolicy + MerchantReplyTemplate **schema skeleton** behind flags |
+| **14u** | ✅ MerchantSafetyPolicy + MerchantReplyTemplate schema skeleton — [phase14u_done.md](phase14u_done.md) |
 | **14v** | Final Guard **pure function** implementation |
 | **14w** | Policy/template **validation service** skeleton |
+| **14x** | Assisted service **skeleton behind flags** |
 
 ---
 

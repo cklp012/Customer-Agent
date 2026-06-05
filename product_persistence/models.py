@@ -160,6 +160,70 @@ class AuditLogRow(ProductBase):
     )
 
 
+class MerchantSafetyPolicyRow(ProductBase):
+    __tablename__ = "merchant_safety_policies"
+
+    policy_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    workspace_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    shop_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    intent_category: Mapped[str] = mapped_column(Text, nullable=False)
+    ai_intervention_mode: Mapped[str] = mapped_column(Text, nullable=False)
+    platform_mode_ceiling: Mapped[str] = mapped_column(Text, nullable=False)
+    allowed_template_ids: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    require_human_confirmation: Mapped[int] = mapped_column(
+        Integer, nullable=False, default=1
+    )
+    allow_auto_reply: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    forbidden_keywords_extra: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    policy_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    enabled: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[str] = mapped_column(Text, nullable=False)
+    updated_at: Mapped[str] = mapped_column(Text, nullable=False)
+
+    __table_args__ = (
+        Index(
+            "idx_policy_workspace_shop_intent",
+            "workspace_id",
+            "shop_id",
+            "intent_category",
+        ),
+        Index("idx_policy_workspace_enabled", "workspace_id", "enabled"),
+        Index("idx_policy_shop_intent", "shop_id", "intent_category"),
+        Index("idx_policy_updated_at", "updated_at"),
+    )
+
+
+class MerchantReplyTemplateRow(ProductBase):
+    __tablename__ = "merchant_reply_templates"
+
+    template_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    workspace_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    shop_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    intent_category: Mapped[str] = mapped_column(Text, nullable=False)
+    title: Mapped[str] = mapped_column(Text, nullable=False)
+    content: Mapped[str] = mapped_column(Text, nullable=False)
+    variables: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    content_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    validation_status: Mapped[str] = mapped_column(Text, nullable=False)
+    validation_warnings: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    template_version: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    enabled: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    created_at: Mapped[str] = mapped_column(Text, nullable=False)
+    updated_at: Mapped[str] = mapped_column(Text, nullable=False)
+
+    __table_args__ = (
+        Index(
+            "idx_template_workspace_shop_intent",
+            "workspace_id",
+            "shop_id",
+            "intent_category",
+        ),
+        Index("idx_template_workspace_enabled", "workspace_id", "enabled"),
+        Index("idx_template_validation_status", "validation_status"),
+        Index("idx_template_content_hash", "content_hash"),
+    )
+
+
 @dataclass(frozen=True)
 class ReplyLogDTO:
     """Read model placeholder — aligns with phase14e repository DTO."""
@@ -243,3 +307,39 @@ class AuditLogDTO:
     reason: Optional[str] = None
     ip_address: Optional[str] = None
     user_agent: Optional[str] = None
+
+
+@dataclass(frozen=True)
+class MerchantSafetyPolicyDTO:
+    policy_id: str
+    workspace_id: str
+    shop_id: str
+    intent_category: str
+    ai_intervention_mode: str
+    platform_mode_ceiling: str
+    policy_version: int
+    enabled: bool
+    created_at: str
+    updated_at: str
+    allowed_template_ids: tuple[str, ...] = ()
+    require_human_confirmation: bool = True
+    allow_auto_reply: bool = False
+    forbidden_keywords_extra: tuple[str, ...] = ()
+
+
+@dataclass(frozen=True)
+class MerchantReplyTemplateDTO:
+    template_id: str
+    workspace_id: str
+    shop_id: str
+    intent_category: str
+    title: str
+    content: str
+    content_hash: str
+    validation_status: str
+    template_version: int
+    enabled: bool
+    created_at: str
+    updated_at: str
+    variables: Optional[Dict[str, Any]] = None
+    validation_warnings: tuple[str, ...] = ()

@@ -45,6 +45,9 @@ class TestProductPersistenceFlags(unittest.TestCase):
             "PRODUCT_PERSISTENCE_WRITE_SEND_DECISION",
             "PRODUCT_PERSISTENCE_WRITE_AUDIT_LOG",
             "PRODUCT_PERSISTENCE_WRITE_PENDING_ASSISTED",
+            "PRODUCT_PERSISTENCE_WRITE_MERCHANT_POLICY",
+            "PRODUCT_PERSISTENCE_WRITE_REPLY_TEMPLATE",
+            "PRODUCT_PERSISTENCE_READ_MERCHANT_POLICY",
             "PRODUCT_PERSISTENCE_READ_DASHBOARD",
         ):
             os.environ.pop(key, None)
@@ -61,6 +64,9 @@ class TestProductPersistenceFlags(unittest.TestCase):
         self.assertFalse(flags.should_write_send_decision())
         self.assertFalse(flags.should_write_audit_log())
         self.assertFalse(flags.should_write_pending_assisted())
+        self.assertFalse(flags.should_write_merchant_policy())
+        self.assertFalse(flags.should_write_reply_template())
+        self.assertFalse(flags.should_read_merchant_policy())
         self.assertFalse(flags.should_read_dashboard_from_product_db())
 
     def test_true_values(self) -> None:

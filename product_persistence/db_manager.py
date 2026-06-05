@@ -40,6 +40,9 @@ class ProductDbManager:
             or flags.should_write_send_decision()
             or flags.should_write_pending_assisted()
             or flags.should_write_audit_log()
+            or flags.should_write_merchant_policy()
+            or flags.should_write_reply_template()
+            or flags.should_read_merchant_policy()
             or flags.should_read_dashboard_from_product_db()
         )
 

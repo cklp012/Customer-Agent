@@ -131,6 +131,7 @@ python scripts/diagnose_runtime.py
 | **14e** | [phase14e_done.md](phase14e_done.md) | **Product persistence 模块边界**（repository/service · flags · 14e 不建目录） |
 | **14f** | [phase14f_done.md](phase14f_done.md) | **product_persistence 空骨架**（Protocol stubs · flags 默认 off · 无 DB） |
 | **14g** | [phase14g_done.md](phase14g_done.md) | **PreviewReplyLogService** in-memory adapter（读 13e projection · 无 handler） |
+| **14h** | [phase14h_done.md](phase14h_done.md) | **Preview ReplyLog service integration planning**（docs only · handler 未接 · H1–H10） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

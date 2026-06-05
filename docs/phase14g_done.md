@@ -41,11 +41,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14h** | Preview ReplyLog service integration **planning** only |
-| **14i** | optional SQLite shadow write planning |
-| **14j** | Dashboard read API planning |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14h** | ✅ | Integration planning — [phase14h_done.md](phase14h_done.md) |
+| **14i** | 待做 | PreviewReplyLogService handler integration（test shop only） |
+| **14j** | 待做 | optional SQLite shadow write planning only |
+| **14k** | 待做 | Dashboard read API planning only |
 
 ---
 

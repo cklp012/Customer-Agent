@@ -106,6 +106,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14e** | SaaS shadow persistence module boundary (docs) | ✅ | [phase14e_done.md](phase14e_done.md) |
 | **14f** | Empty product_persistence skeleton (no DB) | ✅ | [phase14f_done.md](phase14f_done.md) |
 | **14g** | Preview ReplyLog service in-memory adapter | ✅ | [phase14g_done.md](phase14g_done.md) |
+| **14h** | Preview ReplyLog service integration planning (docs) | ✅ | [phase14h_done.md](phase14h_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -118,7 +119,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService（14g）** | **13a–13e + 14f/14g**；DB **未实现** · handler **未接** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService（14g）** | **13a–13e + 14f–14h**；DB **未实现** · handler **未接** · integration **planned only（14h）** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -173,7 +174,16 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | `product_persistence/flags.py` | 默认 false |
 | `product_persistence/db_manager.py` | no-op · 无 engine |
 | `product_persistence/repositories/` | Protocol stubs |
-| `PreviewReplyLogService` | **in-memory read**（14g）· handler 未接 |
+| `PreviewReplyLogService` | **in-memory read**（14g）· handler **未接**（14h 已规划 · 14i 实现） |
+
+**Preview ReplyLog service integration（14h · planning-only）：**
+
+| 文档 | 内容 |
+|------|------|
+| [phase14h_preview_service_integration_plan.md](phase14h_preview_service_integration_plan.md) | as-is / to-be · 迁移步骤 |
+| [phase14h_handler_boundary_plan.md](phase14h_handler_boundary_plan.md) | handler ↔ service 边界 |
+| [phase14h_zero_send_regression_plan.md](phase14h_zero_send_regression_plan.md) | H1–H10 回归 |
+| [phase14h_failure_policy.md](phase14h_failure_policy.md) | fail-safe · no-send on failure |
 
 **Product persistence boundary（14e · planning-only）：**
 
@@ -423,7 +433,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–14g）：** **14g** service 可读 in-memory preview ReplyLog；无 DB · handler 未接；13d send 路径不变。
+**Productization（12a–14h）：** **14g** service 可读 in-memory preview ReplyLog；**14h** integration planned only（handler 仍 `append_preview_log`）；无 DB · handler 未接 service；13d send 路径不变。
 
 ---
 
@@ -672,9 +682,10 @@ flowchart TB
 | **14e** ✅ | SaaS persistence module boundary planning | [phase14e_done.md](phase14e_done.md) |
 | **14f** ✅ | empty product_persistence skeleton（no DB） | [phase14f_done.md](phase14f_done.md) |
 | **14g** ✅ | Preview ReplyLog service in-memory adapter | [phase14g_done.md](phase14g_done.md) |
-| **14h** | handler integration planning only | [phase14g_done.md](phase14g_done.md) |
-| **14i** | SQLite shadow write planning | [phase14g_done.md](phase14g_done.md) |
-| **14j** | Dashboard read API planning | [phase14g_done.md](phase14g_done.md) |
+| **14h** ✅ | Preview ReplyLog service integration planning（docs） | [phase14h_done.md](phase14h_done.md) |
+| **14i** | PreviewReplyLogService handler integration（test shop only） | [phase14h_done.md](phase14h_done.md) |
+| **14j** | optional SQLite shadow write planning only | [phase14h_done.md](phase14h_done.md) |
+| **14k** | Dashboard read API planning only | [phase14h_done.md](phase14h_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

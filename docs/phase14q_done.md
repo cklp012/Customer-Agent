@@ -59,9 +59,10 @@ import module **不创建 DB**；flags off **不创建 product_gate.db**。
 
 | Phase | 内容 |
 |-------|------|
-| **14r** | Assisted approve/reject **service planning** |
+| **14r** | ✅ Assisted approve/reject service planning — [phase14r_done.md](phase14r_done.md) |
 | **14s** | Final guard **implementation planning** |
-| **14t** | PendingAssisted dashboard read planning |
+| **14t** | Assisted service **skeleton behind flags** |
+| **14u** | PendingAssisted dashboard read planning |
 
 ---
 

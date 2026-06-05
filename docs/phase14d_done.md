@@ -54,12 +54,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14e** | SaaS shadow persistence module boundary planning（docs） |
-| **14f** | Empty product persistence skeleton only |
-| **14g** | ReplyLog SQLite shadow write（test shop only） |
-| **14h** | Dashboard read API planning |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14e** | ✅ | Module boundary — [phase14e_done.md](phase14e_done.md) |
+| **14f** | 待做 | Empty `product_persistence/` skeleton only |
+| **14g** | 待做 | in-memory + optional SQLite ReplyLog write（test shop） |
+| **14h** | 待做 | Dashboard read API planning |
 
 ---
 

@@ -103,6 +103,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14b** | Alembic / SQL migration draft (docs) | ✅ | [phase14b_done.md](phase14b_done.md) |
 | **14c** | Empty shadow migration skeleton (investigation) | ✅ | [phase14c_done.md](phase14c_done.md) |
 | **14d** | Persistence architecture decision review (docs) | ✅ | [phase14d_done.md](phase14d_done.md) |
+| **14e** | SaaS shadow persistence module boundary (docs) | ✅ | [phase14e_done.md](phase14e_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -115,7 +116,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **persistence ADR（14d · 推荐 B）** | **13a–13e 代码**；persistent **未实现** |
+| **Productization** | 商家 SaaS + product gate + **persistence 边界（14e）** | **13a–13e 代码**；`product_persistence/` **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -161,7 +162,17 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | AI handler hooks | `_try_shadow_log_send_decision` · `_handle_preview_product_gate` |
 | 单元测试 | `tests/test_product_gate_*.py` · `tests/test_handler_*preview*` |
 
-**product gate enforcement：** 仅 **allowlisted test shop preview**（zero-send）；**assisted/auto send 未实现**；**persistent 未实现**（14d 推荐 **Option B** 独立 `product_gate.db` · 见 [phase14d_recommendation.md](phase14d_recommendation.md)）。
+**product gate enforcement：** 仅 **allowlisted test shop preview**（zero-send）；**assisted/auto send 未实现**；**product persistence 未实现**（14e 模块边界 · 见 [phase14e_product_persistence_boundary.md](phase14e_product_persistence_boundary.md)）。
+
+**Product persistence boundary（14e · planning-only）：**
+
+| 文档 | 内容 |
+|------|------|
+| [phase14e_product_persistence_boundary.md](phase14e_product_persistence_boundary.md) | 目录 · 隔离 |
+| [phase14e_product_db_manager_design.md](phase14e_product_db_manager_design.md) | ProductDbManager |
+| [phase14e_repository_interfaces.md](phase14e_repository_interfaces.md) | Repository Protocol |
+| [phase14e_flags_and_failure_policy.md](phase14e_flags_and_failure_policy.md) | Flags · fail policy |
+| [phase14e_integration_points.md](phase14e_integration_points.md) | Handler → Service |
 
 **Shadow DB schema（14a · planning-only）：**
 
@@ -240,7 +251,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase12b_reply_mode_and_control_model.md](phase12b_reply_mode_and_control_model.md) | ReplyMode / Safety |
 | [phase12b_plan_usage_model.md](phase12b_plan_usage_model.md) | Plan / Usage |
 
-**下一产品化 Phase：** **14e** persistence module boundary · **14f** skeleton · **14g** SQLite ReplyLog write · **12g** wireframe。
+**下一产品化 Phase：** **14f** skeleton · **14g** SQLite ReplyLog write · **14h** Dashboard API · **12g** wireframe。
 
 ---
 
@@ -401,7 +412,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–14d）：** **14d** 推荐 B（独立 shadow SQLite）；legacy `channel_shop.db` **不动**；13d in-memory 仍运行。
+**Productization（12a–14e）：** **14e** `product_persistence/` 边界已规划；legacy DB **不动**；13d in-memory 仍 SSOT。
 
 ---
 
@@ -647,8 +658,8 @@ flowchart TB
 | **14b** ✅ | Alembic/SQL migration draft only（docs） | [phase14b_done.md](phase14b_done.md) |
 | **14c** ✅ | migration skeleton investigation（无 framework） | [phase14c_done.md](phase14c_done.md) |
 | **14d** ✅ | persistence ADR（**推荐 Option B**） | [phase14d_done.md](phase14d_done.md) |
-| **14e** | SaaS persistence module boundary planning | [phase14d_done.md](phase14d_done.md) |
-| **14f** | empty product persistence skeleton | [phase14d_done.md](phase14d_done.md) |
+| **14e** ✅ | SaaS persistence module boundary planning | [phase14e_done.md](phase14e_done.md) |
+| **14f** | empty product persistence skeleton | [phase14e_done.md](phase14e_done.md) |
 | **14g** | ReplyLog SQLite shadow write（test shop） | [phase14d_done.md](phase14d_done.md) |
 | **14h** | Dashboard read API planning | [phase14d_done.md](phase14d_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |

@@ -110,7 +110,6 @@ class AIReplyHandler(BaseHandler):
                 classify_consultation_intent,
             )
             from Message.gates.guarded_send import evaluate_guarded_send
-            from Message.gates.preview_log import append_preview_log
             from Message.gates.send_decision import build_send_decision
 
             message_text = self._processed_content_as_text(processed_content)
@@ -129,19 +128,18 @@ class AIReplyHandler(BaseHandler):
                 return False
 
             guarded_result = evaluate_guarded_send(send_decision, reply)
-            append_preview_log(
+            recorded = self._record_preview_reply_log(
                 message_text=message_text,
                 reply_text=reply,
                 classification=classification,
                 send_decision=send_decision,
                 guarded_result=guarded_result,
                 metadata=metadata,
-                buyer_id=metadata.get("from_uid") or getattr(context, "from_uid", None),
-                workspace_id=gate_config.workspace_id,
-                platform_id=gate_config.platform_id,
-                shop_id=gate_config.shop_id,
-                account_id=gate_config.account_id,
+                gate_config=gate_config,
+                context=context,
             )
+            if not recorded:
+                return False
             await self.log_message(
                 context,
                 "Preview gate suggestion recorded",
@@ -150,6 +148,63 @@ class AIReplyHandler(BaseHandler):
             return True
         except Exception as exc:
             self.logger.debug("Preview gate fail-safe (no send): %s", exc)
+            return False
+
+    def _record_preview_reply_log(
+        self,
+        *,
+        message_text: str,
+        reply_text: str,
+        classification: Any,
+        send_decision: Any,
+        guarded_result: Any,
+        metadata: Dict[str, Any],
+        gate_config: Any,
+        context: Context,
+    ) -> bool:
+        """
+        Test shop preview log via PreviewReplyLogService (14i).
+
+        Fail-open: service errors fall back to in-memory append_preview_log — never send.
+        """
+        buyer_id = metadata.get("from_uid") or getattr(context, "from_uid", None)
+        record_kwargs = dict(
+            message_text=message_text,
+            reply_text=reply_text,
+            classification=classification,
+            send_decision=send_decision,
+            guarded_result=guarded_result,
+            metadata=metadata,
+            buyer_id=buyer_id,
+            workspace_id=gate_config.workspace_id,
+            platform_id=gate_config.platform_id,
+            shop_id=gate_config.shop_id,
+            account_id=gate_config.account_id,
+        )
+        try:
+            from product_persistence.services import PreviewReplyLogService
+
+            result = PreviewReplyLogService().record_preview(**record_kwargs)
+            if result.recorded:
+                return True
+            self.logger.debug(
+                "Preview service record skipped (%s), trying in-memory fallback",
+                result.reason,
+            )
+        except Exception as exc:
+            self.logger.debug(
+                "Preview service record failed (no send): %s", exc
+            )
+
+        try:
+            from Message.gates.preview_log import append_preview_log
+
+            append_preview_log(**record_kwargs)
+            return True
+        except Exception as exc:
+            self.logger.debug(
+                "Preview in-memory fallback failed (no send): %s", exc
+            )
             return False
 
     def _try_shadow_log_send_decision(

@@ -106,7 +106,47 @@ class TestPreviewReplyLogServiceInMemory(unittest.TestCase):
         result = PreviewReplyLogService().list_reply_logs(shop_id="other-shop")
         self.assertEqual(len(result.records), 0)
 
-    def test_record_preview_does_not_write_db_or_send(self) -> None:
+    def test_record_preview_writes_in_memory(self) -> None:
+        cls = classify_consultation_intent("这款商品还有库存吗")
+        decision = build_send_decision(cls, reply_mode="preview", product_gate_enabled=True)
+        guarded = evaluate_guarded_send(decision, "建议回复")
+        svc = PreviewReplyLogService()
+        record = svc.record_preview(
+            message_text="这款商品还有库存吗",
+            reply_text="建议回复",
+            classification=cls,
+            send_decision=decision,
+            guarded_result=guarded,
+            metadata={"shop_id": "shop-rec-1", "from_uid": "buyer-rec-1"},
+        )
+        self.assertTrue(record.recorded)
+        self.assertEqual(record.source, "in_memory")
+        self.assertEqual(record.reason, "recorded_in_memory")
+        self.assertIsNotNone(record.reply_log_id)
+        self.assertEqual(len(preview_log.all()), 1)
+        listed = svc.list_reply_logs()
+        self.assertEqual(len(listed.records), 1)
+        self.assertEqual(listed.records[0].reply_log_id, record.reply_log_id)
+        self.assertFalse(_PRODUCT_GATE_DB.exists())
+
+    def test_record_preview_flag_off_still_writes_in_memory(self) -> None:
+        cls = classify_consultation_intent("这款商品还有库存吗")
+        decision = build_send_decision(cls, reply_mode="preview", product_gate_enabled=True)
+        guarded = evaluate_guarded_send(decision, "建议回复")
+        with patch.dict(os.environ, {}, clear=False):
+            os.environ.pop("PRODUCT_PERSISTENCE_ENABLED", None)
+            record = PreviewReplyLogService().record_preview(
+                message_text="这款商品还有库存吗",
+                reply_text="建议回复",
+                classification=cls,
+                send_decision=decision,
+                guarded_result=guarded,
+            )
+        self.assertTrue(record.recorded)
+        self.assertEqual(record.reason, "recorded_in_memory")
+        self.assertEqual(len(preview_log.all()), 1)
+
+    def test_record_preview_minimal_args_no_write(self) -> None:
         svc = PreviewReplyLogService()
         record = svc.record_preview(message_text="hi", reply_text="reply")
         self.assertFalse(record.recorded)

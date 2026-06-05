@@ -60,11 +60,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14i** | PreviewReplyLogService handler integration for **test shop only** |
-| **14j** | optional SQLite shadow write **planning only** |
-| **14k** | Dashboard read API **planning only** |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14i** | ✅ | Handler integration — [phase14i_done.md](phase14i_done.md) |
+| **14j** | 待做 | optional SQLite shadow write **planning only** |
+| **14k** | 待做 | Dashboard read API **planning only** |
+| **14l** | 待做 | SQLite shadow ReplyLog implementation behind flag (later) |
 
 ---
 

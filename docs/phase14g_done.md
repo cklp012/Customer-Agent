@@ -44,7 +44,7 @@
 | Phase | 状态 | 内容 |
 |-------|------|------|
 | **14h** | ✅ | Integration planning — [phase14h_done.md](phase14h_done.md) |
-| **14i** | 待做 | PreviewReplyLogService handler integration（test shop only） |
+| **14i** | ✅ | Handler integration — [phase14i_done.md](phase14i_done.md) |
 | **14j** | 待做 | optional SQLite shadow write planning only |
 | **14k** | 待做 | Dashboard read API planning only |
 

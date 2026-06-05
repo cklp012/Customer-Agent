@@ -1,4 +1,4 @@
-"""Preview ReplyLog service — in-memory adapter (Phase 14g). No DB, no send."""
+"""Preview ReplyLog service — in-memory adapter (Phase 14g/14i). No DB, no send."""
 
 from __future__ import annotations
 
@@ -13,6 +13,8 @@ class PreviewRecordResult:
     recorded: bool
     persistence_enabled: bool
     reason: str
+    source: Optional[str] = None
+    reply_log_id: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -25,9 +27,9 @@ class PreviewReplyLogServiceResult:
 
 class PreviewReplyLogService:
     """
-    Service-layer read model over Message/gates in-memory preview_log.
+    Service-layer read/write boundary over Message/gates in-memory preview_log.
 
-    DB repository write is reserved for Phase 14i+; handler not wired in 14g.
+    DB repository write is reserved for Phase 14j+; handler wired in 14i (test shop).
     """
 
     def __init__(self, repository: Any = None) -> None:
@@ -38,26 +40,63 @@ class PreviewReplyLogService:
         *,
         message_text: str,
         reply_text: str,
+        classification: Any = None,
+        send_decision: Any = None,
+        guarded_result: Any = None,
         metadata: Optional[Dict[str, Any]] = None,
+        buyer_id: Optional[str] = None,
+        workspace_id: Optional[str] = None,
+        platform_id: Optional[str] = None,
+        shop_id: Optional[str] = None,
+        account_id: Optional[str] = None,
         **_kwargs: Any,
     ) -> PreviewRecordResult:
         """
-        Persistence write path deferred — handlers continue using append_preview_log.
+        Write preview ReplyLog to in-memory store via append_preview_log.
+
+        Works regardless of PRODUCT_PERSISTENCE_ENABLED (14i handler boundary).
         """
-        if not flags.is_product_persistence_enabled():
+        if (
+            classification is None
+            or send_decision is None
+            or guarded_result is None
+        ):
             return PreviewRecordResult(
                 recorded=False,
-                persistence_enabled=False,
-                reason="product_persistence_disabled",
+                persistence_enabled=flags.is_product_persistence_enabled(),
+                reason=(
+                    "product_persistence_disabled"
+                    if not flags.is_product_persistence_enabled()
+                    else "missing_preview_context"
+                ),
             )
+
         if self.repository is not None and flags.should_write_reply_log():
             raise NotImplementedError(
-                "DB ReplyLog write is not available until Phase 14i+"
+                "DB ReplyLog write is not available until Phase 14j+"
             )
+
+        from Message.gates.preview_log import append_preview_log
+
+        record = append_preview_log(
+            message_text=message_text,
+            reply_text=reply_text,
+            classification=classification,
+            send_decision=send_decision,
+            guarded_result=guarded_result,
+            metadata=metadata,
+            buyer_id=buyer_id,
+            workspace_id=workspace_id,
+            platform_id=platform_id,
+            shop_id=shop_id,
+            account_id=account_id,
+        )
         return PreviewRecordResult(
-            recorded=False,
-            persistence_enabled=True,
-            reason="in_memory_deferred",
+            recorded=True,
+            persistence_enabled=flags.is_product_persistence_enabled(),
+            reason="recorded_in_memory",
+            source="in_memory",
+            reply_log_id=record.reply_log_id,
         )
 
     def list_reply_logs(
@@ -69,10 +108,7 @@ class PreviewReplyLogService:
         send_status: Optional[str] = None,
     ) -> PreviewReplyLogServiceResult:
         try:
-            from Message.gates.reply_log_projection import (
-                PreviewReplyLogListItem,
-                list_preview_reply_logs,
-            )
+            from Message.gates.reply_log_projection import list_preview_reply_logs
 
             items = list_preview_reply_logs()
             filtered = self._filter_items(

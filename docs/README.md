@@ -129,6 +129,7 @@ python scripts/diagnose_runtime.py
 | **14c** | [phase14c_done.md](phase14c_done.md) | **Migration skeleton 调查**（无 Alembic · 未创建 revision · runtime 不变） |
 | **14d** | [phase14d_done.md](phase14d_done.md) | **Persistence ADR**（A/B/C 评审 · **推荐 B** 独立 shadow SQLite） |
 | **14e** | [phase14e_done.md](phase14e_done.md) | **Product persistence 模块边界**（repository/service · flags · 14e 不建目录） |
+| **14f** | [phase14f_done.md](phase14f_done.md) | **product_persistence 空骨架**（Protocol stubs · flags 默认 off · 无 DB） |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

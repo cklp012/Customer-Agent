@@ -47,11 +47,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14f** | Empty `product_persistence/` skeleton only |
-| **14g** | in-memory + optional SQLite ReplyLog write（test shop） |
-| **14h** | Dashboard read API planning only |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14f** | ✅ | Empty skeleton — [phase14f_done.md](phase14f_done.md) |
+| **14g** | 待做 | Preview ReplyLog service / in-memory adapter |
+| **14h** | 待做 | SQLite ReplyLog shadow write（test shop） |
+| **14i** | 待做 | Dashboard read API planning |
 
 ---
 

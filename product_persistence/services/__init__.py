@@ -1,0 +1,13 @@
+"""Service layer stubs (Phase 14f)."""
+
+from product_persistence.services.assisted_reply_service import AssistedReplyService
+from product_persistence.services.preview_reply_log_service import (
+    PreviewReplyLogService,
+    PreviewRecordResult,
+)
+
+__all__ = [
+    "AssistedReplyService",
+    "PreviewRecordResult",
+    "PreviewReplyLogService",
+]

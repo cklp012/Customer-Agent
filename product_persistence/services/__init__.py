@@ -4,10 +4,12 @@ from product_persistence.services.assisted_reply_service import AssistedReplySer
 from product_persistence.services.preview_reply_log_service import (
     PreviewReplyLogService,
     PreviewRecordResult,
+    PreviewReplyLogServiceResult,
 )
 
 __all__ = [
     "AssistedReplyService",
     "PreviewRecordResult",
     "PreviewReplyLogService",
+    "PreviewReplyLogServiceResult",
 ]

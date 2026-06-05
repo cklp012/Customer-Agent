@@ -140,6 +140,12 @@ class TestProductPersistenceNoSideEffects(unittest.TestCase):
             PreviewReplyLogService,
         )
 
+        for key in (
+            "PRODUCT_PERSISTENCE_ENABLED",
+            "PRODUCT_PERSISTENCE_WRITE_REPLY_LOG",
+        ):
+            os.environ.pop(key, None)
+
         preview = PreviewReplyLogService()
         result = preview.record_preview(message_text="hi", reply_text="suggestion")
         self.assertFalse(result.recorded)

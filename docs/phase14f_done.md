@@ -41,11 +41,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14g** | Preview ReplyLog service planning / in-memory adapter |
-| **14h** | optional SQLite ReplyLog shadow write（test shop only） |
-| **14i** | Dashboard read API planning only |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14g** | ✅ | In-memory adapter — [phase14g_done.md](phase14g_done.md) |
+| **14h** | 待做 | Handler integration planning only |
+| **14i** | 待做 | SQLite shadow write planning |
+| **14j** | 待做 | Dashboard read API planning |
 
 ---
 

@@ -48,11 +48,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14b** | DB migration planning — exact Alembic/SQL draft only |
-| **14c** | Shadow ReplyLog write implementation（preview 双写） |
-| **14d** | Dashboard read API planning only |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14b** | ✅ | Alembic/SQL migration draft — [phase14b_done.md](phase14b_done.md) |
+| **14c** | 待做 | Create empty shadow migration files only |
+| **14d** | 待做 | Shadow ReplyLog write planning |
+| **14e** | 待做 | Dashboard read API planning only |
 
 ---
 

@@ -67,9 +67,10 @@ Missing id → HTTP 404-style body with `error=not_found`.
 
 | Phase | 内容 |
 |-------|------|
-| **14p** | AuditLog / PendingAssisted planning |
-| **14q** | Dashboard detail snapshots SQLite read integration |
-| **14r** | Auth/permission enforcement planning |
+| **14p** | ✅ AuditLog / PendingAssisted planning — [phase14p_done.md](phase14p_done.md) |
+| **14q** | PendingAssisted + AuditLog schema implementation behind flags |
+| **14r** | Assisted approve/reject service planning |
+| **14s** | Final guard implementation planning |
 
 ---
 

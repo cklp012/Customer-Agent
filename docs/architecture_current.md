@@ -109,6 +109,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14h** | Preview ReplyLog service integration planning (docs) | ✅ | [phase14h_done.md](phase14h_done.md) |
 | **14i** | PreviewReplyLogService handler integration (test shop only) | ✅ | [phase14i_done.md](phase14i_done.md) |
 | **14j** | SQLite shadow write planning (docs) | ✅ | [phase14j_done.md](phase14j_done.md) |
+| **14k** | Dashboard read API planning (docs) | ✅ | [phase14k_done.md](phase14k_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -121,7 +122,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService（14g/14i）** | **13a–13e + 14f–14j**；DB persistence **未实现** · SQLite shadow **planned（14j）** · zero-send **不变** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService（14g/14i）** | **13a–13e + 14f–14k**；DB **未实现** · Dashboard read API **planned（14k）** · endpoint **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -176,7 +177,18 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | `product_persistence/flags.py` | 默认 false |
 | `product_persistence/db_manager.py` | no-op · 无 engine |
 | `product_persistence/repositories/` | Protocol stubs |
-| `PreviewReplyLogService` | **in-memory read/write**（14g/14i）· test shop handler **已接** · SQLite shadow **planned（14j）** · DB **未实现** |
+| `PreviewReplyLogService` | **in-memory read/write**（14g/14i）· test shop handler **已接** · SQLite shadow **planned（14j）** · Dashboard read API **planned（14k）** · endpoint **未实现** |
+
+**Dashboard read API（14k · planning-only）：**
+
+| 文档 | 内容 |
+|------|------|
+| [phase14k_dashboard_read_api_plan.md](phase14k_dashboard_read_api_plan.md) | 总体规划 · 只读 |
+| [phase14k_replylog_list_api_contract.md](phase14k_replylog_list_api_contract.md) | `GET /api/product/reply-logs` |
+| [phase14k_replylog_detail_api_contract.md](phase14k_replylog_detail_api_contract.md) | detail contract |
+| [phase14k_dashboard_filters_and_permissions.md](phase14k_dashboard_filters_and_permissions.md) | 筛选 · 权限 |
+| [phase14k_read_source_strategy.md](phase14k_read_source_strategy.md) | in-memory ↔ SQLite read |
+| [phase14k_test_plan.md](phase14k_test_plan.md) | D1–D11 |
 
 **SQLite shadow write（14j · planning-only）：**
 
@@ -445,7 +457,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–14j）：** **14i** test shop preview → in-memory via service；**14j** SQLite shadow write planned（in-memory first · flags-gated）；DB persistence **仍未实现**；zero-send 不变。
+**Productization（12a–14k）：** **14i** test shop preview → in-memory via service；**14j** SQLite shadow write planned；**14k** Dashboard read API planned（只读 · endpoint 未实现）；DB persistence **仍未实现**；zero-send 不变。
 
 ---
 
@@ -697,10 +709,10 @@ flowchart TB
 | **14h** ✅ | Preview ReplyLog service integration planning（docs） | [phase14h_done.md](phase14h_done.md) |
 | **14i** ✅ | PreviewReplyLogService handler integration（test shop only） | [phase14i_done.md](phase14i_done.md) |
 | **14j** ✅ | SQLite shadow write planning（docs） | [phase14j_done.md](phase14j_done.md) |
-| **14k** | Dashboard read API planning only | [phase14j_done.md](phase14j_done.md) |
-| **14l** | SQLite ReplyLog shadow implementation behind flag | [phase14j_done.md](phase14j_done.md) |
-| **14m** | SendDecision snapshot shadow write | [phase14j_done.md](phase14j_done.md) |
-| **14n** | AuditLog / PendingAssisted planning | [phase14j_done.md](phase14j_done.md) |
+| **14k** ✅ | Dashboard read API planning（docs） | [phase14k_done.md](phase14k_done.md) |
+| **14l** | SQLite ReplyLog shadow implementation behind flag | [phase14k_done.md](phase14k_done.md) |
+| **14m** | Dashboard read API skeleton only | [phase14k_done.md](phase14k_done.md) |
+| **14n** | SendDecision snapshot shadow write planning | [phase14k_done.md](phase14k_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

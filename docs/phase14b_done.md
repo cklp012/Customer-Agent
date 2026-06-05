@@ -48,11 +48,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **14c** | Create empty shadow migration files only |
-| **14d** | Shadow ReplyLog write planning |
-| **14e** | Dashboard read API planning only |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **14c** | ✅ | Migration skeleton 调查 — [phase14c_done.md](phase14c_done.md)（无 framework） |
+| **14d** | 待做 | Migration 路径选型 + DDL fill review |
+| **14e** | 待做 | Shadow ReplyLog write planning |
+| **14f** | 待做 | Dashboard read API planning only |
 
 ---
 

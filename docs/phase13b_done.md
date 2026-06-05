@@ -50,7 +50,7 @@
 | Phase | 状态 | 内容 |
 |-------|------|------|
 | **13c** | ✅ | 单测试店 Preview gate 规划 — [phase13c_done.md](phase13c_done.md) |
-| **13d** | 待做 | Preview gate 实现（in-memory config/log · zero-send） |
+| **13d** | ✅ | Preview gate 实现 — [phase13d_done.md](phase13d_done.md) |
 | **13e** | 待做 | preview ReplyLog + Dashboard read model |
 
 ---

@@ -21,6 +21,20 @@ from Message.gates.intent_types import (
     SendMode,
 )
 from Message.gates.send_decision import SendDecision, build_send_decision
+from Message.gates.preview_log import (
+    InMemoryPreviewLog,
+    PreviewLogRecord,
+    append_preview_log,
+    preview_log,
+)
+from Message.gates.product_gate_config import (
+    ProductGateConfig,
+    TestShopAllowlistEntry,
+    clear_test_shop_allowlist,
+    get_test_shop_allowlist,
+    select_product_gate_config,
+    set_test_shop_allowlist,
+)
 from Message.gates.shadow_decision_logger import (
     InMemoryShadowDecisionLogger,
     ShadowDecisionRecord,
@@ -41,13 +55,23 @@ __all__ = [
     "RiskLevel",
     "SendDecision",
     "SendMode",
+    "InMemoryPreviewLog",
     "InMemoryShadowDecisionLogger",
+    "PreviewLogRecord",
+    "ProductGateConfig",
     "ShadowDecisionRecord",
+    "TestShopAllowlistEntry",
+    "append_preview_log",
     "append_shadow_decision_from_handler",
+    "clear_test_shop_allowlist",
+    "get_test_shop_allowlist",
     "build_send_decision",
     "build_shadow_decision_record",
     "classify_consultation_intent",
     "evaluate_guarded_send",
     "keyword_risk_scan",
+    "preview_log",
+    "select_product_gate_config",
+    "set_test_shop_allowlist",
     "shadow_decision_logger",
 ]

@@ -53,6 +53,18 @@ class AIReplyHandler(BaseHandler):
             # 1b. Shadow SendDecision（观察-only，fail-open，不改变发送路径）
             self._try_shadow_log_send_decision(processed_content, metadata)
 
+            # 1c. Single test shop preview gate（allowlist · zero-send）
+            from Message.gates.product_gate_config import select_product_gate_config
+
+            gate_config = select_product_gate_config(metadata)
+            if (
+                gate_config.product_gate_enabled
+                and gate_config.reply_mode == "preview"
+            ):
+                return await self._handle_preview_product_gate(
+                    processed_content, context, metadata, gate_config
+                )
+
             # 2. 调用AI生成回复
             reply = await self._get_ai_reply(processed_content, context)
             if not reply:
@@ -72,6 +84,68 @@ class AIReplyHandler(BaseHandler):
         except Exception as e:
             self.logger.error(f"AI回复处理失败: {e}")
             return await self._handle_fallback(context, metadata)
+
+    @staticmethod
+    def _processed_content_as_text(processed_content: Any) -> str:
+        if processed_content is None:
+            return ""
+        if isinstance(processed_content, str):
+            return processed_content
+        return str(processed_content)
+
+    async def _handle_preview_product_gate(
+        self,
+        processed_content: Any,
+        context: Context,
+        metadata: Dict[str, Any],
+        gate_config: Any,
+    ) -> bool:
+        """
+        Allowlisted test shop: generate suggestion, guarded eval, preview log — no send.
+
+        Fail-safe: any error or empty AI reply → no _send_reply / no legacy fallback send.
+        """
+        try:
+            from Message.gates.consultation_intent_classifier import (
+                classify_consultation_intent,
+            )
+            from Message.gates.guarded_send import evaluate_guarded_send
+            from Message.gates.preview_log import append_preview_log
+            from Message.gates.send_decision import build_send_decision
+
+            message_text = self._processed_content_as_text(processed_content)
+            classification = classify_consultation_intent(message_text)
+            send_decision = build_send_decision(
+                classification,
+                reply_mode="preview",
+                product_gate_enabled=True,
+                workspace_pause=gate_config.workspace_pause,
+                shop_pause=gate_config.shop_pause,
+            )
+
+            reply = await self._get_ai_reply(processed_content, context)
+            if not reply:
+                self.logger.warning("Preview gate: AI reply empty — no send")
+                return False
+
+            guarded_result = evaluate_guarded_send(send_decision, reply)
+            append_preview_log(
+                message_text=message_text,
+                reply_text=reply,
+                classification=classification,
+                send_decision=send_decision,
+                guarded_result=guarded_result,
+                metadata=metadata,
+            )
+            await self.log_message(
+                context,
+                "Preview gate suggestion recorded",
+                f"send_status={guarded_result.send_status}",
+            )
+            return True
+        except Exception as exc:
+            self.logger.debug("Preview gate fail-safe (no send): %s", exc)
+            return False
 
     def _try_shadow_log_send_decision(
         self,

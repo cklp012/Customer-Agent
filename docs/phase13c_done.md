@@ -58,11 +58,12 @@
 
 ## 下一步
 
-| Phase | 内容 |
-|-------|------|
-| **13d** | single test shop preview gate **implementation**（in-memory config/log） |
-| **13e** | preview ReplyLog + Dashboard read model integration |
-| **12g** | merchant console wireframe（可并行） |
+| Phase | 状态 | 内容 |
+|-------|------|------|
+| **13d** | ✅ | 单店 preview gate 实现 — [phase13d_done.md](phase13d_done.md) |
+| **13e** | 待做 | preview ReplyLog + Dashboard read model |
+| **13f** | 待做 | Assisted mode planning only |
+| **12g** | 待做 | merchant console wireframe |
 
 ---
 

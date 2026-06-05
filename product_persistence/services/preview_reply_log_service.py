@@ -1,4 +1,4 @@
-"""Preview ReplyLog service — in-memory + optional SQLite shadow (Phase 14g–14l)."""
+"""Preview ReplyLog service — in-memory + optional SQLite shadow (Phase 14g–14n)."""
 
 from __future__ import annotations
 
@@ -17,6 +17,9 @@ class PreviewRecordResult:
     reply_log_id: Optional[str] = None
     db_recorded: bool = False
     db_error: Optional[str] = None
+    snapshot_recorded: bool = False
+    snapshot_error: Optional[str] = None
+    send_decision_id: Optional[str] = None
 
 
 @dataclass(frozen=True)
@@ -31,11 +34,16 @@ class PreviewReplyLogService:
     """
     Service-layer read/write boundary over Message/gates in-memory preview_log.
 
-    SQLite shadow write behind flags (Phase 14l); handler wired in 14i.
+    SQLite shadow write behind flags (Phase 14l ReplyLog · 14n SendDecision).
     """
 
-    def __init__(self, repository: Any = None) -> None:
+    def __init__(
+        self,
+        repository: Any = None,
+        snapshot_repository: Any = None,
+    ) -> None:
         self.repository = repository
+        self.snapshot_repository = snapshot_repository
 
     def record_preview(
         self,
@@ -100,29 +108,81 @@ class PreviewReplyLogService:
                 source="in_memory",
                 db_recorded=False,
                 db_error=None,
+                snapshot_recorded=False,
+                snapshot_error=None,
+                send_decision_id=None,
             )
 
+        db_recorded = False
+        db_error: Optional[str] = None
+        source = "in_memory"
+
         try:
-            repository = self.repository
-            if repository is None:
+            reply_repository = self.repository
+            if reply_repository is None:
                 from product_persistence.repositories.sqlite_reply_log_repository import (
                     ReplyLogRepositorySQLite,
                 )
 
-                repository = ReplyLogRepositorySQLite()
-            repository.create_preview_reply_log(record)
+                reply_repository = ReplyLogRepositorySQLite()
+            reply_repository.create_preview_reply_log(record)
+            db_recorded = True
+            source = "in_memory+sqlite_shadow"
+        except Exception as exc:
+            db_error = str(exc)
+
+        if not db_recorded:
             return PreviewRecordResult(
                 **common,
-                source="in_memory+sqlite_shadow",
+                source=source,
+                db_recorded=False,
+                db_error=db_error,
+                snapshot_recorded=False,
+                snapshot_error=None,
+                send_decision_id=None,
+            )
+
+        if not flags.should_write_send_decision():
+            return PreviewRecordResult(
+                **common,
+                source=source,
                 db_recorded=True,
                 db_error=None,
+                snapshot_recorded=False,
+                snapshot_error=None,
+                send_decision_id=None,
+            )
+
+        try:
+            snapshot_repository = self.snapshot_repository
+            if snapshot_repository is None:
+                from product_persistence.repositories.sqlite_send_decision_repository import (
+                    SendDecisionRepositorySQLite,
+                )
+
+                snapshot_repository = SendDecisionRepositorySQLite()
+            send_decision_id = snapshot_repository.create_snapshot(
+                record,
+                decision_phase="ai_preview",
+            )
+            return PreviewRecordResult(
+                **common,
+                source=source,
+                db_recorded=True,
+                db_error=None,
+                snapshot_recorded=True,
+                snapshot_error=None,
+                send_decision_id=send_decision_id,
             )
         except Exception as exc:
             return PreviewRecordResult(
                 **common,
-                source="in_memory",
-                db_recorded=False,
-                db_error=str(exc),
+                source=source,
+                db_recorded=True,
+                db_error=None,
+                snapshot_recorded=False,
+                snapshot_error=str(exc),
+                send_decision_id=None,
             )
 
     def list_reply_logs(

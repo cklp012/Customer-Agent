@@ -11,6 +11,9 @@ from product_persistence.repositories.send_decision_repository import (
 from product_persistence.repositories.sqlite_reply_log_repository import (
     ReplyLogRepositorySQLite,
 )
+from product_persistence.repositories.sqlite_send_decision_repository import (
+    SendDecisionRepositorySQLite,
+)
 
 __all__ = [
     "AuditLogRepository",
@@ -18,4 +21,5 @@ __all__ = [
     "ReplyLogRepository",
     "ReplyLogRepositorySQLite",
     "SendDecisionRepository",
+    "SendDecisionRepositorySQLite",
 ]

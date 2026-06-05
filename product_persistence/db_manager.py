@@ -35,7 +35,11 @@ class ProductDbManager:
         return self._db_url
 
     def _persistence_active(self) -> bool:
-        return flags.should_write_reply_log() or flags.should_read_dashboard_from_product_db()
+        return (
+            flags.should_write_reply_log()
+            or flags.should_write_send_decision()
+            or flags.should_read_dashboard_from_product_db()
+        )
 
     def _ensure_sqlite_directory(self) -> None:
         path = _sqlite_path_from_url(self._db_url)
@@ -43,7 +47,7 @@ class ProductDbManager:
             path.parent.mkdir(parents=True, exist_ok=True)
 
     def init_product_db(self) -> None:
-        """Create engine and reply_logs tables when persistence flags are on."""
+        """Create engine and product tables when persistence flags are on."""
         if not self._persistence_active():
             return
         if self._initialized:

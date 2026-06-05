@@ -53,6 +53,41 @@ class ReplyLogRow(ProductBase):
     )
 
 
+class SendDecisionSnapshotRow(ProductBase):
+    __tablename__ = "send_decision_snapshots"
+
+    send_decision_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    reply_log_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    workspace_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    shop_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    account_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    platform_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    inbound_message_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    decision_phase: Mapped[str] = mapped_column(Text, nullable=False)
+    intent: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    intent_bucket: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    intent_confidence: Mapped[Optional[float]] = mapped_column(Float, nullable=True)
+    risk_level: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    reply_mode: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    workspace_pause: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    shop_pause: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    product_gate_enabled: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    allowed_to_generate: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    allowed_to_send: Mapped[int] = mapped_column(Integer, nullable=False, default=0)
+    send_mode: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    blocked_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    human_takeover_reason: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    decision_source: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[str] = mapped_column(Text, nullable=False)
+
+    __table_args__ = (
+        Index("idx_send_decisions_reply_log_id", "reply_log_id"),
+        Index("idx_send_decisions_workspace_created_at", "workspace_id", "created_at"),
+        Index("idx_send_decisions_shop_created_at", "shop_id", "created_at"),
+        Index("idx_send_decisions_phase", "decision_phase"),
+    )
+
+
 @dataclass(frozen=True)
 class ReplyLogDTO:
     """Read model placeholder — aligns with phase14e repository DTO."""
@@ -79,6 +114,12 @@ class SendDecisionSnapshotDTO:
     decision_phase: str
     intent: str
     send_mode: str
+    intent_bucket: Optional[str] = None
+    risk_level: Optional[str] = None
+    allowed_to_send: Optional[bool] = None
+    allowed_to_generate: Optional[bool] = None
+    decision_source: Optional[str] = None
+    created_at: Optional[str] = None
 
 
 @dataclass(frozen=True)

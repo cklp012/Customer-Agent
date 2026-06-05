@@ -51,10 +51,10 @@
 
 ---
 
-## 当前 runtime（unchanged）
+## 当前 runtime（14n）
 
 - 14l：`reply_logs` shadow behind flags
-- 无 `send_decision_snapshots` 表
+- 14n：`send_decision_snapshots` shadow behind flags（ReplyLog 成功后写入）
 - test shop zero-send · non-test legacy 不变
 
 ---
@@ -63,9 +63,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14n** | SendDecision snapshot SQLite **implementation** behind flag |
+| **14n** | ✅ SendDecision snapshot SQLite — [phase14n_done.md](phase14n_done.md) |
 | **14o** | Dashboard read API **skeleton only** |
 | **14p** | AuditLog / PendingAssisted planning |
+| **14q** | Dashboard detail snapshots read integration planning |
 
 ---
 

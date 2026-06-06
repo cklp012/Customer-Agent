@@ -153,6 +153,7 @@ python scripts/diagnose_runtime.py
 | **15a** | [phase15a_done.md](phase15a_done.md) | **Assisted send implementation planning** — outbound port · idempotency · test shop rollout · A1–A21 |
 | **15b** | [phase15b_done.md](phase15b_done.md) | **Outbound idempotency skeleton** — ORM + SQLite repo · acquire/mark · flags default off · no send |
 | **15c** | [phase15c_done.md](phase15c_done.md) | **Assisted outbound dry-run port** — AssistedOutboundPort + DryRunAssistedOutboundPort · would_send only · no SendMessage |
+| **15d** | [phase15d_done.md](phase15d_done.md) | **PendingAssisted dashboard read API** — list/detail GET skeleton · read-only · no approve/send |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

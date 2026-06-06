@@ -107,7 +107,8 @@ class TestPendingAssistedAuditRepositories(_RepositoryTestCase):
         assert item is not None
         self.assertEqual(item.pending_assisted_id, pending_id)
         self.assertEqual(item.status, "pending")
-        listed = repo.list_pending(workspace_id="ws-q-1", status="pending")
+        listed, total = repo.list_pending(workspace_id="ws-q-1", status="pending")
+        self.assertEqual(total, 1)
         self.assertEqual(len(listed), 1)
         self.assertEqual(listed[0].pending_assisted_id, pending_id)
 

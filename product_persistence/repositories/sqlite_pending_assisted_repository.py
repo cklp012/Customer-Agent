@@ -3,7 +3,7 @@
 from __future__ import annotations
 
 from datetime import datetime, timedelta, timezone
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Tuple
 from uuid import uuid4
 
 from product_persistence.db_manager import ProductDbManager, get_product_db_manager
@@ -11,6 +11,10 @@ from product_persistence.models import PendingAssistedReplyDTO, PendingAssistedR
 
 _DEFAULT_STATUS = "pending"
 _DEFAULT_CREATED_BY = "system"
+_DEFAULT_LIST_STATUSES = ("pending", "failed")
+_SORT_ALLOWLIST = frozenset(
+    {"created_at", "updated_at", "expires_at", "risk_level", "status"}
+)
 
 
 def _utc_now_iso() -> str:
@@ -148,26 +152,76 @@ class PendingAssistedRepositorySQLite:
         *,
         workspace_id: Optional[str] = None,
         shop_id: Optional[str] = None,
+        account_id: Optional[str] = None,
+        platform_id: Optional[str] = None,
         status: Optional[str] = None,
+        statuses: Optional[Tuple[str, ...]] = None,
         buyer_id: Optional[str] = None,
+        intent_category: Optional[str] = None,
+        risk_level: Optional[str] = None,
+        created_after: Optional[str] = None,
+        created_before: Optional[str] = None,
+        updated_after: Optional[str] = None,
+        updated_before: Optional[str] = None,
+        sort_by: str = "created_at",
+        sort_order: str = "desc",
+        offset: int = 0,
         limit: int = 100,
-    ) -> List[PendingAssistedReplyDTO]:
+    ) -> Tuple[List[PendingAssistedReplyDTO], int]:
         session = self._db_manager.get_product_session()
         try:
-            from sqlalchemy import select
+            from sqlalchemy import func, select
 
             stmt = select(PendingAssistedReplyRow)
             if workspace_id is not None:
                 stmt = stmt.where(PendingAssistedReplyRow.workspace_id == workspace_id)
             if shop_id is not None:
                 stmt = stmt.where(PendingAssistedReplyRow.shop_id == shop_id)
-            if status is not None:
-                stmt = stmt.where(PendingAssistedReplyRow.status == status)
+            if account_id is not None:
+                stmt = stmt.where(PendingAssistedReplyRow.account_id == account_id)
+            if platform_id is not None:
+                stmt = stmt.where(PendingAssistedReplyRow.platform_id == platform_id)
             if buyer_id is not None:
                 stmt = stmt.where(PendingAssistedReplyRow.buyer_id == buyer_id)
-            stmt = stmt.order_by(PendingAssistedReplyRow.created_at.desc()).limit(limit)
+            if intent_category is not None:
+                stmt = stmt.where(
+                    (PendingAssistedReplyRow.intent_bucket == intent_category)
+                    | (PendingAssistedReplyRow.intent == intent_category)
+                )
+            if risk_level is not None:
+                stmt = stmt.where(PendingAssistedReplyRow.risk_level == risk_level)
+            if status is not None:
+                stmt = stmt.where(PendingAssistedReplyRow.status == status)
+            elif statuses is not None:
+                stmt = stmt.where(PendingAssistedReplyRow.status.in_(statuses))
+            else:
+                stmt = stmt.where(
+                    PendingAssistedReplyRow.status.in_(_DEFAULT_LIST_STATUSES)
+                )
+            if created_after is not None:
+                stmt = stmt.where(PendingAssistedReplyRow.created_at >= created_after)
+            if created_before is not None:
+                stmt = stmt.where(PendingAssistedReplyRow.created_at <= created_before)
+            if updated_after is not None:
+                stmt = stmt.where(PendingAssistedReplyRow.updated_at >= updated_after)
+            if updated_before is not None:
+                stmt = stmt.where(PendingAssistedReplyRow.updated_at <= updated_before)
+
+            sort_field = sort_by if sort_by in _SORT_ALLOWLIST else "created_at"
+            sort_column = getattr(PendingAssistedReplyRow, sort_field)
+            if sort_order.lower() == "asc":
+                stmt = stmt.order_by(sort_column.asc())
+            else:
+                stmt = stmt.order_by(sort_column.desc())
+
+            count_stmt = select(func.count()).select_from(stmt.subquery())
+            total = int(session.scalar(count_stmt) or 0)
+
+            safe_offset = max(0, int(offset or 0))
+            safe_limit = min(max(1, int(limit or 100)), 100)
+            stmt = stmt.offset(safe_offset).limit(safe_limit)
             rows = session.scalars(stmt).all()
-            return [_dto_from_row(row) for row in rows]
+            return ([_dto_from_row(row) for row in rows], total)
         finally:
             session.close()
 

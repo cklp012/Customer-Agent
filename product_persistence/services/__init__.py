@@ -21,6 +21,13 @@ from product_persistence.services.preview_reply_log_service import (
     PreviewRecordResult,
     PreviewReplyLogServiceResult,
 )
+from product_persistence.services.pending_assisted_dashboard_read_service import (
+    PendingAssistedDashboardReadService,
+    PendingAssistedDetail,
+    PendingAssistedDetailResult,
+    PendingAssistedListItem,
+    PendingAssistedListResult,
+)
 from product_persistence.services.policy_template_validation_service import (
     PolicyValidationResult,
     TemplateValidationResult,
@@ -39,6 +46,11 @@ __all__ = [
     "DashboardListResult",
     "DashboardReadService",
     "DryRunAssistedOutboundPort",
+    "PendingAssistedDashboardReadService",
+    "PendingAssistedDetail",
+    "PendingAssistedDetailResult",
+    "PendingAssistedListItem",
+    "PendingAssistedListResult",
     "PolicyValidationResult",
     "PreviewRecordResult",
     "PreviewReplyLogService",

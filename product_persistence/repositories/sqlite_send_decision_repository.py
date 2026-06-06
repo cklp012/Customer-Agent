@@ -2,7 +2,7 @@
 
 from __future__ import annotations
 
-from typing import Any, List, Optional
+from typing import Any, Dict, List, Optional
 from uuid import uuid4
 
 from Message.gates.preview_log import PreviewLogRecord
@@ -127,5 +127,42 @@ class SendDecisionRepositorySQLite:
             )
             rows = session.scalars(stmt).all()
             return [_dto_from_row(row) for row in rows]
+        finally:
+            session.close()
+
+    def latest_for_reply_log(
+        self,
+        reply_log_id: str,
+    ) -> Optional[Dict[str, Any]]:
+        session = self._db_manager.get_product_session()
+        try:
+            from sqlalchemy import select
+
+            stmt = (
+                select(SendDecisionSnapshotRow)
+                .where(SendDecisionSnapshotRow.reply_log_id == reply_log_id)
+                .order_by(SendDecisionSnapshotRow.created_at.desc())
+                .limit(1)
+            )
+            row = session.scalars(stmt).first()
+            if row is None:
+                return None
+            return {
+                "send_decision_id": row.send_decision_id,
+                "reply_log_id": row.reply_log_id,
+                "decision_phase": row.decision_phase,
+                "intent": row.intent,
+                "intent_bucket": row.intent_bucket,
+                "intent_confidence": row.intent_confidence,
+                "risk_level": row.risk_level,
+                "reply_mode": row.reply_mode,
+                "allowed_to_send": bool(row.allowed_to_send),
+                "allowed_to_generate": bool(row.allowed_to_generate),
+                "send_mode": row.send_mode,
+                "blocked_reason": row.blocked_reason,
+                "human_takeover_reason": row.human_takeover_reason,
+                "decision_source": row.decision_source,
+                "created_at": row.created_at,
+            }
         finally:
             session.close()

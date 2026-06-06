@@ -165,6 +165,56 @@ class AuditLogRepositorySQLite:
         finally:
             session.close()
 
+    def list_for_pending_assisted(
+        self,
+        pending_assisted_id: str,
+        *,
+        limit: int = 100,
+        ascending: bool = True,
+    ) -> List[AuditLogDTO]:
+        session = self._db_manager.get_product_session()
+        try:
+            from sqlalchemy import select
+
+            stmt = select(AuditLogRow).where(
+                AuditLogRow.pending_assisted_id == pending_assisted_id
+            )
+            if ascending:
+                stmt = stmt.order_by(AuditLogRow.created_at.asc())
+            else:
+                stmt = stmt.order_by(AuditLogRow.created_at.desc())
+            stmt = stmt.limit(limit)
+            rows = session.scalars(stmt).all()
+            return [_dto_from_row(row) for row in rows]
+        finally:
+            session.close()
+
+    def list_for_entity(
+        self,
+        entity_type: str,
+        entity_id: str,
+        *,
+        limit: int = 100,
+        ascending: bool = True,
+    ) -> List[AuditLogDTO]:
+        session = self._db_manager.get_product_session()
+        try:
+            from sqlalchemy import select
+
+            stmt = select(AuditLogRow).where(
+                AuditLogRow.target_type == entity_type,
+                AuditLogRow.target_id == entity_id,
+            )
+            if ascending:
+                stmt = stmt.order_by(AuditLogRow.created_at.asc())
+            else:
+                stmt = stmt.order_by(AuditLogRow.created_at.desc())
+            stmt = stmt.limit(limit)
+            rows = session.scalars(stmt).all()
+            return [_dto_from_row(row) for row in rows]
+        finally:
+            session.close()
+
     def get_audit_log(self, audit_log_id: str) -> Optional[AuditLogDTO]:
         session = self._db_manager.get_product_session()
         try:

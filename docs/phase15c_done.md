@@ -53,9 +53,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15d** | PendingAssisted dashboard **read API skeleton** |
+| **15d** | ✅ PendingAssisted dashboard **read API skeleton** — [phase15d_done.md](phase15d_done.md) |
 | **15e** | Assisted send live integration **planning only** |
 | **15f** | Wire dry-run port into AssistedReplyService behind flags |
+| **15g** | Assisted dashboard action endpoint **planning only** |
 
 ---
 

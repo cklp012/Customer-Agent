@@ -54,9 +54,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15h** | Live PDD AssistedOutboundPort **planning only** |
+| **15h** | ✅ Live PDD AssistedOutboundPort **planning** — [phase15h_done.md](phase15h_done.md) |
 | **15i** | Dashboard action endpoint **dry-run skeleton** |
 | **15j** | Action idempotency / `client_request_id` **skeleton** |
+| **15k** | `LivePddAssistedOutboundPort` **skeleton planning only** |
 
 ---
 

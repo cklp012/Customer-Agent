@@ -55,9 +55,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14y** | Final Guard + Assisted service **integration planning** |
+| **14y** | ✅ Final Guard + Assisted integration planning — [phase14y_done.md](phase14y_done.md) |
 | **14z** | PendingAssisted **dashboard read planning** |
 | **15a** | Assisted send **implementation planning only** |
+| **15b** | Outbound **idempotency skeleton** behind flags |
 
 ---
 

@@ -123,6 +123,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14v** | Final Guard pure function | ✅ | [phase14v_done.md](phase14v_done.md) |
 | **14w** | Policy/template validation service skeleton | ✅ | [phase14w_done.md](phase14w_done.md) |
 | **14x** | AssistedReplyService skeleton behind flags | ✅ | [phase14x_done.md](phase14x_done.md) |
+| **14y** | Final Guard + Assisted service integration planning (docs) | ✅ | [phase14y_done.md](phase14y_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -135,7 +136,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14x** · Policy/Guard/Validation ✅ · **Assisted service skeleton** ✅ · send **未实现** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14y** · Guard/Validation/Assisted skeleton ✅ · **integration planned** · send **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -241,11 +242,13 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | `create_pending_from_preview` | ✅ PendingAssisted + audit · no send |
 | `approve_pending` | ✅ role + final guard only · **no send** · status not sent |
 | `reject_pending` / `expire_pending` | ✅ status + audit · no send |
-| handler / outbound integration | ❌ **未接** |
-| assisted send | ❌ **未实现** |
+| handler / outbound integration | 📋 **14y** planned · **未接** |
+| assisted send | ❌ **未实现** · 15a planning |
 | auto send | ❌ **未实现** |
-| audit + snapshot sequence | 📋 [phase14r_audit_and_snapshot_sequence.md](phase14r_audit_and_snapshot_sequence.md) |
-| state machine + idempotency | 📋 [phase14r_state_machine_and_idempotency.md](phase14r_state_machine_and_idempotency.md) |
+| audit + snapshot sequence | 📋 [phase14y_audit_snapshot_ordering.md](phase14y_audit_snapshot_ordering.md) |
+| state machine + idempotency | 📋 [phase14y_idempotency_and_state_transition.md](phase14y_idempotency_and_state_transition.md) |
+| approve → outbound sequence | 📋 [phase14y_approve_to_outbound_sequence.md](phase14y_approve_to_outbound_sequence.md) |
+| failure + recovery | 📋 [phase14y_failure_and_recovery_policy.md](phase14y_failure_and_recovery_policy.md) |
 
 | 文档 | 内容 |
 |------|------|
@@ -255,6 +258,27 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase14r_failure_and_rollback.md](phase14r_failure_and_rollback.md) | failure · rollback |
 | [phase14r_test_plan.md](phase14r_test_plan.md) | R1–R15 |
 | [phase14x_done.md](phase14x_done.md) | Assisted service skeleton |
+| [phase14y_done.md](phase14y_done.md) | Final Guard + Assisted integration planning |
+
+**Final Guard + Assisted Integration（14y · planning-only）：**
+
+| 组件 | 状态 |
+|------|------|
+| approve → outbound sequence | 📋 documented · **not implemented** |
+| audit/snapshot/idempotency ordering | 📋 documented |
+| idempotency / state machine | 📋 documented |
+| failure + recovery policy | 📋 documented |
+| assisted send | ❌ **未实现** |
+| handler / SendMessage integration | ❌ **未接** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase14y_final_guard_assisted_integration_plan.md](phase14y_final_guard_assisted_integration_plan.md) | 总体规划 |
+| [phase14y_approve_to_outbound_sequence.md](phase14y_approve_to_outbound_sequence.md) | approve 顺序 |
+| [phase14y_idempotency_and_state_transition.md](phase14y_idempotency_and_state_transition.md) | 幂等 · 状态 |
+| [phase14y_audit_snapshot_ordering.md](phase14y_audit_snapshot_ordering.md) | audit · snapshot |
+| [phase14y_failure_and_recovery_policy.md](phase14y_failure_and_recovery_policy.md) | 失败策略 |
+| [phase14y_test_plan.md](phase14y_test_plan.md) | Y1–Y17 |
 
 **Merchant Safety Policy + Template（14s · planning · 14u · schema implemented）：**
 
@@ -616,7 +640,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–14x）：** **14x** AssistedReplyService skeleton behind flags（no send）；**14y** integration planning 待做。
+**Productization（12a–14y）：** **14y** Final Guard + Assisted integration planning（pass≠success · no-send on pre-outbound fail）；**14z** Dashboard read 待做。
 
 ---
 
@@ -882,9 +906,10 @@ flowchart TB
 | **14v** ✅ | Final Guard pure function implementation | [phase14v_done.md](phase14v_done.md) |
 | **14w** ✅ | Policy/template validation service skeleton | [phase14w_done.md](phase14w_done.md) |
 | **14x** ✅ | Assisted service skeleton behind flags | [phase14x_done.md](phase14x_done.md) |
-| **14y** | Final Guard integration with Assisted service planning | [phase14x_done.md](phase14x_done.md) |
-| **14z** | PendingAssisted dashboard read planning | [phase14x_done.md](phase14x_done.md) |
-| **15a** | Assisted send implementation planning only | [phase14x_done.md](phase14x_done.md) |
+| **14y** ✅ | Final Guard + Assisted integration planning (docs) | [phase14y_done.md](phase14y_done.md) |
+| **14z** | PendingAssisted dashboard read planning | [phase14y_done.md](phase14y_done.md) |
+| **15a** | Assisted send implementation planning only | [phase14y_done.md](phase14y_done.md) |
+| **15b** | Outbound idempotency skeleton behind flags | [phase14y_done.md](phase14y_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

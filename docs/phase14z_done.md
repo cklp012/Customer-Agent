@@ -65,9 +65,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15a** | Assisted send **implementation planning only** |
+| **15a** | ✅ Assisted send implementation planning — [phase15a_done.md](phase15a_done.md) |
 | **15b** | Outbound **idempotency skeleton** behind flags |
-| **15c** | PendingAssisted dashboard **read API skeleton** |
+| **15c** | Assisted outbound **dry-run port** skeleton |
+| **15d** | PendingAssisted dashboard **read API skeleton** |
 
 ---
 

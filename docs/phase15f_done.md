@@ -52,9 +52,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15g** | Assisted dashboard action endpoint **planning only** |
+| **15g** | ✅ Dashboard action endpoint **planning** — [phase15g_done.md](phase15g_done.md) |
 | **15h** | Live PDD AssistedOutboundPort **planning only** |
-| **15i** | Live assisted send single test shop **planning only** |
+| **15i** | Dashboard action endpoint **dry-run skeleton** |
+| **15j** | Action idempotency / `client_request_id` **skeleton** |
 
 ---
 

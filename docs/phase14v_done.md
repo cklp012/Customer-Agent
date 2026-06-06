@@ -64,9 +64,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14w** | Policy/template **validation service** skeleton |
+| **14w** | ✅ Policy/template validation service skeleton — [phase14w_done.md](phase14w_done.md) |
 | **14x** | Assisted service **skeleton behind flags** |
-| **14y** | Final Guard integration planning with Assisted service |
+| **14y** | Final Guard + Assisted service **integration planning** |
+| **14z** | Policy/template **dashboard read planning** |
 
 ---
 

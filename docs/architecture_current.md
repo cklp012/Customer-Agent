@@ -121,6 +121,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14t** | Final Guard + Merchant Policy integration planning (docs) | ✅ | [phase14t_done.md](phase14t_done.md) |
 | **14u** | MerchantSafetyPolicy + MerchantReplyTemplate schema behind flags | ✅ | [phase14u_done.md](phase14u_done.md) |
 | **14v** | Final Guard pure function | ✅ | [phase14v_done.md](phase14v_done.md) |
+| **14w** | Policy/template validation service skeleton | ✅ | [phase14w_done.md](phase14w_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -133,7 +134,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14v** SQLite · Policy schema ✅ · **Final Guard pure fn** ✅ · send integration **未实现** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14w** · Policy schema ✅ · Final Guard ✅ · **Validation service** ✅ · send integration **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -260,7 +261,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | `ai_intervention_mode` 五档 | 📋 documented · stored as TEXT |
 | `platform_mode_ceiling` | 📋 documented · stored as TEXT |
 | effective_mode 业务逻辑 | ❌ **未实现** |
-| template validation / forbidden scan | ❌ **未实现** · `validation_status` field only |
+| template validation / forbidden scan | ✅ **14w** service skeleton · no DB/send |
 | policy snapshot on ReplyLog/Snapshot | 📋 planned |
 | final guard | ✅ **14v** pure function · **no send integration** |
 | assisted / auto send | ❌ **未实现** |
@@ -275,6 +276,17 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase14s_policy_snapshot_and_audit.md](phase14s_policy_snapshot_and_audit.md) | snapshot · audit |
 | [phase14s_test_plan.md](phase14s_test_plan.md) | S1–S16 |
 | [phase14u_done.md](phase14u_done.md) | schema + repository skeleton |
+| [phase14w_done.md](phase14w_done.md) | policy/template validation service skeleton |
+
+**Policy / Template Validation Service（14w · skeleton implemented）：**
+
+| 组件 | 状态 |
+|------|------|
+| `validate_policy_mode` | ✅ ceiling · redline · effective_mode · no DB |
+| `validate_reply_template` | ✅ forbidden scan · variable whitelist · validation_status |
+| `compute_content_hash` | ✅ sha256 |
+| handler / final guard integration | ❌ **未接** |
+| assisted / auto send | ❌ **未实现** |
 
 **Final Guard + Merchant Policy（14t · planning · 14v · pure function implemented）：**
 
@@ -598,7 +610,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–14v）：** **14v** Final Guard pure function（G1–G27 · no send）；**14w** validation service 待做。
+**Productization（12a–14w）：** **14w** Policy/template validation service skeleton；**14x** Assisted service 待做。
 
 ---
 
@@ -862,9 +874,10 @@ flowchart TB
 | **14t** ✅ | Final Guard + Merchant Policy integration planning (docs) | [phase14t_done.md](phase14t_done.md) |
 | **14u** ✅ | MerchantSafetyPolicy + MerchantReplyTemplate schema skeleton | [phase14u_done.md](phase14u_done.md) |
 | **14v** ✅ | Final Guard pure function implementation | [phase14v_done.md](phase14v_done.md) |
-| **14w** | Policy/template validation service skeleton | [phase14v_done.md](phase14v_done.md) |
-| **14x** | Assisted service skeleton behind flags | [phase14v_done.md](phase14v_done.md) |
-| **14y** | Final Guard integration with Assisted service planning | [phase14v_done.md](phase14v_done.md) |
+| **14w** ✅ | Policy/template validation service skeleton | [phase14w_done.md](phase14w_done.md) |
+| **14x** | Assisted service skeleton behind flags | [phase14w_done.md](phase14w_done.md) |
+| **14y** | Final Guard integration with Assisted service planning | [phase14w_done.md](phase14w_done.md) |
+| **14z** | Policy/template dashboard read planning | [phase14w_done.md](phase14w_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

@@ -48,6 +48,7 @@ class TestProductPersistenceFlags(unittest.TestCase):
             "PRODUCT_PERSISTENCE_WRITE_MERCHANT_POLICY",
             "PRODUCT_PERSISTENCE_WRITE_REPLY_TEMPLATE",
             "PRODUCT_PERSISTENCE_READ_MERCHANT_POLICY",
+            "PRODUCT_ASSISTED_SERVICE_ENABLED",
             "PRODUCT_PERSISTENCE_READ_DASHBOARD",
         ):
             os.environ.pop(key, None)
@@ -67,6 +68,7 @@ class TestProductPersistenceFlags(unittest.TestCase):
         self.assertFalse(flags.should_write_merchant_policy())
         self.assertFalse(flags.should_write_reply_template())
         self.assertFalse(flags.should_read_merchant_policy())
+        self.assertFalse(flags.is_assisted_service_enabled())
         self.assertFalse(flags.should_read_dashboard_from_product_db())
 
     def test_true_values(self) -> None:
@@ -158,8 +160,14 @@ class TestProductPersistenceNoSideEffects(unittest.TestCase):
         self.assertEqual(result.reason, "product_persistence_disabled")
 
         assisted = AssistedReplyService()
-        with self.assertRaises(NotImplementedError):
-            assisted.approve_pending_reply("p1", actor_member_id="m1")
+        result = assisted.approve_pending(
+            "p1",
+            actor_user_id="m1",
+            actor_role="operator",
+        )
+        self.assertFalse(result.success)
+        self.assertEqual(result.status, "disabled")
+        self.assertEqual(result.reason, "assisted_disabled")
 
     def test_services_do_not_reference_send_paths(self) -> None:
         for path in (

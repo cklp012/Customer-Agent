@@ -1,6 +1,9 @@
 """Service layer stubs (Phase 14f)."""
 
-from product_persistence.services.assisted_reply_service import AssistedReplyService
+from product_persistence.services.assisted_reply_service import (
+    AssistedReplyService,
+    AssistedServiceResult,
+)
 from product_persistence.services.dashboard_read_service import (
     DashboardDetailResult,
     DashboardListResult,
@@ -21,6 +24,7 @@ from product_persistence.services.policy_template_validation_service import (
 
 __all__ = [
     "AssistedReplyService",
+    "AssistedServiceResult",
     "DashboardDetailResult",
     "DashboardListResult",
     "DashboardReadService",

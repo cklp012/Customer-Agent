@@ -62,3 +62,12 @@ def should_read_merchant_policy() -> bool:
     return is_product_persistence_enabled() and _env_flag(
         "PRODUCT_PERSISTENCE_READ_MERCHANT_POLICY"
     )
+
+
+def is_assisted_service_enabled() -> bool:
+    return (
+        is_product_persistence_enabled()
+        and should_write_pending_assisted()
+        and should_write_audit_log()
+        and _env_flag("PRODUCT_ASSISTED_SERVICE_ENABLED")
+    )

@@ -60,9 +60,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14x** | Assisted service **skeleton behind flags** |
+| **14x** | ✅ Assisted service skeleton — [phase14x_done.md](phase14x_done.md) |
 | **14y** | Final Guard + Assisted service **integration planning** |
-| **14z** | Policy/template **dashboard read planning** |
+| **14z** | PendingAssisted **dashboard read planning** |
+| **15a** | Assisted send **implementation planning only** |
 
 ---
 

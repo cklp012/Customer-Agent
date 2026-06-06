@@ -154,7 +154,8 @@ python scripts/diagnose_runtime.py
 | **15b** | [phase15b_done.md](phase15b_done.md) | **Outbound idempotency skeleton** — ORM + SQLite repo · acquire/mark · flags default off · no send |
 | **15c** | [phase15c_done.md](phase15c_done.md) | **Assisted outbound dry-run port** — AssistedOutboundPort + DryRunAssistedOutboundPort · would_send only · no SendMessage |
 | **15d** | [phase15d_done.md](phase15d_done.md) | **PendingAssisted dashboard read API** — list/detail GET skeleton · read-only · no approve/send |
-| **15e** | [phase15e_done.md](phase15e_done.md) | **Live assisted send integration planning** — flag+allowlist+guard+audit+idempotency+port · docs only · no live send |
+| **15e** | [phase15e_done.md](phase15e_done.md) | **Live assisted send integration planning** — flag+allowlist+guard+audit+idempotency+port · docs only |
+| **15f** | [phase15f_done.md](phase15f_done.md) | **Dry-run port wired into AssistedReplyService** — would_send only · no live send · no pending sent |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

@@ -1,10 +1,11 @@
-"""Assisted reply service skeleton (Phase 14x) — no send, no outbound."""
+"""Assisted reply service skeleton (Phase 14x) — dry-run outbound wire (Phase 15f)."""
 
 from __future__ import annotations
 
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from typing import Any, Optional
+from uuid import uuid4
 
 from Message.gates.final_guard import FinalGuardInput, evaluate_final_guard
 from product_persistence import flags
@@ -15,9 +16,15 @@ from product_persistence.repositories.sqlite_audit_log_repository import (
 from product_persistence.repositories.sqlite_pending_assisted_repository import (
     PendingAssistedRepositorySQLite,
 )
+from product_persistence.services.assisted_outbound_port import (
+    AssistedOutboundPort,
+    DryRunAssistedOutboundPort,
+    build_assisted_outbound_request,
+)
 
 _APPROVE_ROLES = frozenset({"operator", "admin", "owner"})
 _TERMINAL_APPROVE_STATUSES = frozenset({"rejected", "expired", "sent", "approved"})
+_IDEMPOTENCY_KEY_PREFIX = "assisted_send:"
 
 
 def _utc_now_iso() -> str:
@@ -53,7 +60,7 @@ class AssistedServiceResult:
 
 
 class AssistedReplyService:
-    """Assisted confirmation flow skeleton — persistence + guard only, no outbound."""
+    """Assisted confirmation flow — guard + dry-run outbound port (no live send)."""
 
     def __init__(
         self,
@@ -61,10 +68,14 @@ class AssistedReplyService:
         db_manager: Optional[ProductDbManager] = None,
         pending_repo: Optional[PendingAssistedRepositorySQLite] = None,
         audit_repo: Optional[AuditLogRepositorySQLite] = None,
+        idempotency_repo: Any = None,
+        outbound_port: Optional[AssistedOutboundPort] = None,
     ) -> None:
         self._db_manager = db_manager
         self._pending_repo = pending_repo
         self._audit_repo = audit_repo
+        self._idempotency_repo = idempotency_repo
+        self._outbound_port = outbound_port
 
     def _pending_repository(self) -> PendingAssistedRepositorySQLite:
         if self._pending_repo is not None:
@@ -78,6 +89,261 @@ class AssistedReplyService:
             return self._audit_repo
         return AuditLogRepositorySQLite(
             db_manager=self._db_manager or get_product_db_manager()
+        )
+
+    def _idempotency_repository(self) -> Any:
+        if self._idempotency_repo is not None:
+            return self._idempotency_repo
+        from product_persistence.repositories.sqlite_outbound_idempotency_repository import (
+            OutboundIdempotencyRepositorySQLite,
+        )
+
+        return OutboundIdempotencyRepositorySQLite(
+            db_manager=self._db_manager or get_product_db_manager()
+        )
+
+    def _outbound_port_instance(self) -> AssistedOutboundPort:
+        if self._outbound_port is not None:
+            return self._outbound_port
+        return DryRunAssistedOutboundPort()
+
+    @staticmethod
+    def _idempotency_key(pending_assisted_id: str) -> str:
+        return f"{_IDEMPOTENCY_KEY_PREFIX}{pending_assisted_id}"
+
+    def _write_merchant_confirm_snapshot(
+        self,
+        pending: Any,
+        *,
+        current_time: str,
+    ) -> None:
+        if not flags.should_write_send_decision():
+            return
+        from product_persistence.models import SendDecisionSnapshotRow
+
+        session = (self._db_manager or get_product_db_manager()).get_product_session()
+        try:
+            session.add(
+                SendDecisionSnapshotRow(
+                    send_decision_id=str(uuid4()),
+                    reply_log_id=pending.reply_log_id,
+                    workspace_id=pending.workspace_id,
+                    shop_id=pending.shop_id,
+                    account_id=pending.account_id,
+                    platform_id=pending.platform_id,
+                    inbound_message_id=pending.inbound_message_id,
+                    decision_phase="merchant_confirm",
+                    intent=pending.intent,
+                    intent_bucket=pending.intent_bucket,
+                    risk_level=pending.risk_level,
+                    reply_mode="assisted",
+                    workspace_pause=0,
+                    shop_pause=0,
+                    product_gate_enabled=1,
+                    allowed_to_generate=1,
+                    allowed_to_send=1,
+                    send_mode="assisted_only",
+                    decision_source="assisted_reply_service",
+                    created_at=current_time,
+                )
+            )
+            session.commit()
+        except Exception:
+            session.rollback()
+            raise
+        finally:
+            session.close()
+
+    def _approve_after_guard_passed(
+        self,
+        pending: Any,
+        *,
+        actor_user_id: str,
+        role: str,
+        resolved_final_reply: str,
+        current_time: str,
+    ) -> AssistedServiceResult:
+        audit_id = self._audit_repository().append_audit_log(
+            workspace_id=pending.workspace_id,
+            shop_id=pending.shop_id,
+            account_id=pending.account_id,
+            platform_id=pending.platform_id,
+            actor_user_id=actor_user_id,
+            actor_role=role,
+            action="assisted_approved",
+            target_type="pending_assisted",
+            target_id=pending.pending_assisted_id,
+            reply_log_id=pending.reply_log_id,
+            pending_assisted_id=pending.pending_assisted_id,
+            before_state={"status": pending.status},
+            after_state={"status": pending.status},
+        )
+        self._audit_repository().append_audit_log(
+            workspace_id=pending.workspace_id,
+            shop_id=pending.shop_id,
+            account_id=pending.account_id,
+            platform_id=pending.platform_id,
+            actor_user_id=actor_user_id,
+            actor_role=role,
+            action="final_guard_passed",
+            target_type="pending_assisted",
+            target_id=pending.pending_assisted_id,
+            reply_log_id=pending.reply_log_id,
+            pending_assisted_id=pending.pending_assisted_id,
+            before_state={"status": pending.status},
+            after_state={"status": pending.status, "guard": "passed"},
+        )
+        try:
+            self._write_merchant_confirm_snapshot(pending, current_time=current_time)
+        except Exception as exc:
+            return AssistedServiceResult(
+                success=False,
+                action="approve_pending",
+                status="snapshot_failed",
+                pending_assisted_id=pending.pending_assisted_id,
+                reply_log_id=pending.reply_log_id,
+                audit_log_id=audit_id,
+                final_guard_allowed=True,
+                reason="send_decision_snapshot_failed",
+                error=str(exc),
+            )
+
+        if not flags.is_assisted_send_enabled():
+            return AssistedServiceResult(
+                success=True,
+                action="approve_pending",
+                status="guard_passed_but_send_not_implemented",
+                pending_assisted_id=pending.pending_assisted_id,
+                reply_log_id=pending.reply_log_id,
+                audit_log_id=audit_id,
+                final_guard_allowed=True,
+                reason="send_not_implemented",
+            )
+
+        if not flags.is_assisted_send_dry_run():
+            return AssistedServiceResult(
+                success=False,
+                action="approve_pending",
+                status="live_send_not_implemented",
+                pending_assisted_id=pending.pending_assisted_id,
+                reply_log_id=pending.reply_log_id,
+                audit_log_id=audit_id,
+                final_guard_allowed=True,
+                reason="live_send_not_implemented",
+            )
+
+        if not flags.is_assisted_dry_run_outbound_enabled():
+            return AssistedServiceResult(
+                success=False,
+                action="approve_pending",
+                status="dry_run_not_configured",
+                pending_assisted_id=pending.pending_assisted_id,
+                reply_log_id=pending.reply_log_id,
+                audit_log_id=audit_id,
+                final_guard_allowed=True,
+                reason="outbound_idempotency_persistence_disabled",
+            )
+
+        if not flags.is_assisted_send_test_shop_allowlisted(pending.shop_id):
+            return AssistedServiceResult(
+                success=False,
+                action="approve_pending",
+                status="allowlist_denied",
+                pending_assisted_id=pending.pending_assisted_id,
+                reply_log_id=pending.reply_log_id,
+                audit_log_id=audit_id,
+                final_guard_allowed=True,
+                reason="test_shop_not_allowlisted",
+            )
+
+        idempotency_key = self._idempotency_key(pending.pending_assisted_id)
+        acquire_result = self._idempotency_repository().acquire(
+            idempotency_key,
+            workspace_id=pending.workspace_id,
+            shop_id=pending.shop_id,
+            account_id=pending.account_id,
+            platform_id=pending.platform_id,
+            pending_assisted_id=pending.pending_assisted_id,
+            reply_log_id=pending.reply_log_id,
+            metadata={"dry_run": True},
+        )
+        if not acquire_result.acquired:
+            reason = acquire_result.reason or "idempotency_not_acquired"
+            status_map = {
+                "already_sent": "idempotency_already_sent",
+                "already_in_progress": "idempotency_in_progress",
+                "manual_review_required": "idempotency_manual_review_required",
+            }
+            return AssistedServiceResult(
+                success=False,
+                action="approve_pending",
+                status=status_map.get(reason, "idempotency_denied"),
+                pending_assisted_id=pending.pending_assisted_id,
+                reply_log_id=pending.reply_log_id,
+                audit_log_id=audit_id,
+                final_guard_allowed=True,
+                reason=reason,
+            )
+
+        trace_id = f"assisted-dry-run:{pending.pending_assisted_id}:{current_time}"
+        outbound_result = self._outbound_port_instance().send(
+            build_assisted_outbound_request(
+                workspace_id=pending.workspace_id,
+                shop_id=pending.shop_id,
+                account_id=pending.account_id,
+                platform_id=pending.platform_id,
+                buyer_id=pending.buyer_id,
+                pending_assisted_id=pending.pending_assisted_id,
+                reply_log_id=pending.reply_log_id,
+                final_reply=resolved_final_reply,
+                idempotency_key=idempotency_key,
+                trace_id=trace_id,
+                dry_run=True,
+            )
+        )
+        if not outbound_result.success or not outbound_result.would_send:
+            return AssistedServiceResult(
+                success=False,
+                action="approve_pending",
+                status="dry_run_rejected",
+                pending_assisted_id=pending.pending_assisted_id,
+                reply_log_id=pending.reply_log_id,
+                audit_log_id=audit_id,
+                final_guard_allowed=True,
+                reason=outbound_result.error_code or "dry_run_rejected",
+                error=outbound_result.error_message,
+            )
+
+        dry_run_audit_id = self._audit_repository().append_audit_log(
+            workspace_id=pending.workspace_id,
+            shop_id=pending.shop_id,
+            account_id=pending.account_id,
+            platform_id=pending.platform_id,
+            actor_user_id=actor_user_id,
+            actor_role=role,
+            action="assisted_dry_run_would_send",
+            target_type="pending_assisted",
+            target_id=pending.pending_assisted_id,
+            reply_log_id=pending.reply_log_id,
+            pending_assisted_id=pending.pending_assisted_id,
+            before_state={"status": pending.status},
+            after_state={
+                "status": pending.status,
+                "dry_run": True,
+                "would_send": True,
+                "platform_status": outbound_result.platform_status,
+            },
+            reason="dry_run_would_send",
+        )
+        return AssistedServiceResult(
+            success=True,
+            action="approve_pending",
+            status="dry_run_would_send",
+            pending_assisted_id=pending.pending_assisted_id,
+            reply_log_id=pending.reply_log_id,
+            audit_log_id=dry_run_audit_id,
+            final_guard_allowed=True,
+            reason="dry_run_would_send",
         )
 
     @staticmethod
@@ -292,31 +558,12 @@ class AssistedReplyService:
                 reason=guard_result.block_reason,
             )
 
-        audit_id = self._audit_repository().append_audit_log(
-            workspace_id=pending.workspace_id,
-            shop_id=pending.shop_id,
-            account_id=pending.account_id,
-            platform_id=pending.platform_id,
+        return self._approve_after_guard_passed(
+            pending,
             actor_user_id=actor_user_id,
-            actor_role=role,
-            action="assisted_approved",
-            target_type="pending_assisted",
-            target_id=pending.pending_assisted_id,
-            reply_log_id=pending.reply_log_id,
-            pending_assisted_id=pending.pending_assisted_id,
-            before_state={"status": pending.status},
-            after_state={"status": pending.status, "send": "not_implemented"},
-            reason="send_not_implemented",
-        )
-        return AssistedServiceResult(
-            success=True,
-            action="approve_pending",
-            status="guard_passed_but_send_not_implemented",
-            pending_assisted_id=pending.pending_assisted_id,
-            reply_log_id=pending.reply_log_id,
-            audit_log_id=audit_id,
-            final_guard_allowed=True,
-            reason="send_not_implemented",
+            role=role,
+            resolved_final_reply=resolved_final_reply,
+            current_time=current_time,
         )
 
     def reject_pending(

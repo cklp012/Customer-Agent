@@ -100,3 +100,20 @@ def would_assisted_send_live() -> bool:
         and not is_assisted_send_dry_run()
         and bool(allowlisted)
     )
+
+
+def is_assisted_send_test_shop_allowlisted(shop_id: str) -> bool:
+    allowlisted = get_assisted_send_test_shop_id()
+    if not allowlisted:
+        return False
+    return shop_id == allowlisted
+
+
+def is_assisted_dry_run_outbound_enabled() -> bool:
+    """Dry-run outbound path — requires assisted send + dry_run + idempotency writes."""
+    return (
+        is_assisted_service_enabled()
+        and is_assisted_send_enabled()
+        and is_assisted_send_dry_run()
+        and should_write_outbound_idempotency()
+    )

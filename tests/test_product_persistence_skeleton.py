@@ -79,6 +79,7 @@ class TestProductPersistenceFlags(unittest.TestCase):
         self.assertFalse(flags.should_read_dashboard_from_product_db())
         self.assertFalse(flags.is_assisted_send_enabled())
         self.assertTrue(flags.is_assisted_send_dry_run())
+        self.assertFalse(flags.is_assisted_dry_run_outbound_enabled())
 
     def test_true_values(self) -> None:
         from product_persistence import flags

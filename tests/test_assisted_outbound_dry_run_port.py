@@ -131,8 +131,8 @@ class TestAssistedOutboundPortStaticChecks(unittest.TestCase):
         assisted_source = (
             _REPO_ROOT / "product_persistence" / "services" / "assisted_reply_service.py"
         ).read_text(encoding="utf-8")
-        self.assertNotIn("assisted_outbound_port", assisted_source)
-        self.assertNotIn("DryRunAssistedOutboundPort", assisted_source)
+        self.assertIn("DryRunAssistedOutboundPort", assisted_source)
+        self.assertNotIn("Message.handlers", assisted_source)
 
 
 class TestAssistedSendFlags(unittest.TestCase):

@@ -53,9 +53,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15f** | Wire **dry-run port** into AssistedReplyService behind flags |
-| **15g** | Assisted dashboard **action endpoint planning only** |
-| **15h** | Live PDD **AssistedOutboundPort planning only** |
+| **15f** | ✅ Wire dry-run port — [phase15f_done.md](phase15f_done.md) |
+| **15g** | Assisted dashboard action endpoint **planning only** |
+| **15h** | Live PDD AssistedOutboundPort **planning only** |
+| **15i** | Live assisted send single test shop **planning only** |
 
 ---
 

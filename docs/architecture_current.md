@@ -129,6 +129,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **15b** | Outbound idempotency skeleton behind flags | ✅ | [phase15b_done.md](phase15b_done.md) |
 | **15c** | Assisted outbound dry-run port skeleton | ✅ | [phase15c_done.md](phase15c_done.md) |
 | **15d** | PendingAssisted dashboard read API skeleton | ✅ | [phase15d_done.md](phase15d_done.md) |
+| **15e** | Assisted send live integration planning (docs) | ✅ | [phase15e_done.md](phase15e_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -141,7 +142,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–15d** · dry-run port ✅ · PendingAssisted read API ✅ · live send **未实现** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–15e** · skeletons ✅ · **live send planned only** · **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -314,7 +315,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 
 | 组件 | 状态 |
 |------|------|
-| approve → live outbound | 📋 documented · **not implemented** |
+| approve → live outbound | 📋 **15e** planned · **not implemented** |
 | AssistedOutboundPort contract | ✅ **15c** dry-run skeleton · live **未实现** |
 | idempotency lock contract | ✅ **15b** skeleton · no send integration |
 | dry-run / test shop rollout | ✅ dry-run port · live **未实现** |
@@ -375,6 +376,32 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 文档 | 内容 |
 |------|------|
 | [phase15d_done.md](phase15d_done.md) | Read API skeleton · no mutation |
+
+**Live Assisted Send Integration（15e · planning-only）：**
+
+| 组件 | 状态 |
+|------|------|
+| AssistedReplyService → idempotency + port wiring | 📋 **15e** documented · **15f+ impl** |
+| live assisted send | ❌ **未实现** |
+| auto send | ❌ **未实现** |
+| `approve_pending` current | ✅ guard only · **no send** |
+| flag + allowlist + guard + audit + snapshot + idempotency gate | 📋 **15e** SSOT |
+| dry_run default | ✅ **DRY_RUN=true** · no live outbound |
+| no fallback legacy send | 📋 **15e** documented |
+| dashboard action endpoint | ❌ **15g planning** |
+| LivePddAssistedOutboundPort | ❌ **15h planning** |
+| handler / SendMessage / PDD / Doudian | ❌ **未改** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15e_live_assisted_send_integration_plan.md](phase15e_live_assisted_send_integration_plan.md) | 总体规划 |
+| [phase15e_flag_gate_and_allowlist_policy.md](phase15e_flag_gate_and_allowlist_policy.md) | Flags · allowlist |
+| [phase15e_assisted_service_live_sequence.md](phase15e_assisted_service_live_sequence.md) | Live sequence |
+| [phase15e_live_outbound_port_boundary.md](phase15e_live_outbound_port_boundary.md) | Port 边界 |
+| [phase15e_audit_snapshot_idempotency_order.md](phase15e_audit_snapshot_idempotency_order.md) | 顺序 |
+| [phase15e_failure_rollback_and_reconciliation.md](phase15e_failure_rollback_and_reconciliation.md) | 失败 · rollback |
+| [phase15e_test_plan.md](phase15e_test_plan.md) | E1–E24 |
+| [phase15e_done.md](phase15e_done.md) | 签收 |
 
 **Merchant Safety Policy + Template（14s · planning · 14u · schema implemented）：**
 
@@ -736,7 +763,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–15d）：** **15d** PendingAssisted dashboard read API skeleton（list/detail GET · flags off default · no approve/send）；**15e** live send planning 待做。
+**Productization（12a–15e）：** **15e** live assisted send integration planning（flag+allowlist+guard+audit+snapshot+idempotency+port · dry_run default · no legacy fallback）；**15f** dry-run wire 待做。
 
 ---
 
@@ -1008,9 +1035,10 @@ flowchart TB
 | **15b** ✅ | Outbound idempotency skeleton behind flags | [phase15b_done.md](phase15b_done.md) |
 | **15c** ✅ | Assisted outbound dry-run port skeleton | [phase15c_done.md](phase15c_done.md) |
 | **15d** ✅ | PendingAssisted dashboard read API skeleton | [phase15d_done.md](phase15d_done.md) |
-| **15e** | Assisted send live integration planning only | [phase15d_done.md](phase15d_done.md) |
-| **15f** | Wire dry-run port into AssistedReplyService behind flags | [phase15d_done.md](phase15d_done.md) |
-| **15g** | Assisted dashboard action endpoint planning only | [phase15d_done.md](phase15d_done.md) |
+| **15e** ✅ | Assisted send live integration planning (docs) | [phase15e_done.md](phase15e_done.md) |
+| **15f** | Wire dry-run port into AssistedReplyService behind flags | [phase15e_done.md](phase15e_done.md) |
+| **15g** | Assisted dashboard action endpoint planning only | [phase15e_done.md](phase15e_done.md) |
+| **15h** | Live PDD AssistedOutboundPort planning only | [phase15e_done.md](phase15e_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

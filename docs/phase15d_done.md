@@ -57,9 +57,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15e** | Assisted send live integration **planning only** |
+| **15e** | ✅ Live assisted send integration **planning** — [phase15e_done.md](phase15e_done.md) |
 | **15f** | Wire dry-run port into AssistedReplyService behind flags |
 | **15g** | Assisted dashboard action endpoint **planning only** |
+| **15h** | Live PDD AssistedOutboundPort **planning only** |
 
 ---
 

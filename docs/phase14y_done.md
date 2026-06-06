@@ -66,9 +66,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **14z** | PendingAssisted **Dashboard read planning** |
+| **14z** | ✅ PendingAssisted dashboard read planning — [phase14z_done.md](phase14z_done.md) |
 | **15a** | Assisted send **implementation planning only** |
 | **15b** | Outbound **idempotency skeleton** behind flags |
+| **15c** | PendingAssisted dashboard **read API skeleton** |
 
 ---
 

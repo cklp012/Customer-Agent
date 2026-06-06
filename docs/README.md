@@ -149,6 +149,7 @@ python scripts/diagnose_runtime.py
 | **14w** | [phase14w_done.md](phase14w_done.md) | **Policy/template validation service skeleton** — ceiling · redline · template scan · no DB/send |
 | **14x** | [phase14x_done.md](phase14x_done.md) | **AssistedReplyService skeleton** behind flags — create/reject/expire · approve guard-only · no send |
 | **14y** | [phase14y_done.md](phase14y_done.md) | **Final Guard + Assisted integration planning** — approve sequence · idempotency · audit/snapshot · Y1–Y17 |
+| **14z** | [phase14z_done.md](phase14z_done.md) | **PendingAssisted dashboard read planning** — list/detail contract · timeline · RBAC · Z1–Z17 |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

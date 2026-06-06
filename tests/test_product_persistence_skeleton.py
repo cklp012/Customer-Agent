@@ -49,6 +49,7 @@ class TestProductPersistenceFlags(unittest.TestCase):
             "PRODUCT_PERSISTENCE_WRITE_REPLY_TEMPLATE",
             "PRODUCT_PERSISTENCE_READ_MERCHANT_POLICY",
             "PRODUCT_ASSISTED_SERVICE_ENABLED",
+            "PRODUCT_PERSISTENCE_WRITE_OUTBOUND_IDEMPOTENCY",
             "PRODUCT_PERSISTENCE_READ_DASHBOARD",
         ):
             os.environ.pop(key, None)
@@ -69,6 +70,7 @@ class TestProductPersistenceFlags(unittest.TestCase):
         self.assertFalse(flags.should_write_reply_template())
         self.assertFalse(flags.should_read_merchant_policy())
         self.assertFalse(flags.is_assisted_service_enabled())
+        self.assertFalse(flags.should_write_outbound_idempotency())
         self.assertFalse(flags.should_read_dashboard_from_product_db())
 
     def test_true_values(self) -> None:

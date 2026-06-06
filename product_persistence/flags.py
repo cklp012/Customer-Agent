@@ -71,3 +71,9 @@ def is_assisted_service_enabled() -> bool:
         and should_write_audit_log()
         and _env_flag("PRODUCT_ASSISTED_SERVICE_ENABLED")
     )
+
+
+def should_write_outbound_idempotency() -> bool:
+    return is_product_persistence_enabled() and _env_flag(
+        "PRODUCT_PERSISTENCE_WRITE_OUTBOUND_IDEMPOTENCY"
+    )

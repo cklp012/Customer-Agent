@@ -224,6 +224,38 @@ class MerchantReplyTemplateRow(ProductBase):
     )
 
 
+class OutboundIdempotencyRow(ProductBase):
+    __tablename__ = "outbound_idempotency_keys"
+
+    idempotency_key: Mapped[str] = mapped_column(Text, primary_key=True)
+    workspace_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    shop_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    account_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    platform_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    pending_assisted_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    reply_log_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    operation_type: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(Text, nullable=False)
+    attempt_count: Mapped[int] = mapped_column(Integer, nullable=False, default=1)
+    provider_message_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    platform_status: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    error_code: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    error_message: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    locked_at: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    completed_at: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[str] = mapped_column(Text, nullable=False)
+    updated_at: Mapped[str] = mapped_column(Text, nullable=False)
+    metadata_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+
+    __table_args__ = (
+        Index("idx_idempotency_workspace_shop", "workspace_id", "shop_id"),
+        Index("idx_idempotency_pending_assisted", "pending_assisted_id"),
+        Index("idx_idempotency_status", "status"),
+        Index("idx_idempotency_operation_type", "operation_type"),
+        Index("idx_idempotency_updated_at", "updated_at"),
+    )
+
+
 @dataclass(frozen=True)
 class ReplyLogDTO:
     """Read model placeholder — aligns with phase14e repository DTO."""

@@ -151,6 +151,7 @@ python scripts/diagnose_runtime.py
 | **14y** | [phase14y_done.md](phase14y_done.md) | **Final Guard + Assisted integration planning** — approve sequence · idempotency · audit/snapshot · Y1–Y17 |
 | **14z** | [phase14z_done.md](phase14z_done.md) | **PendingAssisted dashboard read planning** — list/detail contract · timeline · RBAC · Z1–Z17 |
 | **15a** | [phase15a_done.md](phase15a_done.md) | **Assisted send implementation planning** — outbound port · idempotency · test shop rollout · A1–A21 |
+| **15b** | [phase15b_done.md](phase15b_done.md) | **Outbound idempotency skeleton** — ORM + SQLite repo · acquire/mark · flags default off · no send |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

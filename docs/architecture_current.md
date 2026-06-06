@@ -126,6 +126,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14y** | Final Guard + Assisted service integration planning (docs) | ✅ | [phase14y_done.md](phase14y_done.md) |
 | **14z** | PendingAssisted dashboard read planning (docs) | ✅ | [phase14z_done.md](phase14z_done.md) |
 | **15a** | Assisted send implementation planning (docs) | ✅ | [phase15a_done.md](phase15a_done.md) |
+| **15b** | Outbound idempotency skeleton behind flags | ✅ | [phase15b_done.md](phase15b_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -138,7 +139,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–15a** · Assisted skeleton ✅ · integration + dashboard read + **send planned** · send **未实现** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–15b** · Assisted skeleton ✅ · idempotency skeleton ✅ · send **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -250,7 +251,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | assisted send | ❌ **未实现** · **15a** planned |
 | auto send | ❌ **未实现** |
 | audit + snapshot sequence | 📋 [phase14y_audit_snapshot_ordering.md](phase14y_audit_snapshot_ordering.md) |
-| state machine + idempotency | 📋 [phase14y_idempotency_and_state_transition.md](phase14y_idempotency_and_state_transition.md) |
+| state machine + idempotency | ✅ **15b** skeleton · 📋 [phase14y_idempotency_and_state_transition.md](phase14y_idempotency_and_state_transition.md) |
 | approve → outbound sequence | 📋 [phase14y_approve_to_outbound_sequence.md](phase14y_approve_to_outbound_sequence.md) |
 | failure + recovery | 📋 [phase14y_failure_and_recovery_policy.md](phase14y_failure_and_recovery_policy.md) |
 
@@ -313,7 +314,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 |------|------|
 | approve → live outbound | 📋 documented · **not implemented** |
 | AssistedOutboundPort contract | 📋 documented |
-| idempotency lock contract | 📋 documented · **15b** impl |
+| idempotency lock contract | ✅ **15b** skeleton · no send integration |
 | dry-run / test shop rollout | 📋 documented |
 | assisted send | ❌ **未实现** |
 | auto send | ❌ **未实现** |
@@ -329,6 +330,20 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase15a_failure_rollback_policy.md](phase15a_failure_rollback_policy.md) | 失败 · rollback |
 | [phase15a_test_plan.md](phase15a_test_plan.md) | A1–A21 |
 | [phase15a_done.md](phase15a_done.md) | 签收 |
+
+**Outbound Idempotency（15b · skeleton implemented）：**
+
+| 组件 | 状态 |
+|------|------|
+| `OutboundIdempotencyRow` ORM | ✅ behind flags |
+| `OutboundIdempotencyRepositorySQLite` | ✅ acquire / mark_succeeded / mark_failed |
+| assisted send integration | ❌ **未接** |
+| handler / SendMessage / outbound | ❌ **未调用** |
+| PDD / Doudian 热路径 | ❌ **未改** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15b_done.md](phase15b_done.md) | Idempotency skeleton · no send |
 
 **Merchant Safety Policy + Template（14s · planning · 14u · schema implemented）：**
 
@@ -690,7 +705,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–15a）：** **15a** Assisted send implementation planning（guard+audit+idempotency · single test shop · dry_run first）；**15b** idempotency skeleton 待做。
+**Productization（12a–15b）：** **15b** outbound idempotency skeleton behind flags（acquire/mark · no send）；**15c** dry-run port skeleton 待做。
 
 ---
 
@@ -959,9 +974,10 @@ flowchart TB
 | **14y** ✅ | Final Guard + Assisted integration planning (docs) | [phase14y_done.md](phase14y_done.md) |
 | **14z** ✅ | PendingAssisted dashboard read planning (docs) | [phase14z_done.md](phase14z_done.md) |
 | **15a** ✅ | Assisted send implementation planning (docs) | [phase15a_done.md](phase15a_done.md) |
-| **15b** | Outbound idempotency skeleton behind flags | [phase15a_done.md](phase15a_done.md) |
-| **15c** | Assisted outbound dry-run port skeleton | [phase15a_done.md](phase15a_done.md) |
-| **15d** | PendingAssisted dashboard read API skeleton | [phase15a_done.md](phase15a_done.md) |
+| **15b** ✅ | Outbound idempotency skeleton behind flags | [phase15b_done.md](phase15b_done.md) |
+| **15c** | Assisted outbound dry-run port skeleton | [phase15b_done.md](phase15b_done.md) |
+| **15d** | PendingAssisted dashboard read API skeleton | [phase15b_done.md](phase15b_done.md) |
+| **15e** | Assisted send live integration planning only | [phase15b_done.md](phase15b_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

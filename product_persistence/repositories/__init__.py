@@ -26,12 +26,16 @@ from product_persistence.repositories.sqlite_merchant_policy_repository import (
 from product_persistence.repositories.sqlite_reply_template_repository import (
     MerchantReplyTemplateRepositorySQLite,
 )
+from product_persistence.repositories.sqlite_outbound_idempotency_repository import (
+    OutboundIdempotencyRepositorySQLite,
+)
 
 __all__ = [
     "AuditLogRepository",
     "AuditLogRepositorySQLite",
     "MerchantPolicyRepositorySQLite",
     "MerchantReplyTemplateRepositorySQLite",
+    "OutboundIdempotencyRepositorySQLite",
     "PendingAssistedReplyRepository",
     "PendingAssistedRepositorySQLite",
     "ReplyLogRepository",

@@ -66,9 +66,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15b** | Outbound **idempotency skeleton** behind flags |
+| **15b** | ✅ Outbound **idempotency skeleton** — [phase15b_done.md](phase15b_done.md) |
 | **15c** | Assisted outbound **dry-run port** skeleton |
 | **15d** | PendingAssisted dashboard **read API skeleton** |
+| **15e** | Assisted send live integration **planning only** |
 
 ---
 

@@ -48,6 +48,13 @@ from Message.gates.shadow_decision_logger import (
     build_shadow_decision_record,
     shadow_decision_logger,
 )
+from Message.gates.final_guard import (
+    FinalGuardInput,
+    FinalGuardResult,
+    ForbiddenScanResult,
+    evaluate_final_guard,
+    scan_forbidden_promise,
+)
 
 __all__ = [
     "ALLOWED_INTENTS",
@@ -66,6 +73,9 @@ __all__ = [
     "PreviewLogRecord",
     "PreviewReplyLogListItem",
     "ProductGateConfig",
+    "FinalGuardInput",
+    "FinalGuardResult",
+    "ForbiddenScanResult",
     "build_not_sent_explanation",
     "list_preview_reply_logs",
     "project_preview_record_to_reply_log",
@@ -79,6 +89,8 @@ __all__ = [
     "build_shadow_decision_record",
     "classify_consultation_intent",
     "evaluate_guarded_send",
+    "evaluate_final_guard",
+    "scan_forbidden_promise",
     "keyword_risk_scan",
     "preview_log",
     "select_product_gate_config",

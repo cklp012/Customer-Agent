@@ -65,9 +65,10 @@ import module **不创建 DB**；flags off **不创建 product_gate.db**。
 
 | Phase | 内容 |
 |-------|------|
-| **14v** | Final Guard **pure function** implementation |
+| **14v** | ✅ Final Guard pure function — [phase14v_done.md](phase14v_done.md) |
 | **14w** | Policy/template **validation service** skeleton |
 | **14x** | Assisted service **skeleton behind flags** |
+| **14y** | Final Guard integration planning with Assisted service |
 
 ---
 

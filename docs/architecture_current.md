@@ -120,6 +120,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14s** | Merchant Safety Policy + Template planning (docs) | ✅ | [phase14s_done.md](phase14s_done.md) |
 | **14t** | Final Guard + Merchant Policy integration planning (docs) | ✅ | [phase14t_done.md](phase14t_done.md) |
 | **14u** | MerchantSafetyPolicy + MerchantReplyTemplate schema behind flags | ✅ | [phase14u_done.md](phase14u_done.md) |
+| **14v** | Final Guard pure function | ✅ | [phase14v_done.md](phase14v_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -132,7 +133,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14u** SQLite · Policy schema ✅ · **Final Guard** planned · send **未实现** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–14v** SQLite · Policy schema ✅ · **Final Guard pure fn** ✅ · send integration **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -236,7 +237,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 |------|------|
 | `AssistedReplyService` stub | ✅ `NotImplementedError` |
 | create_pending / approve / reject / expire | 📋 planned · 14x+ skeleton |
-| final guard integration | ✅ **14t** planned · **14v** impl · **not implemented** |
+| final guard integration | ✅ **14v** pure function · handler/service **未接** |
 | audit + snapshot sequence | 📋 [phase14r_audit_and_snapshot_sequence.md](phase14r_audit_and_snapshot_sequence.md) |
 | state machine + idempotency | 📋 [phase14r_state_machine_and_idempotency.md](phase14r_state_machine_and_idempotency.md) |
 
@@ -261,7 +262,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | effective_mode 业务逻辑 | ❌ **未实现** |
 | template validation / forbidden scan | ❌ **未实现** · `validation_status` field only |
 | policy snapshot on ReplyLog/Snapshot | 📋 planned |
-| final guard | ❌ **未实现** · 14v |
+| final guard | ✅ **14v** pure function · **no send integration** |
 | assisted / auto send | ❌ **未实现** |
 
 | 文档 | 内容 |
@@ -275,16 +276,18 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase14s_test_plan.md](phase14s_test_plan.md) | S1–S16 |
 | [phase14u_done.md](phase14u_done.md) | schema + repository skeleton |
 
-**Final Guard + Merchant Policy（14t · planning-only）：**
+**Final Guard + Merchant Policy（14t · planning · 14v · pure function implemented）：**
 
 | 组件 | 状态 |
 |------|------|
-| `evaluate_final_guard` pure function | 📋 planned · **未实现** |
-| G1–G27 rule matrix | 📋 documented |
-| forbidden promise scan | 📋 documented |
-| I/O contract | 📋 documented |
-| audit/snapshot integration | 📋 documented |
-| assisted / auto send | ❌ **未实现** |
+| `evaluate_final_guard` pure function | ✅ **14v** · G1–G27 · no I/O |
+| `scan_forbidden_promise` | ✅ **14v** · redline text scan |
+| handler / service integration | ❌ **未接** |
+| G1–G27 rule matrix | ✅ implemented in pure function |
+| forbidden promise scan | ✅ implemented |
+| I/O contract | ✅ `FinalGuardInput` / `FinalGuardResult` |
+| audit/snapshot integration | 📋 planned · caller responsibility |
+| assisted / auto send | ❌ **未实现** · guard decision only |
 
 | 文档 | 内容 |
 |------|------|
@@ -595,7 +598,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–14u）：** **14u** MerchantSafetyPolicy + MerchantReplyTemplate schema/repository skeleton behind flags；**14v** Final Guard impl 待做。
+**Productization（12a–14v）：** **14v** Final Guard pure function（G1–G27 · no send）；**14w** validation service 待做。
 
 ---
 
@@ -858,9 +861,10 @@ flowchart TB
 | **14s** ✅ | Merchant Safety Policy + Template planning (docs) | [phase14s_done.md](phase14s_done.md) |
 | **14t** ✅ | Final Guard + Merchant Policy integration planning (docs) | [phase14t_done.md](phase14t_done.md) |
 | **14u** ✅ | MerchantSafetyPolicy + MerchantReplyTemplate schema skeleton | [phase14u_done.md](phase14u_done.md) |
-| **14v** | Final Guard pure function implementation | [phase14u_done.md](phase14u_done.md) |
-| **14w** | Policy/template validation service skeleton | [phase14u_done.md](phase14u_done.md) |
-| **14x** | Assisted service skeleton behind flags | [phase14u_done.md](phase14u_done.md) |
+| **14v** ✅ | Final Guard pure function implementation | [phase14v_done.md](phase14v_done.md) |
+| **14w** | Policy/template validation service skeleton | [phase14v_done.md](phase14v_done.md) |
+| **14x** | Assisted service skeleton behind flags | [phase14v_done.md](phase14v_done.md) |
+| **14y** | Final Guard integration with Assisted service planning | [phase14v_done.md](phase14v_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

@@ -25,6 +25,7 @@ _PACKAGE_MODULES = (
     "product_persistence.services",
     "product_persistence.services.preview_reply_log_service",
     "product_persistence.services.assisted_reply_service",
+    "product_persistence.services.assisted_outbound_port",
 )
 
 _SOURCE_NO_LEGACY = (
@@ -32,6 +33,7 @@ _SOURCE_NO_LEGACY = (
     _REPO_ROOT / "product_persistence" / "db_manager.py",
     _REPO_ROOT / "product_persistence" / "services" / "preview_reply_log_service.py",
     _REPO_ROOT / "product_persistence" / "services" / "assisted_reply_service.py",
+    _REPO_ROOT / "product_persistence" / "services" / "assisted_outbound_port.py",
 )
 
 
@@ -51,6 +53,9 @@ class TestProductPersistenceFlags(unittest.TestCase):
             "PRODUCT_ASSISTED_SERVICE_ENABLED",
             "PRODUCT_PERSISTENCE_WRITE_OUTBOUND_IDEMPOTENCY",
             "PRODUCT_PERSISTENCE_READ_DASHBOARD",
+            "PRODUCT_ASSISTED_SEND_ENABLED",
+            "PRODUCT_ASSISTED_SEND_DRY_RUN",
+            "PRODUCT_ASSISTED_SEND_TEST_SHOP_ID",
         ):
             os.environ.pop(key, None)
         importlib.reload(importlib.import_module("product_persistence.flags"))
@@ -72,6 +77,8 @@ class TestProductPersistenceFlags(unittest.TestCase):
         self.assertFalse(flags.is_assisted_service_enabled())
         self.assertFalse(flags.should_write_outbound_idempotency())
         self.assertFalse(flags.should_read_dashboard_from_product_db())
+        self.assertFalse(flags.is_assisted_send_enabled())
+        self.assertTrue(flags.is_assisted_send_dry_run())
 
     def test_true_values(self) -> None:
         from product_persistence import flags
@@ -175,6 +182,7 @@ class TestProductPersistenceNoSideEffects(unittest.TestCase):
         for path in (
             _REPO_ROOT / "product_persistence" / "services" / "preview_reply_log_service.py",
             _REPO_ROOT / "product_persistence" / "services" / "assisted_reply_service.py",
+            _REPO_ROOT / "product_persistence" / "services" / "assisted_outbound_port.py",
         ):
             source = path.read_text(encoding="utf-8")
             self.assertNotIn("SendMessage", source)

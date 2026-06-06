@@ -61,9 +61,10 @@ import module **不创建 DB**；flags off **不创建 product_gate.db**。
 
 | Phase | 内容 |
 |-------|------|
-| **15c** | Assisted outbound **dry-run port** skeleton |
+| **15c** | ✅ Assisted outbound **dry-run port** — [phase15c_done.md](phase15c_done.md) |
 | **15d** | PendingAssisted dashboard **read API skeleton** |
 | **15e** | Assisted send live integration **planning only** |
+| **15f** | Wire dry-run port into AssistedReplyService behind flags |
 
 ---
 

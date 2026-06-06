@@ -127,6 +127,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **14z** | PendingAssisted dashboard read planning (docs) | ✅ | [phase14z_done.md](phase14z_done.md) |
 | **15a** | Assisted send implementation planning (docs) | ✅ | [phase15a_done.md](phase15a_done.md) |
 | **15b** | Outbound idempotency skeleton behind flags | ✅ | [phase15b_done.md](phase15b_done.md) |
+| **15c** | Assisted outbound dry-run port skeleton | ✅ | [phase15c_done.md](phase15c_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -139,7 +140,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–15b** · Assisted skeleton ✅ · idempotency skeleton ✅ · send **未实现** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–15c** · idempotency ✅ · dry-run outbound port ✅ · live send **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -313,9 +314,9 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 组件 | 状态 |
 |------|------|
 | approve → live outbound | 📋 documented · **not implemented** |
-| AssistedOutboundPort contract | 📋 documented |
+| AssistedOutboundPort contract | ✅ **15c** dry-run skeleton · live **未实现** |
 | idempotency lock contract | ✅ **15b** skeleton · no send integration |
-| dry-run / test shop rollout | 📋 documented |
+| dry-run / test shop rollout | ✅ dry-run port · live **未实现** |
 | assisted send | ❌ **未实现** |
 | auto send | ❌ **未实现** |
 | handler / SendMessage direct call | ❌ **禁止** |
@@ -344,6 +345,20 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 文档 | 内容 |
 |------|------|
 | [phase15b_done.md](phase15b_done.md) | Idempotency skeleton · no send |
+
+**Assisted Outbound Dry-run Port（15c · skeleton implemented）：**
+
+| 组件 | 状态 |
+|------|------|
+| `AssistedOutboundPort` interface | ✅ |
+| `DryRunAssistedOutboundPort` | ✅ would_send only · no SendMessage |
+| `AssistedReplyService` wire-in | ❌ **15f** |
+| live assisted send | ❌ **未实现** |
+| handler / PDD / Doudian | ❌ **未改** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15c_done.md](phase15c_done.md) | Dry-run port · no send |
 
 **Merchant Safety Policy + Template（14s · planning · 14u · schema implemented）：**
 
@@ -705,7 +720,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–15b）：** **15b** outbound idempotency skeleton behind flags（acquire/mark · no send）；**15c** dry-run port skeleton 待做。
+**Productization（12a–15c）：** **15c** AssistedOutboundPort dry-run skeleton（would_send only · no SendMessage）；**15d** dashboard read API skeleton 待做。
 
 ---
 
@@ -975,9 +990,10 @@ flowchart TB
 | **14z** ✅ | PendingAssisted dashboard read planning (docs) | [phase14z_done.md](phase14z_done.md) |
 | **15a** ✅ | Assisted send implementation planning (docs) | [phase15a_done.md](phase15a_done.md) |
 | **15b** ✅ | Outbound idempotency skeleton behind flags | [phase15b_done.md](phase15b_done.md) |
-| **15c** | Assisted outbound dry-run port skeleton | [phase15b_done.md](phase15b_done.md) |
-| **15d** | PendingAssisted dashboard read API skeleton | [phase15b_done.md](phase15b_done.md) |
-| **15e** | Assisted send live integration planning only | [phase15b_done.md](phase15b_done.md) |
+| **15c** ✅ | Assisted outbound dry-run port skeleton | [phase15c_done.md](phase15c_done.md) |
+| **15d** | PendingAssisted dashboard read API skeleton | [phase15c_done.md](phase15c_done.md) |
+| **15e** | Assisted send live integration planning only | [phase15c_done.md](phase15c_done.md) |
+| **15f** | Wire dry-run port into AssistedReplyService behind flags | [phase15c_done.md](phase15c_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

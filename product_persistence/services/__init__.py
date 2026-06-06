@@ -1,5 +1,12 @@
 """Service layer stubs (Phase 14f)."""
 
+from product_persistence.services.assisted_outbound_port import (
+    AssistedOutboundPort,
+    AssistedOutboundRequest,
+    AssistedOutboundResult,
+    DryRunAssistedOutboundPort,
+    build_assisted_outbound_request,
+)
 from product_persistence.services.assisted_reply_service import (
     AssistedReplyService,
     AssistedServiceResult,
@@ -23,16 +30,21 @@ from product_persistence.services.policy_template_validation_service import (
 )
 
 __all__ = [
+    "AssistedOutboundPort",
+    "AssistedOutboundRequest",
+    "AssistedOutboundResult",
     "AssistedReplyService",
     "AssistedServiceResult",
     "DashboardDetailResult",
     "DashboardListResult",
     "DashboardReadService",
+    "DryRunAssistedOutboundPort",
     "PolicyValidationResult",
     "PreviewRecordResult",
     "PreviewReplyLogService",
     "PreviewReplyLogServiceResult",
     "TemplateValidationResult",
+    "build_assisted_outbound_request",
     "compute_content_hash",
     "validate_policy_mode",
     "validate_reply_template",

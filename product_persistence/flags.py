@@ -77,3 +77,26 @@ def should_write_outbound_idempotency() -> bool:
     return is_product_persistence_enabled() and _env_flag(
         "PRODUCT_PERSISTENCE_WRITE_OUTBOUND_IDEMPOTENCY"
     )
+
+
+def is_assisted_send_enabled() -> bool:
+    return _env_flag("PRODUCT_ASSISTED_SEND_ENABLED")
+
+
+def is_assisted_send_dry_run() -> bool:
+    raw = os.environ.get("PRODUCT_ASSISTED_SEND_DRY_RUN", "true")
+    return raw.strip().lower() in _TRUE_VALUES
+
+
+def get_assisted_send_test_shop_id() -> str:
+    return os.environ.get("PRODUCT_ASSISTED_SEND_TEST_SHOP_ID", "").strip()
+
+
+def would_assisted_send_live() -> bool:
+    """Future live send gate — not used in Phase 15c (dry-run port only)."""
+    allowlisted = get_assisted_send_test_shop_id()
+    return (
+        is_assisted_send_enabled()
+        and not is_assisted_send_dry_run()
+        and bool(allowlisted)
+    )

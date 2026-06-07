@@ -71,9 +71,10 @@ Active when `PRODUCT_PERSISTENCE_ENABLED=true` **and** flag true.
 
 | Phase | 内容 |
 |-------|------|
-| **15k** | `LivePddAssistedOutboundPort` **skeleton planning only** |
+| **15k** | ✅ Live PDD port **skeleton planning** — [phase15k_done.md](phase15k_done.md) |
 | **15l** | Register action routes for local dashboard **behind flags** |
-| **15m** | Action route CSRF/auth hardening **planning** |
+| **15m** | `LivePddAssistedOutboundPort` **skeleton implementation** behind flags |
+| **15n** | Live send **reconciliation planning** |
 
 ---
 

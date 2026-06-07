@@ -29,8 +29,12 @@ from product_persistence.repositories.sqlite_reply_template_repository import (
 from product_persistence.repositories.sqlite_outbound_idempotency_repository import (
     OutboundIdempotencyRepositorySQLite,
 )
+from product_persistence.repositories.sqlite_action_idempotency_repository import (
+    ActionIdempotencyRepositorySQLite,
+)
 
 __all__ = [
+    "ActionIdempotencyRepositorySQLite",
     "AuditLogRepository",
     "AuditLogRepositorySQLite",
     "MerchantPolicyRepositorySQLite",

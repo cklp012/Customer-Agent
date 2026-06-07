@@ -1,4 +1,4 @@
-"""PendingAssisted dashboard action API skeleton (Phase 15i).
+"""PendingAssisted dashboard action API skeleton (Phase 15i · 15j idempotency).
 
 Dry-run approve/reject only. Not registered in app.py.
 Routes call AssistedReplyService only — no SendMessage, outbound, or handler integration.
@@ -7,8 +7,12 @@ Routes call AssistedReplyService only — no SendMessage, outbound, or handler i
 from __future__ import annotations
 
 import json
-from typing import Any, Dict, Iterable, Mapping, Optional, Tuple
+from typing import Any, Callable, Dict, Iterable, Mapping, Optional, Tuple
 
+from product_persistence import flags
+from product_persistence.repositories.sqlite_action_idempotency_repository import (
+    ActionIdempotencyRepositorySQLite,
+)
 from product_persistence.services.assisted_reply_service import (
     AssistedReplyService,
     AssistedServiceResult,
@@ -48,6 +52,158 @@ _FORBIDDEN_OVERRIDE_FIELDS = frozenset(
     }
 )
 _IDEMPOTENCY_KEY_PREFIX = "assisted_send:"
+
+
+def _build_action_idempotency_payload(
+    action: str,
+    pending_assisted_id: str,
+    parsed_body: Mapping[str, Any],
+    fields: Mapping[str, str],
+) -> Dict[str, Any]:
+    payload: Dict[str, Any] = {
+        "action": action,
+        "pending_assisted_id": pending_assisted_id,
+        "workspace_id": fields["workspace_id"],
+        "shop_id": fields["shop_id"],
+        "actor_user_id": fields["actor_user_id"],
+        "actor_role": fields["actor_role"],
+        "expected_pending_status": fields["expected_pending_status"],
+    }
+    if action == "approve":
+        payload["dry_run_expected"] = parsed_body.get("dry_run_expected")
+        override = _optional_str(parsed_body.get("final_reply_override"))
+        if override is not None:
+            payload["final_reply_override"] = override
+    elif action == "reject":
+        reject_reason = _optional_str(parsed_body.get("reject_reason"))
+        if reject_reason is not None:
+            payload["reject_reason"] = reject_reason
+    return payload
+
+
+def _stored_action_response(
+    stored: Mapping[str, Any],
+) -> Tuple[int, Dict[str, Any]]:
+    http_status = int(stored.get("http_status", 200))
+    body = stored.get("body")
+    if not isinstance(body, dict):
+        return 500, _error_response(
+            action=str(stored.get("action") or "unknown"),
+            status="invalid_stored_response",
+            reason="stored_response_invalid",
+        )
+    return http_status, dict(body)
+
+
+def _idempotency_acquire_error_response(
+    *,
+    action: str,
+    pending_assisted_id: str,
+    acquire_reason: str,
+) -> Tuple[int, Dict[str, Any]]:
+    if acquire_reason == "already_in_progress":
+        return 409, _error_response(
+            action=action,
+            status="already_in_progress",
+            reason="already_in_progress",
+            pending_assisted_id=pending_assisted_id,
+        )
+    if acquire_reason == "client_request_conflict":
+        return 409, _error_response(
+            action=action,
+            status="conflict",
+            reason="client_request_conflict",
+            pending_assisted_id=pending_assisted_id,
+        )
+    return 409, _error_response(
+        action=action,
+        status="conflict",
+        reason=acquire_reason or "idempotency_denied",
+        pending_assisted_id=pending_assisted_id,
+    )
+
+
+def _execute_action_with_idempotency(
+    *,
+    action: str,
+    pending_assisted_id: str,
+    parsed_body: Mapping[str, Any],
+    fields: Mapping[str, str],
+    scope_validator: Callable[[], Tuple[Optional[int], Optional[Dict[str, Any]]]],
+    service_call: Callable[[], AssistedServiceResult],
+    result_to_response: Callable[[AssistedServiceResult], Tuple[int, Dict[str, Any]]],
+    idempotency_repo: ActionIdempotencyRepositorySQLite | None = None,
+) -> Tuple[int, Dict[str, Any]]:
+    if not flags.should_write_action_idempotency():
+        scope_status, scope_body = scope_validator()
+        if scope_status is not None:
+            assert scope_body is not None
+            return scope_status, scope_body
+        result = service_call()
+        return result_to_response(result)
+
+    repo = idempotency_repo or ActionIdempotencyRepositorySQLite()
+    payload = _build_action_idempotency_payload(
+        action,
+        pending_assisted_id,
+        parsed_body,
+        fields,
+    )
+    acquire = repo.acquire(
+        fields["client_request_id"],
+        workspace_id=fields["workspace_id"],
+        shop_id=fields["shop_id"],
+        actor_user_id=fields["actor_user_id"],
+        actor_role=fields["actor_role"],
+        pending_assisted_id=pending_assisted_id,
+        action=action,
+        payload=payload,
+    )
+    if not acquire.acquired:
+        if acquire.reason == "replay_completed" and acquire.existing_response:
+            return _stored_action_response(acquire.existing_response)
+        if acquire.reason == "replay_failed" and acquire.existing_response:
+            return _stored_action_response(acquire.existing_response)
+        return _idempotency_acquire_error_response(
+            action=action,
+            pending_assisted_id=pending_assisted_id,
+            acquire_reason=acquire.reason or "idempotency_denied",
+        )
+
+    scope_status, scope_body = scope_validator()
+    if scope_status is not None:
+        assert scope_body is not None
+        repo.complete(
+            fields["client_request_id"],
+            {"http_status": scope_status, "body": scope_body},
+        )
+        return scope_status, scope_body
+
+    try:
+        result = service_call()
+        http_status, response_body = result_to_response(result)
+        repo.complete(
+            fields["client_request_id"],
+            {"http_status": http_status, "body": response_body},
+        )
+        return http_status, response_body
+    except Exception as exc:
+        http_status = 500
+        response_body = _error_response(
+            action=action,
+            status="internal_error",
+            reason="action_service_exception",
+            pending_assisted_id=pending_assisted_id,
+            warnings=[str(exc)],
+        )
+        try:
+            repo.fail(
+                fields["client_request_id"],
+                {"http_status": http_status, "body": response_body},
+            )
+        except Exception:
+            pass
+        return http_status, response_body
 
 
 def _optional_str(value: Any) -> Optional[str]:
@@ -373,6 +529,7 @@ def handle_approve_pending_assisted(
     body: Mapping[str, Any] | str | None = None,
     *,
     service: AssistedReplyService | None = None,
+    idempotency_repo: ActionIdempotencyRepositorySQLite | None = None,
 ) -> Tuple[int, Dict[str, Any]]:
     pending_assisted_id = (pending_assisted_id or "").strip()
     if not pending_assisted_id:
@@ -413,28 +570,35 @@ def handle_approve_pending_assisted(
 
     svc = service or AssistedReplyService()
     pending = _load_pending_for_route_checks(svc, pending_assisted_id)
-    scope_status, scope_body = _validate_pending_scope_and_status(
-        pending,
-        action="approve",
-        pending_assisted_id=pending_assisted_id,
-        workspace_id=fields["workspace_id"],
-        shop_id=fields["shop_id"],
-        expected_pending_status=fields["expected_pending_status"],
-    )
-    if scope_status is not None:
-        assert scope_body is not None
-        return scope_status, scope_body
+
+    def _scope_validator() -> Tuple[Optional[int], Optional[Dict[str, Any]]]:
+        return _validate_pending_scope_and_status(
+            pending,
+            action="approve",
+            pending_assisted_id=pending_assisted_id,
+            workspace_id=fields["workspace_id"],
+            shop_id=fields["shop_id"],
+            expected_pending_status=fields["expected_pending_status"],
+        )
 
     final_reply_override = _optional_str(parsed_body.get("final_reply_override"))
-    result = svc.approve_pending(
-        pending_assisted_id,
-        actor_user_id=fields["actor_user_id"],
-        actor_role=fields["actor_role"],
-        final_reply=final_reply_override,
-        client_request_id=fields["client_request_id"],
-        dry_run_expected=True,
+    return _execute_action_with_idempotency(
+        action="approve",
+        pending_assisted_id=pending_assisted_id,
+        parsed_body=parsed_body,
+        fields=fields,
+        scope_validator=_scope_validator,
+        service_call=lambda: svc.approve_pending(
+            pending_assisted_id,
+            actor_user_id=fields["actor_user_id"],
+            actor_role=fields["actor_role"],
+            final_reply=final_reply_override,
+            client_request_id=fields["client_request_id"],
+            dry_run_expected=True,
+        ),
+        result_to_response=_approve_service_result_to_response,
+        idempotency_repo=idempotency_repo,
     )
-    return _approve_service_result_to_response(result)
 
 
 def handle_reject_pending_assisted(
@@ -442,6 +606,7 @@ def handle_reject_pending_assisted(
     body: Mapping[str, Any] | str | None = None,
     *,
     service: AssistedReplyService | None = None,
+    idempotency_repo: ActionIdempotencyRepositorySQLite | None = None,
 ) -> Tuple[int, Dict[str, Any]]:
     pending_assisted_id = (pending_assisted_id or "").strip()
     if not pending_assisted_id:
@@ -473,27 +638,34 @@ def handle_reject_pending_assisted(
 
     svc = service or AssistedReplyService()
     pending = _load_pending_for_route_checks(svc, pending_assisted_id)
-    scope_status, scope_body = _validate_pending_scope_and_status(
-        pending,
-        action="reject",
-        pending_assisted_id=pending_assisted_id,
-        workspace_id=fields["workspace_id"],
-        shop_id=fields["shop_id"],
-        expected_pending_status=fields["expected_pending_status"],
-    )
-    if scope_status is not None:
-        assert scope_body is not None
-        return scope_status, scope_body
+
+    def _scope_validator() -> Tuple[Optional[int], Optional[Dict[str, Any]]]:
+        return _validate_pending_scope_and_status(
+            pending,
+            action="reject",
+            pending_assisted_id=pending_assisted_id,
+            workspace_id=fields["workspace_id"],
+            shop_id=fields["shop_id"],
+            expected_pending_status=fields["expected_pending_status"],
+        )
 
     reject_reason = _optional_str(parsed_body.get("reject_reason"))
-    result = svc.reject_pending(
-        pending_assisted_id,
-        actor_user_id=fields["actor_user_id"],
-        actor_role=fields["actor_role"],
-        reason=reject_reason,
-        client_request_id=fields["client_request_id"],
+    return _execute_action_with_idempotency(
+        action="reject",
+        pending_assisted_id=pending_assisted_id,
+        parsed_body=parsed_body,
+        fields=fields,
+        scope_validator=_scope_validator,
+        service_call=lambda: svc.reject_pending(
+            pending_assisted_id,
+            actor_user_id=fields["actor_user_id"],
+            actor_role=fields["actor_role"],
+            reason=reject_reason,
+            client_request_id=fields["client_request_id"],
+        ),
+        result_to_response=_reject_service_result_to_response,
+        idempotency_repo=idempotency_repo,
     )
-    return _reject_service_result_to_response(result)
 
 
 def pending_assisted_action_route_names() -> Iterable[str]:
@@ -567,6 +739,7 @@ def dispatch_pending_assisted_action_route(
     *,
     body: Mapping[str, Any] | str | None = None,
     service: AssistedReplyService | None = None,
+    idempotency_repo: ActionIdempotencyRepositorySQLite | None = None,
 ) -> Tuple[int, Dict[str, Any]]:
     """Lightweight dispatcher for tests without Flask."""
     method_upper = method.upper()
@@ -591,12 +764,14 @@ def dispatch_pending_assisted_action_route(
             pending_id,
             body,
             service=service,
+            idempotency_repo=idempotency_repo,
         )
     if action_suffix == "reject":
         return handle_reject_pending_assisted(
             pending_id,
             body,
             service=service,
+            idempotency_repo=idempotency_repo,
         )
 
     return 404, {"error": "not_found", "path": path}

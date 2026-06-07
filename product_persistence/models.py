@@ -256,6 +256,35 @@ class OutboundIdempotencyRow(ProductBase):
     )
 
 
+class DashboardActionIdempotencyRow(ProductBase):
+    __tablename__ = "dashboard_action_idempotency_keys"
+
+    client_request_id: Mapped[str] = mapped_column(Text, primary_key=True)
+    workspace_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    shop_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    actor_user_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    actor_role: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    pending_assisted_id: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    action: Mapped[str] = mapped_column(Text, nullable=False)
+    payload_hash: Mapped[str] = mapped_column(Text, nullable=False)
+    status: Mapped[str] = mapped_column(Text, nullable=False)
+    response_json: Mapped[Optional[str]] = mapped_column(Text, nullable=True)
+    created_at: Mapped[str] = mapped_column(Text, nullable=False)
+    updated_at: Mapped[str] = mapped_column(Text, nullable=False)
+
+    __table_args__ = (
+        Index("idx_action_idempotency_workspace_shop", "workspace_id", "shop_id"),
+        Index(
+            "idx_action_idempotency_pending_action",
+            "pending_assisted_id",
+            "action",
+        ),
+        Index("idx_action_idempotency_actor", "actor_user_id"),
+        Index("idx_action_idempotency_status", "status"),
+        Index("idx_action_idempotency_updated_at", "updated_at"),
+    )
+
+
 @dataclass(frozen=True)
 class ReplyLogDTO:
     """Read model placeholder — aligns with phase14e repository DTO."""

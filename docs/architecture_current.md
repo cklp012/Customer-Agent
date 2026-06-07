@@ -134,6 +134,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | **15g** | Assisted dashboard action endpoint planning (docs) | ✅ | [phase15g_done.md](phase15g_done.md) |
 | **15h** | Live PDD AssistedOutboundPort planning (docs) | ✅ | [phase15h_done.md](phase15h_done.md) |
 | **15i** | Dashboard action endpoint dry-run skeleton | ✅ | [phase15i_done.md](phase15i_done.md) |
+| **15j** | Action idempotency / client_request_id skeleton | ✅ | [phase15j_done.md](phase15j_done.md) |
 
 **未纳入本表、已暂缓：** Phase 4c（consumer 将 outbound 镜像到 `metadata`）、Phase 5b（统一 bool 解析模块）。
 
@@ -146,7 +147,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | 轨道 | 目标 | 当前状态 |
 |------|------|----------|
 | **Engineering** | 多平台架构、PDD 生产稳定、Doudian mock 契约 | PDD ✅；Doudian mock ✅；非 production |
-| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–15i** · action dry-run skeleton ✅ · live send **未实现** |
+| **Productization** | 商家 SaaS + product gate + **PreviewReplyLogService** | **14l–15j** · action idempotency skeleton ✅ · live send **未实现** |
 
 **售卖主线（12b.1 SSOT）：** **拼多多售前咨询 AI 副驾驶** — 处理商品/规格/库存等低风险咨询；**退款 / 投诉 / 售后纠纷 / 订单修改默认转人工**；先 Preview，再显式开启 Auto；平台托管 AI。
 
@@ -420,6 +421,22 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase15g_test_plan.md](phase15g_test_plan.md) | G1–G25 |
 | [phase15g_done.md](phase15g_done.md) | 15g 签收 |
 | [phase15i_done.md](phase15i_done.md) | 15i 签收 · I1–I18 |
+
+**Dashboard Action Idempotency（15j · skeleton implemented）：**
+
+| 组件 | 状态 |
+|------|------|
+| `DashboardActionIdempotencyRow` | ✅ |
+| `ActionIdempotencyRepositorySQLite` | ✅ acquire / complete / fail |
+| Route `client_request_id` integration | ✅ behind flag |
+| Replay same payload | ✅ return stored response |
+| Different payload conflict | ✅ 409 |
+| live send | ❌ **未实现** |
+| app.py registration | ❌ **not registered** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15j_done.md](phase15j_done.md) | 15j 签收 |
 
 **Live PDD AssistedOutboundPort（15h · planning-only）：**
 
@@ -834,7 +851,7 @@ create_auto_reply_runtime_channel()
 
 **Doudian mock spike 状态（11h）：** Phase **10k–11g 已完成、非 production**；真实 API **No-Go** until research gate。
 
-**Productization（12a–15i）：** **15i** Dashboard action endpoint dry-run skeleton（POST approve/reject · AssistedReplyService only · not in app.py）；**15j** client_request_id skeleton 待做。
+**Productization（12a–15j）：** **15j** Dashboard action idempotency / client_request_id skeleton（replay · conflict · flags default off）；**15k** live port planning 待做。
 
 ---
 
@@ -1111,9 +1128,10 @@ flowchart TB
 | **15g** ✅ | Assisted dashboard action endpoint planning (docs) | [phase15g_done.md](phase15g_done.md) |
 | **15h** ✅ | Live PDD AssistedOutboundPort planning (docs) | [phase15h_done.md](phase15h_done.md) |
 | **15i** ✅ | Dashboard action endpoint dry-run skeleton | [phase15i_done.md](phase15i_done.md) |
-| **15j** | Action idempotency / client_request_id skeleton | [phase15i_done.md](phase15i_done.md) |
-| **15k** | LivePddAssistedOutboundPort skeleton planning only | [phase15i_done.md](phase15i_done.md) |
-| **15l** | Register action routes for local dashboard behind flags | [phase15i_done.md](phase15i_done.md) |
+| **15j** ✅ | Action idempotency / client_request_id skeleton | [phase15j_done.md](phase15j_done.md) |
+| **15k** | LivePddAssistedOutboundPort skeleton planning only | [phase15j_done.md](phase15j_done.md) |
+| **15l** | Register action routes for local dashboard behind flags | [phase15j_done.md](phase15j_done.md) |
+| **15m** | Action route CSRF/auth hardening planning | [phase15j_done.md](phase15j_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

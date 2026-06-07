@@ -79,6 +79,12 @@ def should_write_outbound_idempotency() -> bool:
     )
 
 
+def should_write_action_idempotency() -> bool:
+    return is_product_persistence_enabled() and _env_flag(
+        "PRODUCT_PERSISTENCE_WRITE_ACTION_IDEMPOTENCY"
+    )
+
+
 def is_assisted_send_enabled() -> bool:
     return _env_flag("PRODUCT_ASSISTED_SEND_ENABLED")
 

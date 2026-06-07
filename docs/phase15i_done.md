@@ -60,9 +60,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15j** | Action idempotency / `client_request_id` **skeleton** |
+| **15j** | ✅ Action idempotency / `client_request_id` **skeleton** — [phase15j_done.md](phase15j_done.md) |
 | **15k** | `LivePddAssistedOutboundPort` **skeleton planning only** |
 | **15l** | Register action routes for local dashboard **behind flags** |
+| **15m** | Action route CSRF/auth hardening **planning** |
 
 ---
 

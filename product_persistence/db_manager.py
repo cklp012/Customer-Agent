@@ -45,6 +45,7 @@ class ProductDbManager:
             or flags.should_read_merchant_policy()
             or flags.should_read_dashboard_from_product_db()
             or flags.should_write_outbound_idempotency()
+            or flags.should_write_action_idempotency()
         )
 
     def _ensure_sqlite_directory(self) -> None:

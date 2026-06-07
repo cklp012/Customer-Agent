@@ -159,6 +159,7 @@ python scripts/diagnose_runtime.py
 | **15g** | [phase15g_done.md](phase15g_done.md) | **Dashboard action endpoint planning** — approve/reject contracts · CSRF/RBAC · dry-run only first · docs only |
 | **15h** | [phase15h_done.md](phase15h_done.md) | **Live PDD AssistedOutboundPort planning** — port adapter · queue contract · single test shop gate · timeout unknown · docs only |
 | **15i** | [phase15i_done.md](phase15i_done.md) | **Dashboard action endpoint dry-run skeleton** — POST approve/reject · AssistedReplyService only · not in app.py |
+| **15j** | [phase15j_done.md](phase15j_done.md) | **Action idempotency / client_request_id skeleton** — replay · conflict · flags default off |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

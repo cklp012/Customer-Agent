@@ -158,6 +158,7 @@ python scripts/diagnose_runtime.py
 | **15f** | [phase15f_done.md](phase15f_done.md) | **Dry-run port wired into AssistedReplyService** — would_send only · no live send |
 | **15g** | [phase15g_done.md](phase15g_done.md) | **Dashboard action endpoint planning** — approve/reject contracts · CSRF/RBAC · dry-run only first · docs only |
 | **15h** | [phase15h_done.md](phase15h_done.md) | **Live PDD AssistedOutboundPort planning** — port adapter · queue contract · single test shop gate · timeout unknown · docs only |
+| **15i** | [phase15i_done.md](phase15i_done.md) | **Dashboard action endpoint dry-run skeleton** — POST approve/reject · AssistedReplyService only · not in app.py |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

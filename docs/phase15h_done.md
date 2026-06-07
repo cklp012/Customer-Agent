@@ -54,9 +54,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15i** | Dashboard action endpoint **dry-run skeleton** |
+| **15i** | ✅ Dashboard action endpoint **dry-run skeleton** — [phase15i_done.md](phase15i_done.md) |
 | **15j** | Action idempotency / `client_request_id` **skeleton** |
 | **15k** | `LivePddAssistedOutboundPort` **skeleton planning only** |
+| **15l** | Register action routes for local dashboard **behind flags** |
 
 ---
 

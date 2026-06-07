@@ -392,9 +392,9 @@ class TestPendingAssistedActionRoutesDryRun(unittest.TestCase):
             self.assertEqual(status, 405, msg=mutation)
             self.assertEqual(body["error"], "method_not_allowed")
 
-    def test_i16_route_not_registered_in_app(self) -> None:
+    def test_i16_route_registration_via_bootstrap_not_direct_in_app(self) -> None:
         app_source = _APP_SOURCE.read_text(encoding="utf-8")
-        self.assertNotIn("pending_assisted_action_routes", app_source)
+        self.assertIn("apply_dashboard_action_route_bootstrap", app_source)
         self.assertNotIn("register_pending_assisted_action_routes", app_source)
 
     def test_i17_pdd_queue_name_unchanged(self) -> None:

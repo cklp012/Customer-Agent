@@ -161,6 +161,7 @@ python scripts/diagnose_runtime.py
 | **15i** | [phase15i_done.md](phase15i_done.md) | **Dashboard action endpoint dry-run skeleton** — POST approve/reject · AssistedReplyService only · not in app.py |
 | **15j** | [phase15j_done.md](phase15j_done.md) | **Action idempotency / client_request_id skeleton** — replay · conflict · flags default off |
 | **15k** | [phase15k_done.md](phase15k_done.md) | **Live PDD port skeleton planning** — class · primitive · mapping · flags · docs only |
+| **15l** | [phase15l_done.md](phase15l_done.md) | **Action route flag-gated registration** — default off · dry-run only · app.py bootstrap |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

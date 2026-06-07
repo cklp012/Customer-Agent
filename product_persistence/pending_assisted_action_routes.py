@@ -52,6 +52,8 @@ _FORBIDDEN_OVERRIDE_FIELDS = frozenset(
     }
 )
 _IDEMPOTENCY_KEY_PREFIX = "assisted_send:"
+_REGISTERED_ACTION_ROUTE_APP_IDS: set[int] = set()
+_local_dashboard_flask_app: Any | None = None
 
 
 def _build_action_idempotency_payload(
@@ -672,9 +674,62 @@ def pending_assisted_action_route_names() -> Iterable[str]:
     return ("approve_pending_assisted", "reject_pending_assisted")
 
 
+def reset_action_route_registration_state_for_tests() -> None:
+    """Test helper — clear idempotent registration tracking."""
+    _REGISTERED_ACTION_ROUTE_APP_IDS.clear()
+    global _local_dashboard_flask_app
+    _local_dashboard_flask_app = None
+
+
+def get_local_dashboard_flask_app(*, create_if_missing: bool = False) -> Any | None:
+    """Return optional Flask app for local dashboard route registration."""
+    global _local_dashboard_flask_app
+    if _local_dashboard_flask_app is not None:
+        return _local_dashboard_flask_app
+    if not create_if_missing:
+        return None
+    try:
+        from flask import Flask
+    except ImportError:
+        return None
+    _local_dashboard_flask_app = Flask("product_local_dashboard")
+    return _local_dashboard_flask_app
+
+
+def apply_dashboard_action_route_bootstrap(flask_app: Any | None = None) -> bool:
+    """Register dry-run action routes when PRODUCT_DASHBOARD_ACTION_ROUTES_ENABLED=true."""
+    if not flags.is_dashboard_action_routes_enabled():
+        return False
+
+    app = flask_app
+    if app is None:
+        app = get_local_dashboard_flask_app(create_if_missing=True)
+    if app is None:
+        return False
+
+    try:
+        register_pending_assisted_action_routes(app)
+        return True
+    except Exception:
+        try:
+            from utils.logger_loguru import get_logger
+
+            get_logger("DashboardActionRoutes").warning(
+                "PendingAssisted action route registration failed; continuing startup",
+                exc_info=True,
+            )
+        except Exception:
+            pass
+        return False
+
+
 def register_pending_assisted_action_routes(app: Any) -> None:
     """Register POST approve/reject routes when supported; otherwise no-op."""
     if app is None:
+        return
+
+    app_id = id(app)
+    if app_id in _REGISTERED_ACTION_ROUTE_APP_IDS:
         return
 
     add_url_rule = getattr(app, "add_url_rule", None)
@@ -691,6 +746,7 @@ def register_pending_assisted_action_routes(app: Any) -> None:
             view_func=_flask_reject_view,
             methods=["POST"],
         )
+        _REGISTERED_ACTION_ROUTE_APP_IDS.add(app_id)
         return
 
     route_decorator = getattr(app, "route", None)
@@ -703,6 +759,7 @@ def register_pending_assisted_action_routes(app: Any) -> None:
             "/api/product/pending-assisted/<pending_assisted_id>/reject",
             methods=["POST"],
         )(_flask_reject_view)
+        _REGISTERED_ACTION_ROUTE_APP_IDS.add(app_id)
 
 
 def _flask_approve_view(pending_assisted_id: str) -> Any:

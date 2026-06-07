@@ -78,6 +78,12 @@ def main():
 
     apply_app_startup_bootstrap()
 
+    from product_persistence.pending_assisted_action_routes import (
+        apply_dashboard_action_route_bootstrap,
+    )
+
+    apply_dashboard_action_route_bootstrap()
+
     # 创建主窗口
     t0 = time.perf_counter()
     t_import = time.perf_counter()

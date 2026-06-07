@@ -401,9 +401,9 @@ class TestPendingAssistedActionRoutesIdempotency(unittest.TestCase):
         self.assertEqual(status, 409)
         self.assertEqual(body["reason"], "client_request_conflict")
 
-    def test_route_still_not_registered_in_app(self) -> None:
+    def test_route_registration_via_bootstrap_not_direct_in_app(self) -> None:
         app_source = _APP_SOURCE.read_text(encoding="utf-8")
-        self.assertNotIn("pending_assisted_action_routes", app_source)
+        self.assertIn("apply_dashboard_action_route_bootstrap", app_source)
         self.assertNotIn("register_pending_assisted_action_routes", app_source)
 
     @patch("Channel.pinduoduo.utils.API.send_message.SendMessage.send_text")

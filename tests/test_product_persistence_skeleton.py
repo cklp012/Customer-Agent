@@ -57,6 +57,7 @@ class TestProductPersistenceFlags(unittest.TestCase):
             "PRODUCT_ASSISTED_SEND_ENABLED",
             "PRODUCT_ASSISTED_SEND_DRY_RUN",
             "PRODUCT_ASSISTED_SEND_TEST_SHOP_ID",
+            "PRODUCT_DASHBOARD_ACTION_ROUTES_ENABLED",
         ):
             os.environ.pop(key, None)
         importlib.reload(importlib.import_module("product_persistence.flags"))
@@ -82,6 +83,7 @@ class TestProductPersistenceFlags(unittest.TestCase):
         self.assertFalse(flags.is_assisted_send_enabled())
         self.assertTrue(flags.is_assisted_send_dry_run())
         self.assertFalse(flags.is_assisted_dry_run_outbound_enabled())
+        self.assertFalse(flags.is_dashboard_action_routes_enabled())
 
     def test_true_values(self) -> None:
         from product_persistence import flags

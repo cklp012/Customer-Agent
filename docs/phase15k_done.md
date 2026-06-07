@@ -54,9 +54,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15l** | Register action routes for local dashboard **behind flags** |
+| **15l** | ✅ Register action routes **behind flags** — [phase15l_done.md](phase15l_done.md) |
 | **15m** | `LivePddAssistedOutboundPort` **skeleton implementation** behind flags |
 | **15n** | Live send **reconciliation planning** |
+| **15o** | Local dashboard action route **smoke test / runbook** |
 
 ---
 

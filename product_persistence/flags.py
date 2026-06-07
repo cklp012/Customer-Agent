@@ -123,3 +123,8 @@ def is_assisted_dry_run_outbound_enabled() -> bool:
         and is_assisted_send_dry_run()
         and should_write_outbound_idempotency()
     )
+
+
+def is_dashboard_action_routes_enabled() -> bool:
+    """Local dashboard POST approve/reject routes — default off; dry-run only."""
+    return _env_flag("PRODUCT_DASHBOARD_ACTION_ROUTES_ENABLED")

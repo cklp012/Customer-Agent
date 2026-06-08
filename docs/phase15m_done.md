@@ -65,9 +65,10 @@ All validation failures: `platform_status=validation_failed` · `would_send=fals
 
 | Phase | 内容 |
 |-------|------|
-| **15n** | Live send **reconciliation planning** |
+| **15n** | ✅ Live send **reconciliation planning** — [phase15n_done.md](phase15n_done.md) |
 | **15o** | Local dashboard action route **smoke test / runbook** |
 | **15p** | Wire LivePdd port selection **planning only** |
+| **15q** | Reconciliation **schema planning only** |
 
 ---
 

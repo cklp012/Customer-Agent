@@ -163,6 +163,7 @@ python scripts/diagnose_runtime.py
 | **15k** | [phase15k_done.md](phase15k_done.md) | **Live PDD port skeleton planning** — class · primitive · mapping · flags · docs only |
 | **15l** | [phase15l_done.md](phase15l_done.md) | **Action route flag-gated registration** — default off · dry-run only · app.py bootstrap |
 | **15m** | [phase15m_done.md](phase15m_done.md) | **LivePddAssistedOutboundPort skeleton** — validation + safety gates · no live send · not wired |
+| **15n** | [phase15n_done.md](phase15n_done.md) | **Live send reconciliation planning** — timeout_unknown · manual review · no auto retry · docs only |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

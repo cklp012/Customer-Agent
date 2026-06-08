@@ -500,6 +500,33 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 |------|------|
 | [phase15m_done.md](phase15m_done.md) | 15m 签收 · M1–M25 |
 
+**Live Send Reconciliation（15n · planning-only）：**
+
+| 组件 | 状态 |
+|------|------|
+| Unknown outcome state machine | 📋 documented |
+| Reconciliation task contract | 📋 documented · **no worker** |
+| Manual review / operator runbook | 📋 documented |
+| Duplicate send prevention | 📋 documented |
+| Audit / snapshot / status rules | 📋 documented |
+| Failure / rollback policy | 📋 documented |
+| `timeout_unknown` auto retry | ❌ **禁止** |
+| reconciliation creates second send | ❌ **禁止** |
+| live send | ❌ **未实现** |
+| PDD queue `pdd_{shop_id}` | ✅ **unchanged** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15n_live_send_reconciliation_plan.md](phase15n_live_send_reconciliation_plan.md) | 总体规划 |
+| [phase15n_unknown_outcome_state_machine.md](phase15n_unknown_outcome_state_machine.md) | 状态机 |
+| [phase15n_reconciliation_task_contract.md](phase15n_reconciliation_task_contract.md) | Task 契约 |
+| [phase15n_manual_review_and_operator_runbook.md](phase15n_manual_review_and_operator_runbook.md) | Runbook |
+| [phase15n_duplicate_send_prevention.md](phase15n_duplicate_send_prevention.md) | 防重复 |
+| [phase15n_audit_snapshot_status_updates.md](phase15n_audit_snapshot_status_updates.md) | Audit |
+| [phase15n_failure_rollback_policy.md](phase15n_failure_rollback_policy.md) | Rollback |
+| [phase15n_test_plan.md](phase15n_test_plan.md) | N1–N20 |
+| [phase15n_done.md](phase15n_done.md) | 15n 签收 |
+
 **Live PDD AssistedOutboundPort（15h · planning-only）：**
 
 | 组件 | 状态 |
@@ -509,7 +536,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | Service owns guard/audit/idempotency | 📋 documented |
 | Port owns platform send only | 📋 documented |
 | PDD queue `pdd_{shop_id}` | 📋 **unchanged** |
-| timeout → unknown · no auto-retry | 📋 documented |
+| timeout → unknown · no auto-retry | ✅ **15n** reconciliation planned |
 | single test shop live gate | 📋 documented |
 | live send | ❌ **未实现** |
 | auto send | ❌ **未实现** |
@@ -1194,9 +1221,10 @@ flowchart TB
 | **15k** ✅ | Live PDD port skeleton planning (docs) | [phase15k_done.md](phase15k_done.md) |
 | **15l** ✅ | Register action routes for local dashboard behind flags | [phase15l_done.md](phase15l_done.md) |
 | **15m** ✅ | LivePddAssistedOutboundPort skeleton implementation behind flags | [phase15m_done.md](phase15m_done.md) |
-| **15n** | Live send reconciliation planning | [phase15m_done.md](phase15m_done.md) |
-| **15o** | Local dashboard action route smoke test / runbook | [phase15m_done.md](phase15m_done.md) |
-| **15p** | Wire LivePdd port selection planning only | [phase15m_done.md](phase15m_done.md) |
+| **15n** ✅ | Live send reconciliation planning (docs) | [phase15n_done.md](phase15n_done.md) |
+| **15o** | Local dashboard action route smoke test / runbook | [phase15n_done.md](phase15n_done.md) |
+| **15p** | Wire LivePdd port selection planning only | [phase15n_done.md](phase15n_done.md) |
+| **15q** | Reconciliation schema planning only | [phase15n_done.md](phase15n_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

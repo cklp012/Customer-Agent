@@ -465,7 +465,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | PDD send primitive boundary | 📋 documented |
 | Result mapping contract | 📋 documented |
 | Safety flags + allowlist | 📋 documented |
-| Implementation | ❌ **not in 15k** |
+| Implementation | ✅ **15m skeleton** |
 | live send | ❌ **未实现** |
 | PDD hot path / queue `pdd_{shop_id}` | 📋 **unchanged** |
 
@@ -480,11 +480,31 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase15k_test_plan.md](phase15k_test_plan.md) | K1–K24 |
 | [phase15k_done.md](phase15k_done.md) | 15k 签收 |
 
+**LivePddAssistedOutboundPort Skeleton（15m · implemented）：**
+
+| 组件 | 状态 |
+|------|------|
+| `LivePddAssistedOutboundPort` | ✅ skeleton in `live_pdd_assisted_outbound_port.py` |
+| Implements `AssistedOutboundPort` | ✅ |
+| Port-local validation | ✅ |
+| Safety flags + test shop allowlist gate | ✅ |
+| All gates pass → `live_send_not_implemented` | ✅ no real send |
+| Wired into `AssistedReplyService` | ❌ **not wired** |
+| Registered in app.py | ❌ **not registered** |
+| live send | ❌ **未实现** |
+| auto send | ❌ **未实现** |
+| SendMessage / PDD outbound | ❌ **未调用** |
+| PDD queue `pdd_{shop_id}` | ✅ **unchanged** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15m_done.md](phase15m_done.md) | 15m 签收 · M1–M25 |
+
 **Live PDD AssistedOutboundPort（15h · planning-only）：**
 
 | 组件 | 状态 |
 |------|------|
-| `LivePddAssistedOutboundPort` | 📋 planned · **not implemented** |
+| `LivePddAssistedOutboundPort` | ✅ **15m skeleton** · live send **未实现** |
 | Port as `AssistedOutboundPort` impl | 📋 documented |
 | Service owns guard/audit/idempotency | 📋 documented |
 | Port owns platform send only | 📋 documented |
@@ -519,7 +539,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | dry_run default | ✅ **DRY_RUN=true** · no live outbound |
 | no fallback legacy send | 📋 **15e** documented |
 | dashboard action endpoint | ✅ **15i skeleton** · **15l flag-gated register** |
-| LivePddAssistedOutboundPort | 📋 **15h+15k planned** · **15m impl** · **not implemented** |
+| LivePddAssistedOutboundPort | ✅ **15m skeleton** · **not wired to service** · live send **未实现** |
 | handler / SendMessage / PDD / Doudian | ❌ **未改** |
 
 | 文档 | 内容 |
@@ -1173,9 +1193,10 @@ flowchart TB
 | **15j** ✅ | Action idempotency / client_request_id skeleton | [phase15j_done.md](phase15j_done.md) |
 | **15k** ✅ | Live PDD port skeleton planning (docs) | [phase15k_done.md](phase15k_done.md) |
 | **15l** ✅ | Register action routes for local dashboard behind flags | [phase15l_done.md](phase15l_done.md) |
-| **15m** | LivePddAssistedOutboundPort skeleton implementation behind flags | [phase15l_done.md](phase15l_done.md) |
-| **15n** | Live send reconciliation planning | [phase15l_done.md](phase15l_done.md) |
-| **15o** | Local dashboard action route smoke test / runbook | [phase15l_done.md](phase15l_done.md) |
+| **15m** ✅ | LivePddAssistedOutboundPort skeleton implementation behind flags | [phase15m_done.md](phase15m_done.md) |
+| **15n** | Live send reconciliation planning | [phase15m_done.md](phase15m_done.md) |
+| **15o** | Local dashboard action route smoke test / runbook | [phase15m_done.md](phase15m_done.md) |
+| **15p** | Wire LivePdd port selection planning only | [phase15m_done.md](phase15m_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

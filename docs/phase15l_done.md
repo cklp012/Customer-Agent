@@ -57,7 +57,7 @@ Independent of read dashboard flags · assisted service flags · send flags.
 
 | Phase | 内容 |
 |-------|------|
-| **15m** | `LivePddAssistedOutboundPort` **skeleton implementation** behind flags |
+| **15m** | ✅ `LivePddAssistedOutboundPort` **skeleton implementation** — [phase15m_done.md](phase15m_done.md) |
 | **15n** | Live send **reconciliation planning** |
 | **15o** | Local dashboard action route **smoke test / runbook** |
 

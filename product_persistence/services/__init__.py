@@ -7,6 +7,9 @@ from product_persistence.services.assisted_outbound_port import (
     DryRunAssistedOutboundPort,
     build_assisted_outbound_request,
 )
+from product_persistence.services.live_pdd_assisted_outbound_port import (
+    LivePddAssistedOutboundPort,
+)
 from product_persistence.services.assisted_reply_service import (
     AssistedReplyService,
     AssistedServiceResult,
@@ -46,6 +49,7 @@ __all__ = [
     "DashboardListResult",
     "DashboardReadService",
     "DryRunAssistedOutboundPort",
+    "LivePddAssistedOutboundPort",
     "PendingAssistedDashboardReadService",
     "PendingAssistedDetail",
     "PendingAssistedDetailResult",

@@ -26,6 +26,7 @@ _PACKAGE_MODULES = (
     "product_persistence.services.preview_reply_log_service",
     "product_persistence.services.assisted_reply_service",
     "product_persistence.services.assisted_outbound_port",
+    "product_persistence.services.live_pdd_assisted_outbound_port",
 )
 
 _SOURCE_NO_LEGACY = (
@@ -34,6 +35,7 @@ _SOURCE_NO_LEGACY = (
     _REPO_ROOT / "product_persistence" / "services" / "preview_reply_log_service.py",
     _REPO_ROOT / "product_persistence" / "services" / "assisted_reply_service.py",
     _REPO_ROOT / "product_persistence" / "services" / "assisted_outbound_port.py",
+    _REPO_ROOT / "product_persistence" / "services" / "live_pdd_assisted_outbound_port.py",
 )
 
 
@@ -188,6 +190,7 @@ class TestProductPersistenceNoSideEffects(unittest.TestCase):
             _REPO_ROOT / "product_persistence" / "services" / "preview_reply_log_service.py",
             _REPO_ROOT / "product_persistence" / "services" / "assisted_reply_service.py",
             _REPO_ROOT / "product_persistence" / "services" / "assisted_outbound_port.py",
+            _REPO_ROOT / "product_persistence" / "services" / "live_pdd_assisted_outbound_port.py",
         ):
             source = path.read_text(encoding="utf-8")
             self.assertNotIn("SendMessage", source)

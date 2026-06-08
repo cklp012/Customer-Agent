@@ -162,6 +162,7 @@ python scripts/diagnose_runtime.py
 | **15j** | [phase15j_done.md](phase15j_done.md) | **Action idempotency / client_request_id skeleton** — replay · conflict · flags default off |
 | **15k** | [phase15k_done.md](phase15k_done.md) | **Live PDD port skeleton planning** — class · primitive · mapping · flags · docs only |
 | **15l** | [phase15l_done.md](phase15l_done.md) | **Action route flag-gated registration** — default off · dry-run only · app.py bootstrap |
+| **15m** | [phase15m_done.md](phase15m_done.md) | **LivePddAssistedOutboundPort skeleton** — validation + safety gates · no live send · not wired |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

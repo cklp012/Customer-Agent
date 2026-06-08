@@ -58,9 +58,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15o** | Local dashboard action route **smoke test / runbook** |
+| **15o** | ✅ Local dashboard action route **smoke test / runbook** — [phase15o_done.md](phase15o_done.md) |
 | **15p** | Wire LivePdd port selection **planning only** |
 | **15q** | Reconciliation **schema planning only** |
+| **15r** | Local dashboard smoke test **script skeleton** |
 
 ---
 

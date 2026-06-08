@@ -527,6 +527,30 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase15n_test_plan.md](phase15n_test_plan.md) | N1–N20 |
 | [phase15n_done.md](phase15n_done.md) | 15n 签收 |
 
+**Local Dashboard Action Smoke / Runbook（15o · completed）：**
+
+| 组件 | 状态 |
+|------|------|
+| Local smoke runbook | ✅ documented |
+| Flag matrix (default safe + dry-run smoke) | ✅ documented |
+| Manual curl examples (local-only) | ✅ documented |
+| No-send verification checklist | ✅ documented |
+| Rollback checklist | ✅ documented |
+| Light smoke tests | ✅ `test_phase15o_local_dashboard_action_smoke.py` |
+| live send | ❌ **未实现** |
+| retry / reconciliation worker | ❌ **未实现** |
+| PDD queue `pdd_{shop_id}` | ✅ **unchanged** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15o_local_dashboard_action_smoke_runbook.md](phase15o_local_dashboard_action_smoke_runbook.md) | Runbook |
+| [phase15o_flag_matrix_and_safe_env.md](phase15o_flag_matrix_and_safe_env.md) | Flag 矩阵 |
+| [phase15o_manual_curl_examples.md](phase15o_manual_curl_examples.md) | curl |
+| [phase15o_no_send_verification_checklist.md](phase15o_no_send_verification_checklist.md) | No-send |
+| [phase15o_rollback_checklist.md](phase15o_rollback_checklist.md) | Rollback |
+| [phase15o_test_plan.md](phase15o_test_plan.md) | O1–O18 |
+| [phase15o_done.md](phase15o_done.md) | 15o 签收 |
+
 **Live PDD AssistedOutboundPort（15h · planning-only）：**
 
 | 组件 | 状态 |
@@ -1222,9 +1246,10 @@ flowchart TB
 | **15l** ✅ | Register action routes for local dashboard behind flags | [phase15l_done.md](phase15l_done.md) |
 | **15m** ✅ | LivePddAssistedOutboundPort skeleton implementation behind flags | [phase15m_done.md](phase15m_done.md) |
 | **15n** ✅ | Live send reconciliation planning (docs) | [phase15n_done.md](phase15n_done.md) |
-| **15o** | Local dashboard action route smoke test / runbook | [phase15n_done.md](phase15n_done.md) |
-| **15p** | Wire LivePdd port selection planning only | [phase15n_done.md](phase15n_done.md) |
-| **15q** | Reconciliation schema planning only | [phase15n_done.md](phase15n_done.md) |
+| **15o** ✅ | Local dashboard action route smoke test / runbook | [phase15o_done.md](phase15o_done.md) |
+| **15p** | Wire LivePdd port selection planning only | [phase15o_done.md](phase15o_done.md) |
+| **15q** | Reconciliation schema planning only | [phase15o_done.md](phase15o_done.md) |
+| **15r** | Local dashboard smoke test script skeleton | [phase15o_done.md](phase15o_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

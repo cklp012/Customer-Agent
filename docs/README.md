@@ -165,6 +165,7 @@ python scripts/diagnose_runtime.py
 | **15m** | [phase15m_done.md](phase15m_done.md) | **LivePddAssistedOutboundPort skeleton** — validation + safety gates · no live send · not wired |
 | **15n** | [phase15n_done.md](phase15n_done.md) | **Live send reconciliation planning** — timeout_unknown · manual review · no auto retry · docs only |
 | **15o** | [phase15o_done.md](phase15o_done.md) | **Local dashboard action smoke/runbook** — flag matrix · curl · no-send checklist · light tests |
+| **15p** | [phase15p_done.md](phase15p_done.md) | **LivePdd port selection planning** — default DryRun · all-gates live · route 不选 port · docs only |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

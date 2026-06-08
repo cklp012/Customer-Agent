@@ -551,6 +551,30 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase15o_test_plan.md](phase15o_test_plan.md) | O1–O18 |
 | [phase15o_done.md](phase15o_done.md) | 15o 签收 |
 
+**LivePdd Port Selection（15p · planning-only）：**
+
+| 组件 | 状态 |
+|------|------|
+| Outbound port selection plan | 📋 documented |
+| Default port | ✅ **`DryRunAssistedOutboundPort`** (current code) |
+| `LivePddAssistedOutboundPort` wired to service | ❌ **not wired** |
+| `OutboundPortSelector` | 📋 planned · **15s skeleton** |
+| Route direct port selection | ❌ **forbidden** |
+| Selection after guard/idempotency | 📋 documented |
+| live send | ❌ **未实现** |
+| no fallback legacy send | 📋 documented |
+| PDD queue `pdd_{shop_id}` | ✅ **unchanged** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15p_live_port_selection_plan.md](phase15p_live_port_selection_plan.md) | 总体规划 |
+| [phase15p_port_selection_decision_tree.md](phase15p_port_selection_decision_tree.md) | 决策树 |
+| [phase15p_service_integration_boundary.md](phase15p_service_integration_boundary.md) | 集成边界 |
+| [phase15p_flag_and_allowlist_gate.md](phase15p_flag_and_allowlist_gate.md) | Flag · allowlist |
+| [phase15p_no_fallback_and_rollback.md](phase15p_no_fallback_and_rollback.md) | No fallback |
+| [phase15p_test_plan.md](phase15p_test_plan.md) | P1–P20 |
+| [phase15p_done.md](phase15p_done.md) | 15p 签收 |
+
 **Live PDD AssistedOutboundPort（15h · planning-only）：**
 
 | 组件 | 状态 |
@@ -590,7 +614,7 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | dry_run default | ✅ **DRY_RUN=true** · no live outbound |
 | no fallback legacy send | 📋 **15e** documented |
 | dashboard action endpoint | ✅ **15i skeleton** · **15l flag-gated register** |
-| LivePddAssistedOutboundPort | ✅ **15m skeleton** · **not wired to service** · live send **未实现** |
+| LivePddAssistedOutboundPort | ✅ **15m skeleton** · **15p selection planned** · **not wired** · live send **未实现** |
 | handler / SendMessage / PDD / Doudian | ❌ **未改** |
 
 | 文档 | 内容 |
@@ -1247,9 +1271,10 @@ flowchart TB
 | **15m** ✅ | LivePddAssistedOutboundPort skeleton implementation behind flags | [phase15m_done.md](phase15m_done.md) |
 | **15n** ✅ | Live send reconciliation planning (docs) | [phase15n_done.md](phase15n_done.md) |
 | **15o** ✅ | Local dashboard action route smoke test / runbook | [phase15o_done.md](phase15o_done.md) |
-| **15p** | Wire LivePdd port selection planning only | [phase15o_done.md](phase15o_done.md) |
-| **15q** | Reconciliation schema planning only | [phase15o_done.md](phase15o_done.md) |
-| **15r** | Local dashboard smoke test script skeleton | [phase15o_done.md](phase15o_done.md) |
+| **15p** ✅ | Wire LivePdd port selection planning only | [phase15p_done.md](phase15p_done.md) |
+| **15q** | Reconciliation schema planning only | [phase15p_done.md](phase15p_done.md) |
+| **15r** | Local dashboard smoke test script skeleton | [phase15p_done.md](phase15p_done.md) |
+| **15s** | OutboundPortSelector skeleton implementation, dry-run only | [phase15p_done.md](phase15p_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

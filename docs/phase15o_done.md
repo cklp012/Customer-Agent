@@ -50,9 +50,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15p** | Wire LivePdd port selection **planning only** |
+| **15p** | ✅ Wire LivePdd port selection **planning only** — [phase15p_done.md](phase15p_done.md) |
 | **15q** | Reconciliation **schema planning only** |
 | **15r** | Local dashboard smoke test **script skeleton** |
+| **15s** | `OutboundPortSelector` **skeleton implementation** · dry-run only |
 
 ---
 

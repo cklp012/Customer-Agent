@@ -575,6 +575,32 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase15p_test_plan.md](phase15p_test_plan.md) | P1–P20 |
 | [phase15p_done.md](phase15p_done.md) | 15p 签收 |
 
+**Reconciliation Schema（15q · planning-only）：**
+
+| 组件 | 状态 |
+|------|------|
+| `reconciliation_attempts` table | 📋 planned · **not created** |
+| Outbound idempotency status extension | 📋 documented |
+| Pending assisted status extension | 📋 documented |
+| Manual review queries | 📋 documented |
+| Status transition rules | 📋 documented |
+| Schema records uncertainty only | 📋 **no resend permission** |
+| reconciliation worker | ❌ **未实现** |
+| live send / retry | ❌ **未实现** |
+| PDD queue `pdd_{shop_id}` | ✅ **unchanged** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15q_reconciliation_schema_plan.md](phase15q_reconciliation_schema_plan.md) | 总体规划 |
+| [phase15q_reconciliation_attempts_table.md](phase15q_reconciliation_attempts_table.md) | Future 表 |
+| [phase15q_outbound_idempotency_status_extension.md](phase15q_outbound_idempotency_status_extension.md) | Idempotency |
+| [phase15q_pending_assisted_status_extension.md](phase15q_pending_assisted_status_extension.md) | Pending |
+| [phase15q_manual_review_fields_and_queries.md](phase15q_manual_review_fields_and_queries.md) | Manual review |
+| [phase15q_status_transition_rules.md](phase15q_status_transition_rules.md) | Transitions |
+| [phase15q_failure_rollback_policy.md](phase15q_failure_rollback_policy.md) | Rollback |
+| [phase15q_test_plan.md](phase15q_test_plan.md) | Q1–Q20 |
+| [phase15q_done.md](phase15q_done.md) | 15q 签收 |
+
 **Live PDD AssistedOutboundPort（15h · planning-only）：**
 
 | 组件 | 状态 |
@@ -1272,9 +1298,10 @@ flowchart TB
 | **15n** ✅ | Live send reconciliation planning (docs) | [phase15n_done.md](phase15n_done.md) |
 | **15o** ✅ | Local dashboard action route smoke test / runbook | [phase15o_done.md](phase15o_done.md) |
 | **15p** ✅ | Wire LivePdd port selection planning only | [phase15p_done.md](phase15p_done.md) |
-| **15q** | Reconciliation schema planning only | [phase15p_done.md](phase15p_done.md) |
-| **15r** | Local dashboard smoke test script skeleton | [phase15p_done.md](phase15p_done.md) |
-| **15s** | OutboundPortSelector skeleton implementation, dry-run only | [phase15p_done.md](phase15p_done.md) |
+| **15q** ✅ | Reconciliation schema planning only | [phase15q_done.md](phase15q_done.md) |
+| **15r** | Local dashboard smoke test script skeleton | [phase15q_done.md](phase15q_done.md) |
+| **15s** | OutboundPortSelector skeleton implementation, dry-run only | [phase15q_done.md](phase15q_done.md) |
+| **15t** | Reconciliation schema implementation behind flags | [phase15q_done.md](phase15q_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

@@ -54,9 +54,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15q** | Reconciliation **schema planning only** |
+| **15q** | ✅ Reconciliation **schema planning only** — [phase15q_done.md](phase15q_done.md) |
 | **15r** | Local dashboard smoke test **script skeleton** |
 | **15s** | `OutboundPortSelector` **skeleton implementation** · dry-run only |
+| **15t** | Reconciliation schema **implementation behind flags** |
 
 ---
 

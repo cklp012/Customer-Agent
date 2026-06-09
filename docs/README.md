@@ -167,6 +167,7 @@ python scripts/diagnose_runtime.py
 | **15o** | [phase15o_done.md](phase15o_done.md) | **Local dashboard action smoke/runbook** — flag matrix · curl · no-send checklist · light tests |
 | **15p** | [phase15p_done.md](phase15p_done.md) | **LivePdd port selection planning** — default DryRun · all-gates live · route 不选 port · docs only |
 | **15q** | [phase15q_done.md](phase15q_done.md) | **Reconciliation schema planning** — attempts table · status extensions · manual review · no table created |
+| **15r** | [phase15r_done.md](phase15r_done.md) | **Local dashboard smoke script** — `scripts/smoke_dashboard_action_routes.py` · dry-run/no-send only |
 | **9–10** | [phase9_plan.md](phase9_plan.md) / [phase8_plan.md](phase8_plan.md) | Registry / 多平台规划 |
 
 ---

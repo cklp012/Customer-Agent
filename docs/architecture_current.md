@@ -601,6 +601,21 @@ Customer-Agent 正在改造为**多平台电商 AI 客服工作台**，服务对
 | [phase15q_test_plan.md](phase15q_test_plan.md) | Q1–Q20 |
 | [phase15q_done.md](phase15q_done.md) | 15q 签收 |
 
+**Local Dashboard Smoke Script（15r · implemented）：**
+
+| 组件 | 状态 |
+|------|------|
+| `scripts/smoke_dashboard_action_routes.py` | ✅ dry-run / no-send smoke |
+| Developer manual run | ✅ `python scripts/smoke_dashboard_action_routes.py` |
+| Env restore | ✅ `temporary_env` finally |
+| Temp DB only | ✅ `temp/product_smoke_dashboard_action.db` |
+| live send | ❌ **未实现** |
+| PDD queue `pdd_{shop_id}` | ✅ **unchanged** |
+
+| 文档 | 内容 |
+|------|------|
+| [phase15r_done.md](phase15r_done.md) | 15r 签收 · R1–R16 |
+
 **Live PDD AssistedOutboundPort（15h · planning-only）：**
 
 | 组件 | 状态 |
@@ -1299,9 +1314,10 @@ flowchart TB
 | **15o** ✅ | Local dashboard action route smoke test / runbook | [phase15o_done.md](phase15o_done.md) |
 | **15p** ✅ | Wire LivePdd port selection planning only | [phase15p_done.md](phase15p_done.md) |
 | **15q** ✅ | Reconciliation schema planning only | [phase15q_done.md](phase15q_done.md) |
-| **15r** | Local dashboard smoke test script skeleton | [phase15q_done.md](phase15q_done.md) |
-| **15s** | OutboundPortSelector skeleton implementation, dry-run only | [phase15q_done.md](phase15q_done.md) |
-| **15t** | Reconciliation schema implementation behind flags | [phase15q_done.md](phase15q_done.md) |
+| **15r** ✅ | Local dashboard smoke test script skeleton | [phase15r_done.md](phase15r_done.md) |
+| **15s** | OutboundPortSelector skeleton implementation, dry-run only | [phase15r_done.md](phase15r_done.md) |
+| **15t** | Reconciliation schema implementation behind flags | [phase15r_done.md](phase15r_done.md) |
+| **15u** | Live PDD send primitive planning only | [phase15r_done.md](phase15r_done.md) |
 | **12e–12f** | Safety rules engine · billing / AI quotas | [phase12a_done.md](phase12a_done.md) |
 | **12g-T** | Doudian real API research（11h G1，非售卖阻塞） | [phase11h_plan.md](phase11h_plan.md) |
 | **13+** | 真实 API prototype（**默认 off**） | [phase11h_plan.md](phase11h_plan.md) |

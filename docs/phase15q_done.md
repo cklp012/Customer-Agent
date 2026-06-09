@@ -56,9 +56,10 @@
 
 | Phase | 内容 |
 |-------|------|
-| **15r** | Local dashboard smoke test **script skeleton** |
+| **15r** | ✅ Local dashboard smoke test **script skeleton** — [phase15r_done.md](phase15r_done.md) |
 | **15s** | `OutboundPortSelector` skeleton · dry-run only |
 | **15t** | Reconciliation schema **implementation behind flags** |
+| **15u** | Live PDD send primitive **planning only** |
 
 ---
 
